@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Models\User;
+use App\Models\Role;
+use App\Models\Jumuiya;
+use App\Exports\MemberTemplateExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
@@ -79,12 +84,13 @@ class MemberController extends Controller
         }
 
         // Order by latest
-        $members = $query->orderBy('created_at', 'desc')->paginate(20);
+        $members = $query->orderBy('created_at', 'desc')->paginate(7);
 
         // Get statistics
         $stats = [
             'total' => Member::count(),
             'active' => Member::active()->count(),
+            'inactive' => Member::where('is_active', false)->count(),
             'male' => Member::where('gender', 'Mme')->count(),
             'female' => Member::where('gender', 'Mke')->count(),
         ];
@@ -361,7 +367,7 @@ class MemberController extends Controller
         $contributions = $member->incomes()
             ->with('category')
             ->orderBy('collection_date', 'desc')
-            ->paginate(20);
+            ->paginate(7);
 
         $totalContributions = $member->incomes()->sum('amount');
 
@@ -405,53 +411,76 @@ class MemberController extends Controller
             $file = $request->file('file');
             $data = Excel::toArray([], $file)[0];
 
-            // Skip header row
-            $header = array_shift($data);
+            // Skip first 6 header rows (church info, title, instructions, etc.)
+            // Data starts from row 7 (index 6) in the Excel template
+            $data = array_slice($data, 6);
 
             $imported = 0;
             $errors = [];
             $year = date('Y');
 
-            foreach ($data as $index => $row) {
-                $rowNumber = $index + 2; // +2 because we skipped header and Excel rows start at 1
+            // Get default Mwanachama role for user accounts
+            $defaultRole = Role::where('slug', 'mwanachama')->first();
 
-                // Map Excel columns to database fields
+            foreach ($data as $index => $row) {
+                $rowNumber = $index + 7; // +7 because we skipped 6 header rows and Excel rows start at 1
+
+                // Skip empty rows or rows that look like notes/instructions
+                if (empty($row[0]) && empty($row[2])) {
+                    continue;
+                }
+
+                // Skip if first cell contains instruction text (like the sample note row)
+                $firstCell = trim($row[0] ?? '');
+                if (strpos($firstCell, '↑') !== false || strpos($firstCell, 'Mfano') !== false) {
+                    continue;
+                }
+
+                // Look up jumuiya by name
+                $jumuiyaId = null;
+                $jumuiyaName = $row[13] ?? null;
+                if ($jumuiyaName) {
+                    $jumuiya = Jumuiya::where('name', 'like', '%' . trim($jumuiyaName) . '%')->first();
+                    $jumuiyaId = $jumuiya ? $jumuiya->id : null;
+                }
+
+                // Map Excel columns to database fields (new order matching template)
                 $memberData = [
-                    'first_name' => $row[0] ?? null,
-                    'middle_name' => $row[1] ?? null,
-                    'last_name' => $row[2] ?? null,
+                    'first_name' => trim($row[0] ?? ''),
+                    'middle_name' => trim($row[1] ?? ''),
+                    'last_name' => trim($row[2] ?? ''),
                     'date_of_birth' => $row[3] ?? null,
-                    'gender' => $row[4] ?? null,
-                    'phone' => $row[5] ?? null,
-                    'email' => $row[6] ?? null,
-                    'occupation' => $row[7] ?? null,
-                    'address' => $row[8] ?? null,
-                    'house_number' => $row[9] ?? null,
-                    'block_number' => $row[10] ?? null,
-                    'city' => $row[11] ?? null,
-                    'region' => $row[12] ?? null,
-                    'marital_status' => $row[13] ?? null,
-                    'spouse_name' => $row[14] ?? null,
-                    'spouse_phone' => $row[15] ?? null,
-                    'neighbor_name' => $row[16] ?? null,
-                    'neighbor_phone' => $row[17] ?? null,
-                    'church_elder' => $row[18] ?? null,
-                    'pledge_number' => $row[19] ?? null,
-                    'special_group' => $row[20] ?? null,
-                    'baptism_date' => $row[21] ?? null,
-                    'confirmation_date' => $row[22] ?? null,
-                    'membership_date' => $row[23] ?? null,
-                    'id_number' => $row[24] ?? null,
-                    'notes' => $row[25] ?? null,
+                    'gender' => trim($row[4] ?? ''),
+                    'id_number' => trim($row[5] ?? ''),
+                    'phone' => trim($row[6] ?? ''),
+                    'email' => trim($row[7] ?? '') ?: null,
+                    'address' => trim($row[8] ?? ''),
+                    'house_number' => trim($row[9] ?? ''),
+                    'block_number' => trim($row[10] ?? ''),
+                    'city' => trim($row[11] ?? ''),
+                    'region' => trim($row[12] ?? ''),
+                    'jumuiya_id' => $jumuiyaId,
+                    'baptism_date' => $row[14] ?? null,
+                    'confirmation_date' => $row[15] ?? null,
+                    'marital_status' => trim($row[16] ?? ''),
+                    'special_group' => trim($row[17] ?? ''),
+                    'occupation' => trim($row[18] ?? ''),
+                    'church_elder' => trim($row[19] ?? ''),
+                    'spouse_name' => trim($row[20] ?? ''),
+                    'spouse_phone' => trim($row[21] ?? ''),
+                    'neighbor_name' => trim($row[22] ?? ''),
+                    'neighbor_phone' => trim($row[23] ?? ''),
                 ];
 
                 // Validate row data
                 $validator = Validator::make($memberData, [
                     'first_name' => 'required|string|max:100',
                     'last_name' => 'required|string|max:100',
+                    'date_of_birth' => 'required|date',
                     'gender' => 'required|in:Mme,Mke',
                     'phone' => 'required|string|max:20',
                     'email' => 'nullable|email|max:255|unique:members,email',
+                    'marital_status' => 'required|in:Hajaoa/Hajaolewa,Ameoa/Ameolewa,Mjane/Mgane,Talaka',
                 ]);
 
                 if ($validator->fails()) {
@@ -459,25 +488,43 @@ class MemberController extends Controller
                     continue;
                 }
 
-                // Auto-generate member number
-                $lastMember = Member::whereYear('created_at', $year)
+                // Auto-generate member number - Format: KKKT-AGAPE-YYYY-NNNN (4 digits)
+                $lastMember = Member::where('member_number', 'like', "KKKT-AGAPE-{$year}-%")
                     ->orderBy('id', 'desc')
                     ->first();
 
-                $sequence = $lastMember ? intval(substr($lastMember->member_number, -3)) + 1 : 1;
-                $memberData['member_number'] = 'M' . $year . str_pad($sequence, 3, '0', STR_PAD_LEFT);
+                $sequence = 1;
+                if ($lastMember) {
+                    // Extract sequence number from format KKKT-AGAPE-YYYY-NNNN
+                    $parts = explode('-', $lastMember->member_number);
+                    $sequence = isset($parts[3]) ? intval($parts[3]) + 1 : 1;
+                }
 
-                // Auto-generate envelope number
-                $memberData['envelope_number'] = Member::generateEnvelopeNumber();
+                $memberNumber = 'KKKT-AGAPE-' . $year . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+                $memberData['member_number'] = $memberNumber;
+
+                // Set envelope number same as member number
+                $memberData['envelope_number'] = $memberNumber;
 
                 $memberData['is_active'] = true;
+
+                // Create User account with password = last name
+                $user = User::create([
+                    'name' => trim($memberData['first_name'] . ' ' . $memberData['last_name']),
+                    'email' => $memberNumber . '@kkkt-agape.org',
+                    'password' => Hash::make($memberData['last_name']),
+                    'role_id' => $defaultRole ? $defaultRole->id : null,
+                    'is_active' => true,
+                ]);
+
+                $memberData['user_id'] = $user->id;
 
                 Member::create($memberData);
                 $imported++;
             }
 
             if ($imported > 0) {
-                $message = "Wanachama {$imported} wameongezwa kikamilifu";
+                $message = "Wanachama {$imported} wameongezwa kikamilifu. Kila muumini ana akaunti ya mtumiaji - Username: Namba ya Muumini, Password: Jina la Ukoo";
                 if (count($errors) > 0) {
                     $message .= ". Kuna makosa " . count($errors) . " katika baadhi ya mistari.";
                 }
@@ -497,83 +544,11 @@ class MemberController extends Controller
     }
 
     /**
-     * Download sample import template
+     * Download sample import template (Excel format with green headers)
      */
     public function downloadTemplate()
     {
-        $headers = [
-            'Jina la Kwanza*',
-            'Jina la Kati',
-            'Jina la Ukoo*',
-            'Tarehe ya Kuzaliwa (YYYY-MM-DD)',
-            'Jinsia* (Mme/Mke)',
-            'Nambari ya Simu*',
-            'Barua Pepe',
-            'Kazi',
-            'Anwani',
-            'Namba ya Nyumba',
-            'Namba ya Block',
-            'Jiji',
-            'Mkoa',
-            'Hali ya Ndoa',
-            'Jina la Mwenzi',
-            'Simu ya Mwenzi',
-            'Jina la Jirani',
-            'Simu ya Jirani',
-            'Mzee wa Kanisa',
-            'Namba ya Ahadi',
-            'Kundi Maalum',
-            'Tarehe ya Ubatizo',
-            'Tarehe ya Uthibitisho',
-            'Tarehe ya Ujumbe',
-            'Namba ya Kitambulisho',
-            'Maelezo'
-        ];
-
-        $filename = 'template_waumini.csv';
-
-        $handle = fopen('php://output', 'w');
-        ob_start();
-
-        fputcsv($handle, $headers);
-
-        // Add sample row
-        $sampleRow = [
-            'John',
-            'Doe',
-            'Smith',
-            '1990-01-15',
-            'Mme',
-            '0712345678',
-            'john@example.com',
-            'Mfanyabiashara',
-            'Kijitonyama',
-            'A123',
-            'Block 5',
-            'Dar es Salaam',
-            'Dar es Salaam',
-            'Ameoa/Ameolewa',
-            'Jane Smith',
-            '0723456789',
-            'Peter Paul',
-            '0734567890',
-            'Mzee John',
-            'AH001',
-            'Kwaya',
-            '2000-05-10',
-            '2005-08-20',
-            '2010-01-01',
-            '123456789',
-            'Muumini hai'
-        ];
-        fputcsv($handle, $sampleRow);
-
-        $csv = ob_get_clean();
-        fclose($handle);
-
-        return response($csv)
-            ->header('Content-Type', 'text/csv')
-            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        return Excel::download(new MemberTemplateExport, 'template_waumini_' . date('Y-m-d') . '.xlsx');
     }
 
     /**

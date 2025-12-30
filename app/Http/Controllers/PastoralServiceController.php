@@ -43,7 +43,7 @@ class PastoralServiceController extends Controller
             $query->where('preferred_date', '<=', $request->end_date);
         }
 
-        $services = $query->orderBy('created_at', 'desc')->paginate(20);
+        $services = $query->orderBy('created_at', 'desc')->paginate(7);
 
         // Get statistics
         $stats = [
@@ -330,5 +330,225 @@ class PastoralServiceController extends Controller
 
         return redirect()->route('pastoral-services.index')
             ->with('success', 'Ombi limefutwa kikamilifu');
+    }
+
+    /**
+     * Show report page with statistics
+     */
+    public function report(Request $request)
+    {
+        $user = Auth::user();
+
+        // Only admin/pastor can view reports
+        if ($user->isMwanachama()) {
+            abort(403, 'Huna ruhusa ya kuangalia ripoti');
+        }
+
+        $year = $request->get('year', date('Y'));
+        $month = $request->get('month', date('m'));
+
+        // Get date ranges
+        $startOfWeek = now()->startOfWeek();
+        $endOfWeek = now()->endOfWeek();
+        $startOfMonth = now()->startOfMonth();
+        $endOfMonth = now()->endOfMonth();
+        $startOfYear = now()->startOfYear();
+        $endOfYear = now()->endOfYear();
+
+        // Weekly statistics
+        $weeklyStats = [
+            'total' => PastoralService::whereBetween('created_at', [$startOfWeek, $endOfWeek])->count(),
+            'completed' => PastoralService::whereBetween('created_at', [$startOfWeek, $endOfWeek])->where('status', 'Imekamilika')->count(),
+            'pending' => PastoralService::whereBetween('created_at', [$startOfWeek, $endOfWeek])->where('status', 'Inasubiri')->count(),
+            'approved' => PastoralService::whereBetween('created_at', [$startOfWeek, $endOfWeek])->where('status', 'Imeidhinishwa')->count(),
+        ];
+
+        // Monthly statistics
+        $monthlyStats = [
+            'total' => PastoralService::whereBetween('created_at', [$startOfMonth, $endOfMonth])->count(),
+            'completed' => PastoralService::whereBetween('created_at', [$startOfMonth, $endOfMonth])->where('status', 'Imekamilika')->count(),
+            'pending' => PastoralService::whereBetween('created_at', [$startOfMonth, $endOfMonth])->where('status', 'Inasubiri')->count(),
+            'approved' => PastoralService::whereBetween('created_at', [$startOfMonth, $endOfMonth])->where('status', 'Imeidhinishwa')->count(),
+        ];
+
+        // Yearly statistics
+        $yearlyStats = [
+            'total' => PastoralService::whereBetween('created_at', [$startOfYear, $endOfYear])->count(),
+            'completed' => PastoralService::whereBetween('created_at', [$startOfYear, $endOfYear])->where('status', 'Imekamilika')->count(),
+            'pending' => PastoralService::whereBetween('created_at', [$startOfYear, $endOfYear])->where('status', 'Inasubiri')->count(),
+            'approved' => PastoralService::whereBetween('created_at', [$startOfYear, $endOfYear])->where('status', 'Imeidhinishwa')->count(),
+        ];
+
+        // Services by type for the year
+        $servicesByType = PastoralService::whereBetween('created_at', [$startOfYear, $endOfYear])
+            ->select('service_type', DB::raw('count(*) as total'))
+            ->groupBy('service_type')
+            ->orderByDesc('total')
+            ->get();
+
+        // Monthly breakdown for the year
+        $monthlyBreakdown = PastoralService::whereYear('created_at', $year)
+            ->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('count(*) as total'),
+                DB::raw('SUM(CASE WHEN status = "Imekamilika" THEN 1 ELSE 0 END) as completed')
+            )
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month');
+
+        // Fill in missing months
+        $monthlyData = [];
+        $swahiliMonths = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Machi', 4 => 'Aprili',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Julai', 8 => 'Agosti',
+            9 => 'Septemba', 10 => 'Oktoba', 11 => 'Novemba', 12 => 'Desemba'
+        ];
+
+        for ($i = 1; $i <= 12; $i++) {
+            $monthlyData[] = [
+                'month' => $i,
+                'name' => $swahiliMonths[$i],
+                'total' => $monthlyBreakdown->get($i)?->total ?? 0,
+                'completed' => $monthlyBreakdown->get($i)?->completed ?? 0,
+            ];
+        }
+
+        // Recent completed services
+        $recentCompleted = PastoralService::with('member')
+            ->where('status', 'Imekamilika')
+            ->orderBy('updated_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        $serviceTypes = [
+            'Ubatizo', 'Uthibitisho', 'Ndoa', 'Wakfu',
+            'Mazishi', 'Ushauri wa Kichungaji', 'Nyingine'
+        ];
+
+        return view('panel.pastoral-services.report', compact(
+            'weeklyStats', 'monthlyStats', 'yearlyStats',
+            'servicesByType', 'monthlyData', 'recentCompleted',
+            'serviceTypes', 'year', 'month', 'swahiliMonths'
+        ));
+    }
+
+    /**
+     * Export pastoral services to PDF
+     */
+    public function export(Request $request)
+    {
+        $user = Auth::user();
+
+        // Only admin/pastor can export
+        if ($user->isMwanachama()) {
+            abort(403, 'Huna ruhusa ya ku-export');
+        }
+
+        $period = $request->get('period', 'month');
+        $year = $request->get('year', date('Y'));
+        $month = $request->get('month', date('m'));
+
+        $swahiliMonths = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Machi', 4 => 'Aprili',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Julai', 8 => 'Agosti',
+            9 => 'Septemba', 10 => 'Oktoba', 11 => 'Novemba', 12 => 'Desemba'
+        ];
+
+        $query = PastoralService::with('member');
+
+        // Filter by period
+        switch ($period) {
+            case 'week':
+                $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                $periodLabel = 'Wiki hii (' . now()->startOfWeek()->format('d/m') . ' - ' . now()->endOfWeek()->format('d/m/Y') . ')';
+                break;
+            case 'month':
+                $query->whereYear('created_at', $year)->whereMonth('created_at', $month);
+                $periodLabel = $swahiliMonths[(int)$month] . ' ' . $year;
+                break;
+            case 'year':
+                $query->whereYear('created_at', $year);
+                $periodLabel = 'Mwaka ' . $year;
+                break;
+            default:
+                $periodLabel = 'Zote';
+        }
+
+        // Filter by status if provided
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by service type if provided
+        if ($request->filled('service_type')) {
+            $query->where('service_type', $request->service_type);
+        }
+
+        $services = $query->orderBy('created_at', 'desc')->get();
+
+        // Calculate statistics
+        $stats = [
+            'total' => $services->count(),
+            'completed' => $services->where('status', 'Imekamilika')->count(),
+            'approved' => $services->where('status', 'Imeidhinishwa')->count(),
+            'pending' => $services->where('status', 'Inasubiri')->count(),
+            'rejected' => $services->where('status', 'Imekataliwa')->count(),
+        ];
+
+        // Group services by type for summary
+        $servicesByType = $services->groupBy('service_type')->map(function ($items) {
+            return $items->count();
+        });
+
+        // Get yearly statistics (for all periods - always show yearly summary)
+        $currentYear = date('Y');
+        $startOfYear = now()->startOfYear();
+        $endOfYear = now()->endOfYear();
+
+        $yearlyStats = [
+            'total' => PastoralService::whereBetween('created_at', [$startOfYear, $endOfYear])->count(),
+            'completed' => PastoralService::whereBetween('created_at', [$startOfYear, $endOfYear])->where('status', 'Imekamilika')->count(),
+            'approved' => PastoralService::whereBetween('created_at', [$startOfYear, $endOfYear])->where('status', 'Imeidhinishwa')->count(),
+            'pending' => PastoralService::whereBetween('created_at', [$startOfYear, $endOfYear])->where('status', 'Inasubiri')->count(),
+            'rejected' => PastoralService::whereBetween('created_at', [$startOfYear, $endOfYear])->where('status', 'Imekataliwa')->count(),
+        ];
+
+        // Yearly services by type
+        $yearlyServicesByType = PastoralService::whereBetween('created_at', [$startOfYear, $endOfYear])
+            ->select('service_type', DB::raw('count(*) as total'))
+            ->groupBy('service_type')
+            ->orderByDesc('total')
+            ->get();
+
+        // Get church settings
+        $churchName = \App\Models\Setting::get('church_name', 'KANISA LA KIINJILI LA KILUTHERI TANZANIA');
+        $diocese = \App\Models\Setting::get('diocese', 'DAYOSISI YA MASHARIKI NA PWANI');
+        $parish = \App\Models\Setting::get('parish', 'USHARIKA WA MAKABE');
+
+        // Generate filename
+        $filename = 'ripoti_huduma_kichungaji_' . $period . '_' . date('Y-m-d_His') . '.pdf';
+
+        // Generate PDF
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('panel.pastoral-services.pdf-report', [
+            'services' => $services,
+            'periodLabel' => $periodLabel,
+            'period' => $period,
+            'stats' => $stats,
+            'servicesByType' => $servicesByType,
+            'yearlyStats' => $yearlyStats,
+            'yearlyServicesByType' => $yearlyServicesByType,
+            'currentYear' => $currentYear,
+            'churchName' => $churchName,
+            'diocese' => $diocese,
+            'parish' => $parish,
+            'generatedAt' => now()->format('d/m/Y H:i'),
+            'generatedBy' => $user->name,
+        ]);
+
+        $pdf->setPaper('A4', 'landscape');
+
+        return $pdf->download($filename);
     }
 }

@@ -135,32 +135,67 @@
 
         <!-- Sample Data Format -->
         <div class="mt-8 border-t pt-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Mfano wa Muundo wa Data</h3>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Mfano wa Muundo wa Data (Template ina safu 24)</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 text-sm">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-green-600">
                         <tr>
-                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Jina la Kwanza*</th>
-                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Jina la Kati</th>
-                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Jina la Ukoo*</th>
-                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tarehe ya Kuzaliwa</th>
-                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Jinsia*</th>
-                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Simu*</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-white uppercase">Jina la Kwanza*</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-white uppercase">Jina la Kati</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-white uppercase">Jina la Ukoo*</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-white uppercase">Tarehe Kuzaliwa*</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-white uppercase">Jinsia*</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-white uppercase">Simu*</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-white uppercase">Jumuiya*</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-white uppercase">Hali ya Ndoa*</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="bg-green-50 divide-y divide-gray-200">
                         <tr>
-                            <td class="px-3 py-2 whitespace-nowrap">John</td>
-                            <td class="px-3 py-2 whitespace-nowrap">Doe</td>
-                            <td class="px-3 py-2 whitespace-nowrap">Smith</td>
-                            <td class="px-3 py-2 whitespace-nowrap">1990-01-15</td>
-                            <td class="px-3 py-2 whitespace-nowrap">Mwanaume</td>
+                            <td class="px-3 py-2 whitespace-nowrap font-medium">Yohana</td>
+                            <td class="px-3 py-2 whitespace-nowrap">Petro</td>
+                            <td class="px-3 py-2 whitespace-nowrap font-medium">Mwakasege</td>
+                            <td class="px-3 py-2 whitespace-nowrap">1985-06-15</td>
+                            <td class="px-3 py-2 whitespace-nowrap">Mme</td>
                             <td class="px-3 py-2 whitespace-nowrap">0712345678</td>
+                            <td class="px-3 py-2 whitespace-nowrap">Jumuiya ya Kwanza</td>
+                            <td class="px-3 py-2 whitespace-nowrap">Ameoa/Ameolewa</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <p class="text-xs text-gray-500 mt-2">* Taarifa hizi ni lazima</p>
+            <p class="text-xs text-gray-500 mt-2">* Taarifa hizi ni lazima. Template ya Excel ina safu zote 24 zinazohusiana na fomu ya usajili.</p>
+
+            <!-- All fields list -->
+            <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                <p class="text-sm font-semibold text-gray-700 mb-2">Safu zote kwenye Template (24):</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-600">
+                    <span><i class="fas fa-check text-green-600 mr-1"></i>Jina la Kwanza *</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Jina la Kati</span>
+                    <span><i class="fas fa-check text-green-600 mr-1"></i>Jina la Ukoo *</span>
+                    <span><i class="fas fa-check text-green-600 mr-1"></i>Tarehe Kuzaliwa *</span>
+                    <span><i class="fas fa-check text-green-600 mr-1"></i>Jinsia *</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Namba NIDA</span>
+                    <span><i class="fas fa-check text-green-600 mr-1"></i>Simu *</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Barua Pepe</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Anwani</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Namba Nyumba</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Namba Block</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Jiji</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Mkoa</span>
+                    <span><i class="fas fa-check text-green-600 mr-1"></i>Jumuiya *</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Tarehe Ubatizo</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Tarehe Kipaimara</span>
+                    <span><i class="fas fa-check text-green-600 mr-1"></i>Hali ya Ndoa *</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Kundi Maalum</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Kazi/Ajira</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Mzee wa Kanisa</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Jina la Mwenzi</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Simu ya Mwenzi</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Jina la Jirani</span>
+                    <span><i class="fas fa-check text-gray-400 mr-1"></i>Simu ya Jirani</span>
+                </div>
+            </div>
         </div>
     </div>
 

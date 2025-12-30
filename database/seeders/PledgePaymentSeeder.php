@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\PledgePayment;
 use App\Models\Pledge;
-use App\Models\Member;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -17,10 +16,11 @@ class PledgePaymentSeeder extends Seeder
     public function run(): void
     {
         // Get admin user for recorded_by
-        $adminUser = User::where('email', 'admin@kanisa.org')->first();
-        $mhasibuUser = User::where('email', 'mhasibu@kanisa.org')->first();
+        $year = date('Y');
+        $adminUser = User::where('email', 'KKKT-AGAPE-' . $year . '-0001@kkkt-agape.org')->first(); // Mchungaji
+        $mhasibuUser = User::where('email', 'KKKT-AGAPE-' . $year . '-0002@kkkt-agape.org')->first(); // Mhasibu
         $recordedBy = $adminUser ? $adminUser->id : 1;
-        $recordedByMhasibu = $mhasibuUser ? $mhasibuUser->id : 1;
+        $recordedByMhasibu = $mhasibuUser ? $mhasibuUser->id : $recordedBy;
 
         // Get all pledges
         $pledges = Pledge::with('member')->get();
@@ -94,17 +94,6 @@ class PledgePaymentSeeder extends Seeder
 
         // Create all payments without triggering the boot events
         // (since pledges already have the correct amount_paid values from seeder)
-        foreach ($payments as $payment) {
-            // Temporarily disable events to prevent double-updating pledges
-            PledgePayment::withoutEvents(function () use ($payment) {
-                PledgePayment::insert($payment);
-            });
-        }
-
-        // Fix the inserted payments by adding individual records with proper timestamps
-        // We need to recreate them properly because insert() doesn't trigger timestamps
-        \DB::table('pledge_payments')->truncate();
-
         foreach ($payments as $payment) {
             PledgePayment::withoutEvents(function () use ($payment) {
                 PledgePayment::create($payment);

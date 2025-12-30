@@ -1,31 +1,31 @@
 @auth
 @extends('layouts.app')
 
-@section('title', '404 - Ukurasa Haujapatikana')
-@section('page-title', 'Ukurasa Haujapatikana')
-@section('page-subtitle', 'Ukurasa unaoutafuta haupo')
+@section('title', '403 - Huna Ruhusa')
+@section('page-title', 'Huna Ruhusa')
+@section('page-subtitle', 'Hauruhusiwi kuona ukurasa huu')
 
 @section('content')
 <div class="flex items-center justify-center min-h-[60vh]">
     <div class="max-w-lg w-full text-center">
         <!-- Error Card -->
         <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 md:p-12">
-            <!-- 404 Number -->
+            <!-- 403 Number -->
             <div class="relative mb-6">
-                <span class="text-9xl font-bold text-primary-100">404</span>
+                <span class="text-9xl font-bold text-yellow-100">403</span>
                 <div class="absolute inset-0 flex items-center justify-center">
-                    <div class="h-20 w-20 bg-primary-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-search text-4xl text-primary-600"></i>
+                    <div class="h-20 w-20 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-lock text-4xl text-yellow-600"></i>
                     </div>
                 </div>
             </div>
 
             <!-- Error Message -->
             <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-                Ukurasa Haujapatikana
+                Huna Ruhusa
             </h1>
             <p class="text-gray-600 mb-8">
-                Samahani, ukurasa unaoutafuta haupo au umehamishwa. Tafadhali rudi nyumbani au jaribu kutafuta tena.
+                Samahani, hauruhusiwi kufikia ukurasa huu. Tafadhali wasiliana na msimamizi kama unahitaji ufikiaji.
             </p>
 
             <!-- Action Buttons -->
@@ -44,7 +44,7 @@
         <!-- Help Text -->
         <p class="mt-6 text-sm text-gray-500">
             <i class="fas fa-info-circle mr-1"></i>
-            Kama tatizo linaendelea, tafadhali wasiliana na msimamizi wa mfumo
+            Kama unahitaji ufikiaji, tafadhali wasiliana na msimamizi wa mfumo
         </p>
     </div>
 </div>
@@ -56,7 +56,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Ukurasa Haujapatikana</title>
+    <title>403 - Huna Ruhusa</title>
     <link rel="icon" type="image/png" href="{{ asset('images/kkkt_logo.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -95,27 +95,27 @@
 
         <!-- Error Card -->
         <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-            <!-- 404 Number -->
+            <!-- 403 Number -->
             <div class="relative mb-6">
-                <span class="text-9xl font-bold text-primary-100">404</span>
+                <span class="text-9xl font-bold text-yellow-100">403</span>
                 <div class="absolute inset-0 flex items-center justify-center">
-                    <i class="fas fa-search text-5xl text-primary-500"></i>
+                    <i class="fas fa-lock text-5xl text-yellow-500"></i>
                 </div>
             </div>
 
             <!-- Error Message -->
             <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-                Ukurasa Haujapatikana
+                Huna Ruhusa
             </h1>
             <p class="text-gray-600 mb-8">
-                Samahani, ukurasa unaoutafuta haupo au umehamishwa. Tafadhali rudi nyumbani au wasiliana na msimamizi.
+                Samahani, hauruhusiwi kufikia ukurasa huu. Tafadhali ingia kwanza au wasiliana na msimamizi.
             </p>
 
             <!-- Action Buttons -->
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{{ url('/') }}" class="inline-flex items-center justify-center px-6 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-all duration-200 shadow-md hover:shadow-lg">
-                    <i class="fas fa-home mr-2"></i>
-                    Rudi Nyumbani
+                <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-6 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-all duration-200 shadow-md hover:shadow-lg">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    Ingia
                 </a>
                 <button onclick="history.back()" class="inline-flex items-center justify-center px-6 py-3 bg-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-300 transition-all duration-200">
                     <i class="fas fa-arrow-left mr-2"></i>

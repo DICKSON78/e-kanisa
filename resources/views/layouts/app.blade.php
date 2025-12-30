@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Prevent caching - prevents access after logout via browser back button -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>@yield('title', 'Mfumo wa Kanisa')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/kkkt_logo.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -527,6 +531,166 @@
             50% { opacity: 0.5; }
         }
 
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Notification Dropdown */
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            width: 360px;
+            max-width: calc(100vw - 2rem);
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            overflow: hidden;
+            animation: dropdownSlide 0.2s ease-out;
+        }
+
+        @keyframes dropdownSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .notification-dropdown-header {
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, #360958, #2a0745);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-dropdown-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-count {
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        .notification-dropdown-body {
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .notification-empty {
+            padding: 2rem;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f3f4f6;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .notification-item:hover {
+            background: #f9fafb;
+        }
+
+        .notification-item-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-item-icon i {
+            font-size: 1.125rem;
+        }
+
+        .notification-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-item-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.125rem;
+        }
+
+        .notification-item-desc {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .notification-item-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            padding: 0.25rem 0.625rem;
+            border-radius: 20px;
+            flex-shrink: 0;
+        }
+
+        .notification-dropdown-footer {
+            padding: 0.875rem 1.25rem;
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .notification-dropdown-footer a {
+            font-size: 0.875rem;
+            color: #360958;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .notification-dropdown-footer a:hover {
+            color: #efc120;
+        }
+
+        @media (max-width: 480px) {
+            .notification-dropdown {
+                width: calc(100vw - 1rem);
+                right: -0.5rem;
+            }
+        }
+
         .header-date {
             font-size: 0.875rem;
             color: #6b7280;
@@ -863,7 +1027,7 @@
             transform: scale(1) translateY(0);
         }
 
-        /* Modal positioning - exclude sidebar and header from blur */
+        /* Modal positioning - no blur per user request */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -871,19 +1035,17 @@
             bottom: 0;
             left: 0;
             background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1rem;
-            z-index: 50;
+            z-index: 9999;
             transition: all 0.3s ease;
         }
 
         /* Modal inner content should be above the overlay */
         .modal-overlay > div {
-            z-index: 51;
+            z-index: 10000;
         }
 
         /* ============================================
@@ -994,12 +1156,7 @@
                 <a href="{{ route('requests.index') }}" class="sidebar-link {{ request()->routeIs('requests.*') ? 'active' : '' }}">
                     <i class="fas fa-paper-plane"></i>
                     <span class="sidebar-text">Maombi ya Fedha</span>
-                    <span class="request-badge" id="sidebarRequestsBadge">
-                        @php
-                            $sidebarPendingRequests = \App\Models\Request::where('status', 'Inasubiri')->count();
-                        @endphp
-                        {{ $sidebarPendingRequests }}
-                    </span>
+
                     <div class="sidebar-tooltip">Maombi ya Fedha</div>
                 </a>
                 @endif
@@ -1042,8 +1199,7 @@
                         <i class="fas fa-user text-primary-500"></i>
                     </div>
                     <div class="user-details">
-                        <p>{{ Auth::user()->name ?? 'Admin Kanisa' }}</p>
-                        <p>{{ Auth::user()->email ?? 'admin@kanisa.org' }}</p>
+                        <h2 class="text-lg font-semibold">{{ Auth::user()->role->name ?? 'Muumini' }}</h2>
                     </div>
                 </div>
             </div>
@@ -1063,10 +1219,65 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <button class="notification-btn" id="notificationToggle" aria-label="Notifications">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-dot" id="notificationDot" style="display: none;"></span>
-                    </button>
+                    <!-- Notification Dropdown -->
+                    <div class="relative" id="notificationWrapper">
+                        <button class="notification-btn" id="notificationToggle" aria-label="Notifications">
+                            <i class="fas fa-bell"></i>
+                            @php
+                                $pendingRequests = \App\Models\Request::where('status', 'Inasubiri')->count();
+                                $pendingPastoral = \App\Models\PastoralService::where('status', 'Inasubiri')->count();
+                                $totalNotifications = $pendingRequests + $pendingPastoral;
+                            @endphp
+                            @if($totalNotifications > 0)
+                            <span class="notification-badge" id="notificationBadge">{{ $totalNotifications }}</span>
+                            @endif
+                        </button>
+
+                        <!-- Notification Dropdown Panel -->
+                        <div class="notification-dropdown hidden" id="notificationDropdown">
+                            <div class="notification-dropdown-header">
+                                <h3><i class="fas fa-bell mr-2"></i>Arifa</h3>
+                                <span class="notification-count">{{ $totalNotifications }} mpya</span>
+                            </div>
+                            <div class="notification-dropdown-body">
+                                @if($totalNotifications == 0)
+                                <div class="notification-empty">
+                                    <i class="fas fa-check-circle text-green-500 text-3xl mb-2"></i>
+                                    <p>Hakuna arifa mpya</p>
+                                </div>
+                                @else
+                                    @if($pendingRequests > 0)
+                                    <a href="{{ route('requests.index') }}" class="notification-item">
+                                        <div class="notification-item-icon bg-yellow-100">
+                                            <i class="fas fa-paper-plane text-yellow-600"></i>
+                                        </div>
+                                        <div class="notification-item-content">
+                                            <p class="notification-item-title">Maombi ya Fedha</p>
+                                            <p class="notification-item-desc">{{ $pendingRequests }} maombi yanasubiri kuidhinishwa</p>
+                                        </div>
+                                        <span class="notification-item-badge bg-yellow-500">{{ $pendingRequests }}</span>
+                                    </a>
+                                    @endif
+
+                                    @if($pendingPastoral > 0)
+                                    <a href="{{ route('pastoral-services.index') }}" class="notification-item">
+                                        <div class="notification-item-icon bg-purple-100">
+                                            <i class="fas fa-praying-hands text-purple-600"></i>
+                                        </div>
+                                        <div class="notification-item-content">
+                                            <p class="notification-item-title">Huduma za Kichungaji</p>
+                                            <p class="notification-item-desc">{{ $pendingPastoral }} maombi yanasubiri kuidhinishwa</p>
+                                        </div>
+                                        <span class="notification-item-badge bg-purple-500">{{ $pendingPastoral }}</span>
+                                    </a>
+                                    @endif
+                                @endif
+                            </div>
+                            <div class="notification-dropdown-footer">
+                                <a href="{{ route('requests.index') }}">Ona maombi yote <i class="fas fa-arrow-right ml-1"></i></a>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="header-date date-desktop">
                         {{ \Carbon\Carbon::now()->translatedFormat('l, F d, Y') }}
@@ -1081,7 +1292,7 @@
                         </div>
                         <div class="header-user-info">
                             <p>{{ Auth::user()->name ?? 'Admin Kanisa' }}</p>
-                            <span>Admin</span>
+                            <span> {{Auth::user()->role->name}}</span>
                         </div>
                     </div>
                     @auth
@@ -1205,11 +1416,10 @@
             handleResize();
             window.addEventListener('resize', handleResize);
 
-            // Notification system
+            // Toast Notification system (for flash messages)
             let notifications = [];
             const notificationContainer = document.getElementById('notificationContainer');
             const notificationToggle = document.getElementById('notificationToggle');
-            const notificationDot = document.getElementById('notificationDot');
 
             function showNotification(message, type = 'success', category = 'Mfumo') {
                 const now = new Date();
@@ -1279,16 +1489,30 @@
             }
 
             function updateNotificationDot() {
-                if (notifications.length > 0) {
-                    notificationDot.style.display = 'block';
-                } else {
-                    notificationDot.style.display = 'none';
-                }
+                // Notification dot is now replaced with badge in header
+                // Toast notifications are separate from dropdown notifications
             }
 
-            notificationToggle.addEventListener('click', () => {
-                if (notifications.length === 0) {
-                    showNotification('Hakuna arifa mpya zilizopo', 'info', 'Mfumo');
+            // Notification Dropdown Toggle
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            const notificationWrapper = document.getElementById('notificationWrapper');
+
+            notificationToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!notificationWrapper.contains(e.target)) {
+                    notificationDropdown.classList.add('hidden');
+                }
+            });
+
+            // Close dropdown on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    notificationDropdown.classList.add('hidden');
                 }
             });
 
@@ -1350,7 +1574,7 @@
 
         // Global Styled Alert/Confirm Modal System
         const alertModalHTML = `
-            <div id="globalAlertModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-[9999]">
+            <div id="globalAlertModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[9999]">
                 <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95" id="alertModalContent">
                     <div class="p-6">
                         <div class="flex items-start gap-4">
@@ -1510,6 +1734,55 @@
 
         // Override native alert (optional - uncomment to auto-replace all alerts)
         // window.alert = (message) => showAlertModal(message, 'info');
+
+        // ============================================
+        // PREVENT BROWSER BACK/FORWARD NAVIGATION
+        // ============================================
+        (function() {
+            // Push current state to prevent going back
+            history.pushState(null, null, location.href);
+
+            // Listen for popstate (when user tries to go back/forward)
+            window.addEventListener('popstate', function(event) {
+                // Push state again to keep user on current page
+                history.pushState(null, null, location.href);
+            });
+
+            // Handle page show event (when page is restored from bfcache)
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    // Page was restored from browser cache - force full reload from server
+                    window.location.replace(window.location.href);
+                }
+            });
+
+            // Check session validity
+            function checkSessionValidity() {
+                fetch('/panel/check-session', {
+                    method: 'GET',
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                }).then(function(response) {
+                    if (!response.ok || response.status === 401) {
+                        // Session invalid - redirect to login
+                        window.location.replace('{{ route("login") }}');
+                    }
+                }).catch(function() {
+                    // On error, reload page to let server handle it
+                    window.location.reload();
+                });
+            }
+
+            // Check session when page becomes visible after being hidden
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    checkSessionValidity();
+                }
+            });
+        })();
     </script>
 
     @yield('modals')

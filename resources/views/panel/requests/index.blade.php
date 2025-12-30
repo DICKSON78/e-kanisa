@@ -326,8 +326,8 @@ function formatRequestMoney($amount) {
         <div class="sticky top-0 bg-white px-6 py-5 rounded-t-xl border-b border-gray-200 z-10">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <div class="h-10 w-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-exclamation-triangle text-red-600"></i>
+                    <div class="h-12 w-12 bg-red-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-gray-900">Thibitisha Kufuta</h3>

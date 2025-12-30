@@ -11,38 +11,38 @@ class JumuiyaSeeder extends Seeder
     {
         $jumuiyas = [
             [
-                'name' => 'Jumuiya Israel',
-                'slug' => 'jumuiya-israel',
-                'description' => 'Jumuiya ya Israel',
-                'location' => 'Eneo la Kaskazini',
+                'name' => 'Jumuiya Agape',
+                'slug' => 'jumuiya-agape',
+                'description' => 'Jumuiya ya Agape - upendo wa Mungu',
+                'location' => 'Eneo la Kati - Mbezi Beach',
                 'is_active' => true,
             ],
             [
-                'name' => 'Jumuiya Yuda',
-                'slug' => 'jumuiya-yuda',
-                'description' => 'Jumuiya ya Yuda',
-                'location' => 'Eneo la Kusini',
+                'name' => 'Jumuiya Imani',
+                'slug' => 'jumuiya-imani',
+                'description' => 'Jumuiya ya Imani - nguvu ya kuamini',
+                'location' => 'Eneo la Kaskazini - Mikocheni',
                 'is_active' => true,
             ],
             [
-                'name' => 'Jumuiya Kanaani',
-                'slug' => 'jumuiya-kanaani',
-                'description' => 'Jumuiya ya Kanaani',
-                'location' => 'Eneo la Mashariki',
+                'name' => 'Jumuiya Tumaini',
+                'slug' => 'jumuiya-tumaini',
+                'description' => 'Jumuiya ya Tumaini - ujasiri katika Bwana',
+                'location' => 'Eneo la Kusini - Kinondoni',
                 'is_active' => true,
             ],
             [
-                'name' => 'Jumuiya Betheli',
-                'slug' => 'jumuiya-betheli',
-                'description' => 'Jumuiya ya Betheli',
-                'location' => 'Eneo la Magharibi',
+                'name' => 'Jumuiya Neema',
+                'slug' => 'jumuiya-neema',
+                'description' => 'Jumuiya ya Neema - baraka za Mungu',
+                'location' => 'Eneo la Mashariki - Ubungo',
                 'is_active' => true,
             ],
             [
-                'name' => 'Jumuiya Gilgali',
-                'slug' => 'jumuiya-gilgali',
-                'description' => 'Jumuiya ya Gilgali',
-                'location' => 'Eneo la Kati',
+                'name' => 'Jumuiya Baraka',
+                'slug' => 'jumuiya-baraka',
+                'description' => 'Jumuiya ya Baraka - neema na rehema',
+                'location' => 'Eneo la Magharibi - Tegeta',
                 'is_active' => true,
             ],
         ];
@@ -53,5 +53,7 @@ class JumuiyaSeeder extends Seeder
                 $jumuiya
             );
         }
+
+        $this->command->info('Jumuiyas seeded successfully! Total: ' . count($jumuiyas));
     }
 }

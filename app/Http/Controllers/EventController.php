@@ -38,7 +38,7 @@ class EventController extends Controller
             $query->where('title', 'like', '%' . $request->search . '%');
         }
 
-        $events = $query->paginate(20);
+        $events = $query->paginate(7);
 
         // Get event types for filter
         $eventTypes = Event::select('event_type')

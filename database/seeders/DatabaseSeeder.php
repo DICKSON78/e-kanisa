@@ -11,6 +11,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $year = date('Y');
+
         // Run seeders in the correct order
         // 1. Roles must be seeded first (required for users)
         $this->call(RoleSeeder::class);
@@ -24,52 +26,77 @@ class DatabaseSeeder extends Seeder
         // 4. Expense categories
         $this->call(ExpenseCategorySeeder::class);
 
-        // 5. Admin user (depends on roles)
+        // 5. Jumuiyas (required for members)
+        $this->call(JumuiyaSeeder::class);
+
+        // 6. Admin and member users (depends on roles)
         $this->call(AdminUserSeeder::class);
 
-        // 6. Members data
+        // 7. Members data (depends on users and jumuiyas)
         $this->call(MemberSeeder::class);
 
-        // 7. Pledges data (depends on members, users)
+        // 8. Departments
+        $this->call(DepartmentSeeder::class);
+
+        // 9. Pledges data (depends on members, users)
         $this->call(PledgeSeeder::class);
 
-        // 8. Pledge payments data (depends on pledges)
+        // 10. Pledge payments data (depends on pledges)
         $this->call(PledgePaymentSeeder::class);
 
-        // 9. Income data (depends on members, categories, users)
+        // 11. Income data (depends on members, categories, users)
         $this->call(IncomeSeeder::class);
 
-        // 10. Expense data (depends on categories, users)
+        // 12. Expense data (depends on categories, users)
         $this->call(ExpenseSeeder::class);
 
-        // 11. Events data (depends on users)
+        // 13. Events data (depends on users)
         $this->call(EventSeeder::class);
 
-        // 12. Requests data (depends on users)
+        // 14. Requests data (depends on users)
         $this->call(RequestSeeder::class);
+
+        // 15. Pastoral Services data (depends on members, users)
+        $this->call(PastoralServiceSeeder::class);
 
         $this->command->info('');
         $this->command->info('========================================');
-        $this->command->info('All seeders completed successfully!');
+        $this->command->info('   KKKT AGAPE - Database Seeded!');
         $this->command->info('========================================');
         $this->command->info('');
-        $this->command->info('Login Credentials:');
-        $this->command->info('------------------');
-        $this->command->info('Admin (Pastor):     admin@kanisa.org / password');
-        $this->command->info('Accountant:         mhasibu@kanisa.org / password');
-        $this->command->info('Member:             member@kanisa.org / password');
+        $this->command->info('Taarifa za Kuingia (Login Credentials):');
+        $this->command->info('----------------------------------------');
         $this->command->info('');
-        $this->command->warn('IMPORTANT: Please change these passwords after first login!');
+        $this->command->info('MCHUNGAJI (Admin):');
+        $this->command->info('   Namba ya Kadi: KKKT-AGAPE-' . $year . '-0001');
+        $this->command->info('   Nenosiri: mwakasege');
         $this->command->info('');
-        $this->command->info('Database Statistics:');
-        $this->command->info('------------------');
-        $this->command->info('✓ 10 Wanachama (Members)');
-        $this->command->info('✓ 19 Ahadi (Pledges)');
-        $this->command->info('✓ 36 Malipo ya Ahadi (Pledge Payments)');
-        $this->command->info('✓ 50+ Rekodi za Mapato (Income Records)');
-        $this->command->info('✓ 60+ Rekodi za Matumizi (Expense Records)');
-        $this->command->info('✓ 14 Matukio (Events)');
-        $this->command->info('✓ 11 Maombi (Requests)');
+        $this->command->info('MHASIBU (Accountant):');
+        $this->command->info('   Namba ya Kadi: KKKT-AGAPE-' . $year . '-0002');
+        $this->command->info('   Nenosiri: kimaro');
+        $this->command->info('');
+        $this->command->info('WANACHAMA (Members):');
+        $this->command->info('   KKKT-AGAPE-' . $year . '-0003 / mwangi');
+        $this->command->info('   KKKT-AGAPE-' . $year . '-0004 / moshi');
+        $this->command->info('   KKKT-AGAPE-' . $year . '-0005 / komba');
+        $this->command->info('   KKKT-AGAPE-' . $year . '-0006 / massawe');
+        $this->command->info('   KKKT-AGAPE-' . $year . '-0007 / mwakyembe');
+        $this->command->info('   KKKT-AGAPE-' . $year . '-0008 / ndunguru');
+        $this->command->info('   KKKT-AGAPE-' . $year . '-0009 / msuya');
+        $this->command->info('   KKKT-AGAPE-' . $year . '-0010 / kilave');
+        $this->command->info('   KKKT-AGAPE-' . $year . '-0011 / lyatuu');
+        $this->command->info('   KKKT-AGAPE-' . $year . '-0012 / swai');
+        $this->command->info('');
+        $this->command->warn('MUHIMU: Tafadhali badilisha nenosiri baada ya kuingia mara ya kwanza!');
+        $this->command->info('');
+        $this->command->info('Takwimu za Database:');
+        $this->command->info('--------------------');
+        $this->command->info('   12 Wanachama (Members)');
+        $this->command->info('   5 Jumuiya');
+        $this->command->info('   Ahadi na Malipo');
+        $this->command->info('   Mapato na Matumizi');
+        $this->command->info('   Matukio na Maombi');
+        $this->command->info('   Huduma za Kichungaji');
         $this->command->info('');
     }
 }

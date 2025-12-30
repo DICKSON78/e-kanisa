@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Event;
+use App\Models\User;
 use Carbon\Carbon;
 
 class EventSeeder extends Seeder
@@ -13,6 +14,11 @@ class EventSeeder extends Seeder
      */
     public function run(): void
     {
+        // Get admin user dynamically
+        $year = date('Y');
+        $adminUser = User::where('email', "KKKT-AGAPE-{$year}-0001@kkkt-agape.org")->first();
+        $createdBy = $adminUser ? $adminUser->id : 1;
+
         $events = [
             // Past Events
             [
@@ -28,7 +34,7 @@ class EventSeeder extends Seeder
                 'budget' => 500000,
                 'is_active' => true,
                 'notes' => 'Sherehe kubwa ya mwaka mpya iliyofanyika kwa mafanikio',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now()->subMonths(6),
             ],
             [
@@ -44,7 +50,7 @@ class EventSeeder extends Seeder
                 'budget' => 450000,
                 'is_active' => true,
                 'notes' => 'Semina iliyofanyika kwa mafanikio. Viongozi wote walihudhuhudhuria',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now()->subMonths(3),
             ],
             [
@@ -60,7 +66,7 @@ class EventSeeder extends Seeder
                 'budget' => 600000,
                 'is_active' => true,
                 'notes' => 'Tamasha lililofaulu sana. Vijana wengi walishiriki',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now()->subMonths(5),
             ],
             [
@@ -76,7 +82,7 @@ class EventSeeder extends Seeder
                 'budget' => 800000,
                 'is_active' => true,
                 'notes' => 'Ibada ya Pasaka iliyofanyika kwa shangwe kubwa',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now()->subMonths(5),
             ],
 
@@ -94,7 +100,7 @@ class EventSeeder extends Seeder
                 'budget' => 100000,
                 'is_active' => true,
                 'notes' => 'Ibada ya kawaida ya kila Jumapili',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now(),
             ],
             [
@@ -110,7 +116,7 @@ class EventSeeder extends Seeder
                 'budget' => 150000,
                 'is_active' => true,
                 'notes' => 'Mkutano muhimu wa wazazi na waalimu',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now(),
             ],
             [
@@ -126,7 +132,7 @@ class EventSeeder extends Seeder
                 'budget' => 200000,
                 'is_active' => true,
                 'notes' => 'Kesha ya kila mwezi - Jumamosi ya pili',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now(),
             ],
             [
@@ -142,7 +148,7 @@ class EventSeeder extends Seeder
                 'budget' => 1500000,
                 'is_active' => true,
                 'notes' => 'Crusade kubwa ya kusambaza injili kwa watu wengi',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now(),
             ],
             [
@@ -158,7 +164,7 @@ class EventSeeder extends Seeder
                 'budget' => 250000,
                 'is_active' => true,
                 'notes' => 'Mafundisho maalum ya Bibilia',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now(),
             ],
             [
@@ -174,7 +180,7 @@ class EventSeeder extends Seeder
                 'budget' => 300000,
                 'is_active' => true,
                 'notes' => 'Sherehe ya ubatizo wa watoto 20',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now(),
             ],
             [
@@ -190,7 +196,7 @@ class EventSeeder extends Seeder
                 'budget' => 120000,
                 'is_active' => true,
                 'notes' => 'Mkutano wa kawaida wa akina mama',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now(),
             ],
             [
@@ -206,7 +212,7 @@ class EventSeeder extends Seeder
                 'budget' => 2000000,
                 'is_active' => true,
                 'notes' => 'Safari ya burudani na kujifurahisha kwa wazee',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now(),
             ],
             [
@@ -222,7 +228,7 @@ class EventSeeder extends Seeder
                 'budget' => 1200000,
                 'is_active' => true,
                 'notes' => 'Sherehe kubwa ya mwaka - Mavuno',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now(),
             ],
             [
@@ -238,7 +244,7 @@ class EventSeeder extends Seeder
                 'budget' => 50000,
                 'is_active' => true,
                 'notes' => 'Kikao cha kila mwezi cha kamati ya ujenzi',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => Carbon::now(),
             ],
         ];

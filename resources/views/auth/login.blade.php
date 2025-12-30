@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Prevent caching - prevents access after logout via browser back button -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Login - KKKT Agape</title>
     <link rel="icon" type="image/png" href="{{ asset('images/kkkt_logo.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -56,7 +60,6 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -73,21 +76,71 @@
 
         .modal-content {
             background: white;
-            border-radius: 12px;
-            max-width: 400px;
+            border-radius: 16px;
+            max-width: 420px;
             width: 90%;
-            padding: 24px;
-            transform: translateY(-20px);
+            transform: scale(0.95);
             transition: transform 0.3s ease;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
         }
 
         .modal.active .modal-content {
-            transform: translateY(0);
+            transform: scale(1);
+        }
+
+        /* Login Progress Bar */
+        .login-progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(54, 9, 88, 0.1);
+            z-index: 9999;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease;
+        }
+
+        .login-progress-container.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .login-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #360958, #efc120, #360958);
+            background-size: 200% 100%;
+            animation: progressGradient 1.5s ease infinite;
+            transition: width 0.3s ease;
+        }
+
+        @keyframes progressGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .login-progress-bar.indeterminate {
+            width: 100%;
+            animation: progressIndeterminate 1.5s ease-in-out infinite, progressGradient 1.5s ease infinite;
+        }
+
+        @keyframes progressIndeterminate {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
     </style>
 </head>
 <body class="text-gray-800">
+    <!-- Login Progress Bar -->
+    <div class="login-progress-container" id="loginProgressContainer">
+        <div class="login-progress-bar" id="loginProgressBar"></div>
+    </div>
+
     <!-- Login Form Only - No Card Design -->
     <div class="login-container px-4">
         <!-- Logo and Title -->
@@ -179,7 +232,7 @@
 
     <!-- Forgot Password Modal -->
     <div id="forgot-password-modal" class="modal">
-        <div class="modal-content relative">
+        <div class="modal-content relative p-6">
             <button onclick="closeModal('forgot-password-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
                 <i class="fas fa-times text-lg"></i>
             </button>
@@ -190,23 +243,76 @@
                 <h2 class="text-2xl font-bold text-gray-800">Weka Upya Nenosiri</h2>
                 <p class="text-gray-600 mt-2">Weka barua pepe yako kupokea kiungo cha kuweka upya nenosiri</p>
             </div>
-            <form class="space-y-4" id="reset-password-form">
+
+            <!-- Error/Success Messages -->
+            <div id="forgot-error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span id="forgot-error-text"></span>
+                </div>
+            </div>
+            <div id="forgot-success" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span id="forgot-success-text"></span>
+                </div>
+            </div>
+
+            <form action="{{ route('password.email') }}" method="POST" class="space-y-4" id="reset-password-form">
+                @csrf
                 <div>
-                    <label for="reset-email" class="block text-sm font-medium text-gray-700 mb-1">Anwani ya Barua Pepe</label>
+                    <label for="reset-email" class="block text-sm font-medium text-gray-700 mb-1">Barua Pepe ya Usajili</label>
                     <input type="email" id="reset-email" name="email"
                            class="input-focus w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none transition bg-white text-gray-800"
                            placeholder="barua@pepe.com" required>
+                    <p class="text-xs text-gray-500 mt-1">
+                        <i class="fas fa-info-circle"></i> Ingiza barua pepe uliyoitumia wakati wa kusajili
+                    </p>
                 </div>
-                <button type="submit" class="btn-primary w-full text-white py-3 rounded-lg font-medium">
-                    <i class="fas fa-paper-plane mr-2"></i> Tuma Kiungo cha Kubadilisha
+                <button type="submit" id="forgot-submit-btn" class="btn-primary w-full text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2">
+                    <i class="fas fa-paper-plane" id="forgot-btn-icon"></i>
+                    <span id="forgot-btn-text">Tuma Kiungo cha Kubadilisha</span>
                 </button>
             </form>
+
+            <!-- Church Contact Info -->
+            @php
+                $churchPhone = \App\Models\Setting::get('church_phone', '+255 XXX XXX XXX');
+                $churchEmail = \App\Models\Setting::get('church_email', 'info@kkkt-agape.org');
+            @endphp
+            <div class="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p class="text-xs font-semibold text-gray-800 mb-1">Msaada wa Ziada</p>
+                <p class="text-xs text-gray-600 mb-2">Ukishindwa, wasiliana na ofisi:</p>
+                <div class="text-xs space-y-1">
+                    @if($churchPhone)
+                    <p><i class="fas fa-phone text-blue-500 mr-1"></i><a href="tel:{{ $churchPhone }}" class="text-blue-600 hover:underline">{{ $churchPhone }}</a></p>
+                    @endif
+                    @if($churchEmail)
+                    <p><i class="fas fa-envelope text-blue-500 mr-1"></i><a href="mailto:{{ $churchEmail }}" class="text-blue-600 hover:underline">{{ $churchEmail }}</a></p>
+                    @endif
+                </div>
+            </div>
+
             <div class="mt-4 text-center text-sm text-gray-500">
                 Unakumbuka nenosiri lako?
                 <a href="#" onclick="closeModal('forgot-password-modal')" class="text-purple-600 hover:text-purple-700 focus:outline-none">
                     Ingia
                 </a>
             </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="loginAlertModal" class="modal">
+        <div class="modal-content p-6 text-center">
+            <div id="loginAlertIcon" class="h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-green-100">
+                <i id="loginAlertIconClass" class="fas fa-check-circle text-3xl text-green-600"></i>
+            </div>
+            <h3 id="loginAlertTitle" class="text-xl font-bold text-gray-900 mb-2">Imefanikiwa!</h3>
+            <p id="loginAlertMessage" class="text-gray-600 mb-6">Ujumbe hapa</p>
+            <button onclick="closeModal('loginAlertModal')" class="w-full px-5 py-2.5 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-all">
+                <i class="fas fa-check mr-2"></i>Sawa, Nimeelewa
+            </button>
         </div>
     </div>
 
@@ -252,17 +358,148 @@
             });
         @endif
 
+        // Forgot Password Form Submit
         document.getElementById('reset-password-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Kiungo cha kuweka upya nenosiri kimetumwa kwa barua pepe yako!');
-            closeModal('forgot-password-modal');
+
+            const form = this;
+            const btn = document.getElementById('forgot-submit-btn');
+            const btnIcon = document.getElementById('forgot-btn-icon');
+            const btnText = document.getElementById('forgot-btn-text');
+            const errorDiv = document.getElementById('forgot-error');
+            const errorText = document.getElementById('forgot-error-text');
+            const successDiv = document.getElementById('forgot-success');
+            const successText = document.getElementById('forgot-success-text');
+
+            // Hide previous messages
+            errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+
+            // Show loading state
+            btn.disabled = true;
+            btnIcon.className = 'fas fa-spinner fa-spin';
+            btnText.textContent = 'Inatuma...';
+
+            // Submit via AJAX
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json().then(data => ({ status: response.status, data })))
+            .then(({ status, data }) => {
+                // Reset button state
+                btn.disabled = false;
+                btnIcon.className = 'fas fa-paper-plane';
+                btnText.textContent = 'Tuma Kiungo';
+
+                if (status === 200 || data.success) {
+                    // Show success
+                    successText.textContent = data.message || 'Kiungo cha kubadilisha nenosiri kimetumwa kwa barua pepe yako!';
+                    successDiv.classList.remove('hidden');
+                    form.reset();
+
+                    // Close modal after 3 seconds
+                    setTimeout(() => {
+                        closeModal('forgot-password-modal');
+                        showLoginAlert('success', 'Imefanikiwa!', successText.textContent);
+                    }, 2000);
+                } else {
+                    // Show error
+                    errorText.textContent = data.message || data.errors?.email?.[0] || 'Kuna hitilafu. Tafadhali jaribu tena.';
+                    errorDiv.classList.remove('hidden');
+                }
+            })
+            .catch(error => {
+                // Reset button state
+                btn.disabled = false;
+                btnIcon.className = 'fas fa-paper-plane';
+                btnText.textContent = 'Tuma Kiungo';
+
+                errorText.textContent = 'Kuna hitilafu. Tafadhali jaribu tena.';
+                errorDiv.classList.remove('hidden');
+            });
         });
+
+        // Show Alert Modal
+        function showLoginAlert(type, title, message) {
+            const iconContainer = document.getElementById('loginAlertIcon');
+            const iconClass = document.getElementById('loginAlertIconClass');
+            const titleEl = document.getElementById('loginAlertTitle');
+            const messageEl = document.getElementById('loginAlertMessage');
+
+            const configs = {
+                'success': { bgColor: 'bg-green-100', iconColor: 'text-green-600', icon: 'fas fa-check-circle' },
+                'error': { bgColor: 'bg-red-100', iconColor: 'text-red-600', icon: 'fas fa-times-circle' },
+                'warning': { bgColor: 'bg-yellow-100', iconColor: 'text-yellow-600', icon: 'fas fa-exclamation-triangle' },
+                'info': { bgColor: 'bg-blue-100', iconColor: 'text-blue-600', icon: 'fas fa-info-circle' }
+            };
+
+            const config = configs[type] || configs['info'];
+
+            iconContainer.className = `h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4 ${config.bgColor}`;
+            iconClass.className = `${config.icon} text-3xl ${config.iconColor}`;
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            openModal('loginAlertModal');
+        }
 
         // Auto-focus on email input
         document.addEventListener('DOMContentLoaded', function() {
             const emailInput = document.getElementById('email');
             if (emailInput) {
                 emailInput.focus();
+            }
+        });
+
+        // ============================================
+        // LOGIN PROGRESS BAR
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('login-form');
+            const progressContainer = document.getElementById('loginProgressContainer');
+            const progressBar = document.getElementById('loginProgressBar');
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+
+            loginForm.addEventListener('submit', function(e) {
+                // Show progress bar
+                progressContainer.classList.add('active');
+                progressBar.classList.add('indeterminate');
+
+                // Disable submit button and show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Inaendelea...';
+
+                // Let the form submit normally
+            });
+        });
+
+        // ============================================
+        // HANDLE BFCACHE - Prevent cached login page issues
+        // ============================================
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                // Page was restored from bfcache - reset form state
+                const progressContainer = document.getElementById('loginProgressContainer');
+                const progressBar = document.getElementById('loginProgressBar');
+                const loginForm = document.getElementById('login-form');
+                const submitBtn = loginForm?.querySelector('button[type="submit"]');
+
+                // Hide progress bar
+                if (progressContainer) {
+                    progressContainer.classList.remove('active');
+                }
+                if (progressBar) {
+                    progressBar.classList.remove('indeterminate');
+                }
+                // Reset submit button
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Ingia';
+                }
             }
         });
     </script>

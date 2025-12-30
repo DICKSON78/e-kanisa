@@ -116,6 +116,24 @@
                         @enderror
                     </div>
 
+                    <!-- Expense Date -->
+                    <div class="md:col-span-2">
+                        <label for="expense_date" class="block text-sm font-semibold text-gray-900 mb-2">
+                            Tarehe ya Matumizi <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-calendar-day text-gray-400"></i>
+                            </div>
+                            <input type="date" id="expense_date" name="expense_date"
+                                   value="{{ old('expense_date', $expense->expense_date ? $expense->expense_date->format('Y-m-d') : '') }}" required
+                                   class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 @error('expense_date') border-red-500 @enderror">
+                        </div>
+                        @error('expense_date')
+                            <p class="mt-2 text-sm text-red-600"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     <!-- Amount -->
                     <div class="md:col-span-2">
                         <label for="amount" class="block text-sm font-semibold text-gray-900 mb-2">

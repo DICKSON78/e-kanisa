@@ -43,7 +43,7 @@ class IncomeController extends Controller
         }
 
         // Get incomes ordered by date descending
-        $incomes = $query->orderBy('collection_date', 'desc')->paginate(20);
+        $incomes = $query->orderBy('collection_date', 'desc')->paginate(7);
 
         // Calculate totals per category and grand total
         $categoryTotals = Income::query()
@@ -213,7 +213,7 @@ class IncomeController extends Controller
     /**
      * Store bulk income entries
      */
-    public function storeBulk(Request $request)
+    public function bulkStore(Request $request)
     {
         $validated = $request->validate([
             'entries' => 'required|array|min:1',
@@ -250,5 +250,57 @@ class IncomeController extends Controller
                 ->with('error', 'Hitilafu imetokea wakati wa kuhifadhi mapato')
                 ->withInput();
         }
+    }
+
+    /**
+     * Display income categories
+     */
+    public function categories()
+    {
+        $categories = IncomeCategory::orderBy('name')->get();
+        return view('panel.income.categories', compact('categories'));
+    }
+
+    /**
+     * Store a new income category
+     */
+    public function storeCategory(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:income_categories,name',
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        IncomeCategory::create($validated);
+
+        return redirect()->route('income.categories')
+            ->with('success', 'Kategoria imeongezwa kikamilifu!');
+    }
+
+    /**
+     * Get financial summary for API
+     */
+    public function getFinancialSummary(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = Income::query();
+        
+        if ($startDate) {
+            $query->where('collection_date', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->where('collection_date', '<=', $endDate);
+        }
+
+        $totalIncome = $query->sum('amount');
+        $count = $query->count();
+
+        return response()->json([
+            'total' => $totalIncome,
+            'count' => $count,
+            'formatted_total' => number_format($totalIncome, 2)
+        ]);
     }
 }

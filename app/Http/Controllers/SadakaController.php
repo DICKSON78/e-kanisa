@@ -534,4 +534,89 @@ public function index(Request $request)
             })
         ]);
     }
+
+    /**
+     * Display the specified offering
+     */
+    public function show($id)
+    {
+        $income = Income::with(['category', 'member', 'creator'])->findOrFail($id);
+        return view('panel.offerings.show', compact('income'));
+    }
+
+    /**
+     * Show the form for editing the specified offering
+     */
+    public function edit($id)
+    {
+        $income = Income::findOrFail($id);
+        $categories = IncomeCategory::active()->ordered()->get();
+        $members = Member::where('is_active', true)
+            ->orderBy('first_name', 'asc')
+            ->get();
+
+        return view('panel.offerings.edit', compact('income', 'categories', 'members'));
+    }
+
+    /**
+     * Update the specified offering
+     */
+    public function update(Request $request, $id)
+    {
+        $income = Income::findOrFail($id);
+
+        $validated = $request->validate([
+            'income_category_id' => 'required|exists:income_categories,id',
+            'collection_date' => 'required|date',
+            'amount' => 'required|numeric|min:0',
+            'member_id' => 'nullable|exists:members,id',
+            'receipt_number' => 'nullable|string|max:50',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $validated['updated_by'] = Auth::id();
+        $income->update($validated);
+
+        return redirect()->route('offerings.index')
+            ->with('success', 'Sadaka imesasishwa kikamilifu!');
+    }
+
+    /**
+     * Remove the specified offering
+     */
+    public function destroy($id)
+    {
+        $income = Income::findOrFail($id);
+        $income->delete();
+
+        return redirect()->route('offerings.index')
+            ->with('success', 'Sadaka imefutwa kikamilifu!');
+    }
+
+    /**
+     * Display offering types (categories)
+     */
+    public function types()
+    {
+        $categories = IncomeCategory::orderBy('name')->get();
+        return view('panel.offerings.types', compact('categories'));
+    }
+
+    /**
+     * Store a new offering type
+     */
+    public function storeType(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:income_categories,name',
+            'code' => 'nullable|string|max:50|unique:income_categories,code',
+            'description' => 'nullable|string|max:1000',
+            'is_active' => 'boolean',
+        ]);
+
+        IncomeCategory::create($validated);
+
+        return redirect()->route('offerings.types')
+            ->with('success', 'Aina ya sadaka imeongezwa kikamilifu!');
+    }
 }

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Member;
 use App\Models\Role;
@@ -73,7 +76,12 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('success', 'Umetoka nje salama');
+        // Clear browser cache to prevent back button access after logout
+        return redirect()->route('login')
+            ->with('success', 'Umetoka nje salama')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 
     // Show forgot password form
@@ -82,38 +90,115 @@ class AuthController extends Controller
         return view('auth.forgot-password');
     }
 
-    // Send password reset link (placeholder)
+    // Send password reset link
     public function sendResetLink(Request $request)
     {
-        $request->validate([
+        $validator = validator($request->all(), [
             'email' => ['required', 'email', 'exists:users,email'],
         ], [
             'email.required' => 'Tafadhali ingiza barua pepe',
             'email.email' => 'Barua pepe si sahihi',
-            'email.exists' => 'Barua pepe hii haijasajiliwa',
+            'email.exists' => 'Barua pepe hii haijasajiliwa kwenye mfumo',
         ]);
 
-        // TODO: Implement password reset email sending
-        return back()->with('success', 'Kiungo cha kubadilisha nywila kimetumwa kwenye barua pepe yako');
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first('email'),
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $email = $request->email;
+
+        // Delete any existing tokens for this email
+        DB::table('password_reset_tokens')->where('email', $email)->delete();
+
+        // Generate new token
+        $token = Str::random(64);
+
+        // Store the token
+        DB::table('password_reset_tokens')->insert([
+            'email' => $email,
+            'token' => Hash::make($token),
+            'created_at' => Carbon::now()
+        ]);
+
+        // For now, we'll show the token in the success message (since email isn't configured)
+        // In production, you would send an email with the reset link
+        $resetUrl = route('password.reset', $token) . '?email=' . urlencode($email);
+
+        $message = 'Kiungo cha kubadilisha nenosiri kimetayarishwa. Kwa sababu mfumo wa barua pepe haujaundwa, tafadhali tumia kiungo hiki: ' . $resetUrl;
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Kiungo cha kubadilisha nenosiri kimetumwa. Angalia barua pepe yako.',
+                'reset_url' => $resetUrl // Remove this in production
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 
     // Show reset password form
     public function showResetForm($token)
     {
-        return view('auth.reset-password', ['token' => $token]);
+        $email = request()->query('email');
+        return view('auth.reset-password', [
+            'token' => $token,
+            'email' => $email
+        ]);
     }
 
-    // Handle password reset (placeholder)
+    // Handle password reset
     public function resetPassword(Request $request)
     {
         $request->validate([
             'token' => 'required',
             'email' => 'required|email|exists:users,email',
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|min:6|confirmed',
+        ], [
+            'email.required' => 'Barua pepe inahitajika',
+            'email.email' => 'Barua pepe si sahihi',
+            'email.exists' => 'Barua pepe hii haijasajiliwa',
+            'password.required' => 'Nenosiri jipya linahitajika',
+            'password.min' => 'Nenosiri lazima liwe na herufi 6 au zaidi',
+            'password.confirmed' => 'Nenosiri hazilingani',
         ]);
 
-        // TODO: Implement password reset logic
-        return redirect()->route('login')->with('success', 'Nywila imebadilishwa! Tafadhali ingia');
+        // Find the password reset record
+        $resetRecord = DB::table('password_reset_tokens')
+            ->where('email', $request->email)
+            ->first();
+
+        if (!$resetRecord) {
+            return back()->withErrors(['email' => 'Kiungo cha kubadilisha nenosiri si sahihi au kimepitwa na wakati.']);
+        }
+
+        // Check if token is valid
+        if (!Hash::check($request->token, $resetRecord->token)) {
+            return back()->withErrors(['email' => 'Kiungo cha kubadilisha nenosiri si sahihi.']);
+        }
+
+        // Check if token has expired (1 hour)
+        if (Carbon::parse($resetRecord->created_at)->addHour()->isPast()) {
+            DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+            return back()->withErrors(['email' => 'Kiungo cha kubadilisha nenosiri kimepitwa na wakati. Tafadhali omba kiungo kipya.']);
+        }
+
+        // Update user password
+        $user = User::where('email', $request->email)->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // Delete the reset token
+        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
+        return redirect()->route('login')->with('success', 'Nenosiri limebadilishwa! Tafadhali ingia na nenosiri lako jipya.');
     }
 
     // Show registration form
@@ -135,19 +220,37 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
+            // Personal Information
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20|unique:members,phone',
-            'email' => 'nullable|email|max:255|unique:users,email',
             'date_of_birth' => 'required|date',
             'gender' => 'required|in:Mme,Mke',
-            'marital_status' => 'required|string|max:50',
+            'id_number' => 'nullable|string|max:50',
+
+            // Contact Information
+            'phone' => 'required|string|max:20|unique:members,phone',
+            'email' => 'nullable|email|max:255|unique:users,email',
             'address' => 'nullable|string|max:500',
+            'house_number' => 'nullable|string|max:50',
+            'block_number' => 'nullable|string|max:50',
             'city' => 'nullable|string|max:100',
             'region' => 'nullable|string|max:100',
+
+            // Christian Information
             'jumuiya_id' => 'required|exists:jumuiyas,id',
-            'password' => 'required|min:8|confirmed',
+            'baptism_date' => 'nullable|date',
+            'confirmation_date' => 'nullable|date',
+            'marital_status' => 'required|string|max:50',
+            'special_group' => 'nullable|string|max:255',
+            'occupation' => 'nullable|string|max:255',
+            'church_elder' => 'nullable|string|max:255',
+
+            // Family Information
+            'spouse_name' => 'nullable|string|max:255',
+            'spouse_phone' => 'nullable|string|max:20',
+            'neighbor_name' => 'nullable|string|max:255',
+            'neighbor_phone' => 'nullable|string|max:20',
         ], [
             'first_name.required' => 'Jina la kwanza linahitajika',
             'last_name.required' => 'Jina la mwisho linahitajika',
@@ -157,14 +260,11 @@ class AuthController extends Controller
             'date_of_birth.required' => 'Tarehe ya kuzaliwa inahitajika',
             'gender.required' => 'Jinsia inahitajika',
             'marital_status.required' => 'Hali ya ndoa inahitajika',
-            'password.required' => 'Nenosiri linahitajika',
-            'password.min' => 'Nenosiri lazima liwe na herufi 8 au zaidi',
-            'password.confirmed' => 'Nenosiri hayalingani',
             'jumuiya_id.required' => 'Tafadhali chagua jumuiya',
             'jumuiya_id.exists' => 'Jumuiya uliyochagua haipo',
         ]);
 
-        // Generate member number
+        // Generate member number automatically
         $year = date('Y');
         $lastMember = Member::whereYear('created_at', $year)
             ->orderBy('id', 'desc')
@@ -187,36 +287,56 @@ class AuthController extends Controller
         // Generate email for login if not provided
         $loginEmail = $validated['email'] ?? $memberNumber . '@kkkt-agape.org';
 
+        // Auto-generate password from last name (lowercase)
+        $autoPassword = strtolower(trim($validated['last_name']));
+
         // Create user account (inactive until approved)
         $user = User::create([
             'name' => trim($validated['first_name'] . ' ' . ($validated['middle_name'] ?? '') . ' ' . $validated['last_name']),
             'email' => $loginEmail,
-            'password' => Hash::make($validated['password']),
+            'password' => Hash::make($autoPassword),
             'role_id' => $memberRole ? $memberRole->id : null,
             'is_active' => false, // Inactive until admin approves
         ]);
 
-        // Create member record
+        // Create member record with all fields
         $member = Member::create([
             'member_number' => $memberNumber,
             'envelope_number' => $envelopeNumber,
             'first_name' => $validated['first_name'],
             'middle_name' => $validated['middle_name'] ?? null,
             'last_name' => $validated['last_name'],
-            'phone' => $validated['phone'],
-            'email' => $validated['email'] ?? null,
             'date_of_birth' => $validated['date_of_birth'],
             'gender' => $validated['gender'],
-            'marital_status' => $validated['marital_status'],
+            'id_number' => $validated['id_number'] ?? null,
+            'phone' => $validated['phone'],
+            'email' => $validated['email'] ?? null,
             'address' => $validated['address'] ?? null,
+            'house_number' => $validated['house_number'] ?? null,
+            'block_number' => $validated['block_number'] ?? null,
             'city' => $validated['city'] ?? null,
             'region' => $validated['region'] ?? null,
             'jumuiya_id' => $validated['jumuiya_id'],
+            'baptism_date' => $validated['baptism_date'] ?? null,
+            'confirmation_date' => $validated['confirmation_date'] ?? null,
+            'marital_status' => $validated['marital_status'],
+            'special_group' => $validated['special_group'] ?? null,
+            'occupation' => $validated['occupation'] ?? null,
+            'church_elder' => $validated['church_elder'] ?? null,
+            'spouse_name' => $validated['spouse_name'] ?? null,
+            'spouse_phone' => $validated['spouse_phone'] ?? null,
+            'neighbor_name' => $validated['neighbor_name'] ?? null,
+            'neighbor_phone' => $validated['neighbor_phone'] ?? null,
             'membership_date' => now(),
             'is_active' => false, // Inactive until admin approves
             'user_id' => $user->id,
         ]);
 
-        return redirect()->route('login')->with('success', 'Usajili umefanikiwa! Tafadhali subiri uthibitisho kutoka kwa msimamizi wa kanisa kabla ya kuingia.');
+        return redirect()->route('login')->with('success',
+            'Usajili umefanikiwa! Namba yako ya muumini ni: ' . $memberNumber . '. ' .
+            'Nenosiri lako ni: ' . $autoPassword . ' (jina lako la ukoo kwa herufi ndogo). ' .
+            'MUHIMU: Akaunti yako bado haijaidhinishwa. Tafadhali subiri msimamizi wa kanisa aidhinishe akaunti yako kabla ya kuweza kuingia kwenye mfumo. ' .
+            'Utapokea taarifa wakati akaunti yako itakapoidhinishwa.'
+        );
     }
 }

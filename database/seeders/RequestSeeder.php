@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Request;
+use App\Models\User;
 use Carbon\Carbon;
 
 class RequestSeeder extends Seeder
@@ -13,6 +14,14 @@ class RequestSeeder extends Seeder
      */
     public function run(): void
     {
+        // Get users dynamically
+        $year = date('Y');
+        $adminUser = User::where('email', "KKKT-AGAPE-{$year}-0001@kkkt-agape.org")->first(); // Mchungaji
+        $mhasibuUser = User::where('email', "KKKT-AGAPE-{$year}-0002@kkkt-agape.org")->first(); // Mhasibu
+
+        $approvedBy = $adminUser ? $adminUser->id : 1;
+        $requestedBy = $mhasibuUser ? $mhasibuUser->id : 2;
+
         $requests = [
             // Approved Requests
             [
@@ -26,8 +35,8 @@ class RequestSeeder extends Seeder
                 'approval_notes' => 'Ombi limeidhinishwa. Nunua mikrofoni za bei nafuu lakini za ubora.',
                 'requested_date' => Carbon::now()->subMonths(3)->format('Y-m-d'),
                 'approved_date' => Carbon::now()->subMonths(3)->addDays(5)->format('Y-m-d'),
-                'requested_by' => 2,
-                'approved_by' => 1,
+                'requested_by' => $requestedBy,
+                'approved_by' => $approvedBy,
                 'created_at' => Carbon::now()->subMonths(3),
                 'updated_at' => Carbon::now()->subMonths(3)->addDays(5),
             ],
@@ -42,8 +51,8 @@ class RequestSeeder extends Seeder
                 'approval_notes' => 'Ombi limeidhinishwa kwa TZS 2,500,000. Kamati ya ujenzi itasimamia kazi.',
                 'requested_date' => Carbon::now()->subMonths(4)->format('Y-m-d'),
                 'approved_date' => Carbon::now()->subMonths(4)->addDays(3)->format('Y-m-d'),
-                'requested_by' => 2,
-                'approved_by' => 1,
+                'requested_by' => $requestedBy,
+                'approved_by' => $approvedBy,
                 'created_at' => Carbon::now()->subMonths(4),
                 'updated_at' => Carbon::now()->subMonths(4)->addDays(3),
             ],
@@ -58,8 +67,8 @@ class RequestSeeder extends Seeder
                 'approval_notes' => 'Ombi limeidhinishwa kikamilifu. Hakikisheni ubora wa kanzu ni mzuri.',
                 'requested_date' => Carbon::now()->subMonths(2)->format('Y-m-d'),
                 'approved_date' => Carbon::now()->subMonths(2)->addDays(2)->format('Y-m-d'),
-                'requested_by' => 2,
-                'approved_by' => 1,
+                'requested_by' => $requestedBy,
+                'approved_by' => $approvedBy,
                 'created_at' => Carbon::now()->subMonths(2),
                 'updated_at' => Carbon::now()->subMonths(2)->addDays(2),
             ],
@@ -74,8 +83,8 @@ class RequestSeeder extends Seeder
                 'approval_notes' => 'Nununue kompyuta ya bei ya wastani ambayo itafanya kazi. Kiasi cha TZS 1,000,000 kimeidhinishwa.',
                 'requested_date' => Carbon::now()->subMonths(5)->format('Y-m-d'),
                 'approved_date' => Carbon::now()->subMonths(5)->addDays(7)->format('Y-m-d'),
-                'requested_by' => 2,
-                'approved_by' => 1,
+                'requested_by' => $requestedBy,
+                'approved_by' => $approvedBy,
                 'created_at' => Carbon::now()->subMonths(5),
                 'updated_at' => Carbon::now()->subMonths(5)->addDays(7),
             ],
@@ -92,7 +101,7 @@ class RequestSeeder extends Seeder
                 'approval_notes' => null,
                 'requested_date' => Carbon::now()->subDays(5)->format('Y-m-d'),
                 'approved_date' => null,
-                'requested_by' => 2,
+                'requested_by' => $requestedBy,
                 'approved_by' => null,
                 'created_at' => Carbon::now()->subDays(5),
                 'updated_at' => Carbon::now()->subDays(5),
@@ -108,7 +117,7 @@ class RequestSeeder extends Seeder
                 'approval_notes' => null,
                 'requested_date' => Carbon::now()->subDays(3)->format('Y-m-d'),
                 'approved_date' => null,
-                'requested_by' => 2,
+                'requested_by' => $requestedBy,
                 'approved_by' => null,
                 'created_at' => Carbon::now()->subDays(3),
                 'updated_at' => Carbon::now()->subDays(3),
@@ -124,7 +133,7 @@ class RequestSeeder extends Seeder
                 'approval_notes' => null,
                 'requested_date' => Carbon::now()->subDays(10)->format('Y-m-d'),
                 'approved_date' => null,
-                'requested_by' => 2,
+                'requested_by' => $requestedBy,
                 'approved_by' => null,
                 'created_at' => Carbon::now()->subDays(10),
                 'updated_at' => Carbon::now()->subDays(10),
@@ -140,7 +149,7 @@ class RequestSeeder extends Seeder
                 'approval_notes' => null,
                 'requested_date' => Carbon::now()->subDays(2)->format('Y-m-d'),
                 'approved_date' => null,
-                'requested_by' => 2,
+                'requested_by' => $requestedBy,
                 'approved_by' => null,
                 'created_at' => Carbon::now()->subDays(2),
                 'updated_at' => Carbon::now()->subDays(2),
@@ -156,7 +165,7 @@ class RequestSeeder extends Seeder
                 'approval_notes' => null,
                 'requested_date' => Carbon::now()->subDays(7)->format('Y-m-d'),
                 'approved_date' => null,
-                'requested_by' => 2,
+                'requested_by' => $requestedBy,
                 'approved_by' => null,
                 'created_at' => Carbon::now()->subDays(7),
                 'updated_at' => Carbon::now()->subDays(7),
@@ -174,8 +183,8 @@ class RequestSeeder extends Seeder
                 'approval_notes' => 'Ombi limekataliwa kwa sasa kwa sababu fedha za kanisa hazitoshi. Tunaweza kulifikiria baadaye.',
                 'requested_date' => Carbon::now()->subMonths(1)->format('Y-m-d'),
                 'approved_date' => Carbon::now()->subMonths(1)->addDays(4)->format('Y-m-d'),
-                'requested_by' => 2,
-                'approved_by' => 1,
+                'requested_by' => $requestedBy,
+                'approved_by' => $approvedBy,
                 'created_at' => Carbon::now()->subMonths(1),
                 'updated_at' => Carbon::now()->subMonths(1)->addDays(4),
             ],
@@ -190,8 +199,8 @@ class RequestSeeder extends Seeder
                 'approval_notes' => 'Ombi limekataliwa. Kuna ziara nyingi za ndani zinazohitaji fedha. Safari ya nje inaweza kungojea.',
                 'requested_date' => Carbon::now()->subMonths(2)->format('Y-m-d'),
                 'approved_date' => Carbon::now()->subMonths(2)->addDays(10)->format('Y-m-d'),
-                'requested_by' => 2,
-                'approved_by' => 1,
+                'requested_by' => $requestedBy,
+                'approved_by' => $approvedBy,
                 'created_at' => Carbon::now()->subMonths(2),
                 'updated_at' => Carbon::now()->subMonths(2)->addDays(10),
             ],

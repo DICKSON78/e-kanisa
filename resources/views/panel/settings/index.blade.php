@@ -599,8 +599,8 @@
 <div id="jumuiyaAlertModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[10000]">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95" id="jumuiyaAlertModalContent">
         <div class="p-6 text-center">
-            <div id="jumuiyaAlertIcon" class="h-12 w-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-exclamation-triangle text-yellow-600 text-2xl"></i>
+            <div id="jumuiyaAlertIcon" class="h-16 w-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-yellow-600 text-3xl"></i>
             </div>
             <h3 id="jumuiyaAlertTitle" class="text-lg font-bold text-gray-900 mb-2">Onyo</h3>
             <p id="jumuiyaAlertMessage" class="text-gray-600 mb-6">Ujumbe wa onyo</p>
@@ -615,8 +615,8 @@
 <div id="jumuiyaConfirmModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[10000]">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95" id="jumuiyaConfirmModalContent">
         <div class="p-6 text-center">
-            <div class="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-trash-alt text-red-600 text-2xl"></i>
+            <div class="h-16 w-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-trash-alt text-red-600 text-3xl"></i>
             </div>
             <h3 class="text-lg font-bold text-gray-900 mb-2">Thibitisha Kufuta</h3>
             <p class="text-gray-600 mb-2">Je, una uhakika unataka kufuta jumuiya:</p>

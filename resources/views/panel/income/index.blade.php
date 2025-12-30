@@ -307,15 +307,12 @@
                                    title="Hariri">
                                     <i class="fas fa-pencil-alt text-sm"></i>
                                 </a>
-                                <form action="{{ route('income.destroy', $income->id) }}" method="POST" class="inline" onsubmit="return confirm('Je, una uhakika unataka kufuta rekodi hii?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="h-8 w-8 bg-red-100 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-200 transition-all duration-200"
-                                            title="Futa">
-                                        <i class="fas fa-trash text-sm"></i>
-                                    </button>
-                                </form>
+                                <button type="button"
+                                        onclick="confirmDelete({{ $income->id }}, '{{ $income->category->name }}', '{{ number_format($income->amount, 0) }}')"
+                                        class="h-8 w-8 bg-red-100 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-200 transition-all duration-200"
+                                        title="Futa">
+                                    <i class="fas fa-trash text-sm"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -355,8 +352,101 @@
     </div>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95" id="deleteModalContent">
+        <div class="sticky top-0 bg-white px-6 py-5 rounded-t-2xl border-b border-gray-200 z-10">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="h-12 w-12 bg-red-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Thibitisha Kufuta</h3>
+                        <p class="text-sm text-gray-600">Hatua hii haiwezi kurudishwa</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeDeleteModal()" class="text-gray-400 hover:text-gray-600 rounded-lg p-1.5 hover:bg-gray-100 transition-all duration-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <p class="text-gray-700 mb-2">Je, una uhakika unataka kufuta rekodi hii ya mapato?</p>
+            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                <p class="text-sm text-gray-600">Aina: <span class="font-semibold text-gray-900" id="deleteCategory"></span></p>
+                <p class="text-sm text-gray-600">Kiasi: <span class="font-bold text-green-600" id="deleteAmount"></span> TSh</p>
+            </div>
+            <p class="text-sm text-red-600">
+                <i class="fas fa-warning mr-1"></i>
+                Taarifa zote za mapato haya zitafutwa kabisa.
+            </p>
+        </div>
+
+        <div class="sticky bottom-0 bg-gray-50 px-6 py-5 rounded-b-2xl border-t border-gray-200 flex justify-end space-x-3">
+            <button type="button" onclick="closeDeleteModal()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-xl hover:bg-gray-300 transition-all duration-200">
+                Ghairi
+            </button>
+            <form id="deleteForm" method="POST" class="inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-xl hover:bg-red-700 transition-all duration-200 flex items-center gap-2">
+                    <i class="fas fa-trash"></i>
+                    <span>Futa Mapato</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
+// Delete modal functions
+function confirmDelete(incomeId, category, amount) {
+    document.getElementById('deleteCategory').textContent = category;
+    document.getElementById('deleteAmount').textContent = amount;
+    document.getElementById('deleteForm').action = '/panel/income/' + incomeId;
+
+    const modal = document.getElementById('deleteModal');
+    const content = document.getElementById('deleteModalContent');
+
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+    }, 10);
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    const content = document.getElementById('deleteModalContent');
+
+    content.classList.remove('scale-100');
+    content.classList.add('scale-95');
+
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 200);
+}
+
+// Close modal when clicking outside
+document.getElementById('deleteModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('deleteModal');
+        if (modal && !modal.classList.contains('hidden')) {
+            closeDeleteModal();
+        }
+    }
+});
+
 function exportMapato() {
     // Get current filter values
     const startDate = document.querySelector('input[name="start_date"]').value;

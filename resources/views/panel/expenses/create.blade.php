@@ -22,8 +22,9 @@
 
     <!-- Form Container -->
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <form method="POST" action="{{ route('expenses.store') }}" class="divide-y divide-gray-200">
+        <form method="POST" action="{{ route('expenses.store') }}" id="expenseForm" class="divide-y divide-gray-200">
             @csrf
+            <input type="hidden" name="confirm_past_month" id="confirm_past_month" value="0">
 
             <!-- Expense Details Section -->
             <div class="p-6">
@@ -111,6 +112,23 @@
                             </select>
                         </div>
                         @error('month')
+                            <p class="mt-2 text-sm text-red-600"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Expense Date -->
+                    <div class="md:col-span-2">
+                        <label for="expense_date" class="block text-sm font-semibold text-gray-900 mb-2">
+                            Tarehe ya Matumizi <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-calendar-day text-gray-400"></i>
+                            </div>
+                            <input type="date" id="expense_date" name="expense_date" value="{{ old('expense_date', date('Y-m-d')) }}" required
+                                   class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 @error('expense_date') border-red-500 @enderror">
+                        </div>
+                        @error('expense_date')
                             <p class="mt-2 text-sm text-red-600"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
                         @enderror
                     </div>
@@ -215,6 +233,27 @@
             </div>
             @endif
 
+            @if(session('past_month_warning'))
+            <div class="p-6">
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mt-1 mr-3"></i>
+                        <div class="flex-1">
+                            <p class="text-sm text-yellow-700 font-medium">{{ session('warning_message') }}</p>
+                            <div class="mt-3 flex gap-3">
+                                <button type="button" onclick="confirmPastMonth()" class="px-4 py-2 bg-yellow-500 text-white text-sm font-medium rounded-lg hover:bg-yellow-600 transition-colors">
+                                    <i class="fas fa-check mr-2"></i>Ndio, Endelea
+                                </button>
+                                <a href="{{ route('expenses.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition-colors">
+                                    <i class="fas fa-times mr-2"></i>Ghairi
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Action Buttons -->
             <div class="sticky bottom-0 bg-white px-6 py-5 border-t border-gray-200 flex justify-end space-x-4">
                 <a href="{{ route('expenses.index') }}"
@@ -237,10 +276,19 @@
             <i class="fas fa-info-circle text-blue-400 mt-1 mr-3"></i>
             <div>
                 <p class="text-sm text-blue-700">
-                    <strong>Kumbuka:</strong> Ikiwa matumizi ya aina hii, mwaka na mwezi uliochagua tayari yanapatikana, utapokea ujumbe wa hitilafu. Tafadhali hariri rekodi iliyopo badala yake.
+                    <strong>Kumbuka:</strong> Unaweza kuongeza matumizi mengi kwa kategoria moja katika mwezi mmoja. Kama utaongeza matumizi kwa mwezi uliopita, utaulizwa kuthibitisha kwanza.
                 </p>
             </div>
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    function confirmPastMonth() {
+        document.getElementById('confirm_past_month').value = '1';
+        document.getElementById('expenseForm').submit();
+    }
+</script>
 @endsection

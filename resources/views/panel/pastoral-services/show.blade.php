@@ -341,13 +341,13 @@
 <!-- Approve Service Modal -->
 @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
     @if($service->status == 'Inasubiri')
-    <div id="approveServiceModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
-            <div class="sticky top-0 bg-white px-6 py-5 rounded-t-xl border-b border-gray-200 z-10">
+    <div id="approveServiceModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[9999]">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
+            <div class="sticky top-0 bg-white px-6 py-5 rounded-t-2xl border-b border-gray-200 z-10">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                        <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                            <i class="fas fa-check-circle text-green-600"></i>
+                        <div class="h-12 w-12 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-gray-900">Idhinisha Huduma</h3>
@@ -392,13 +392,13 @@
     </div>
 
     <!-- Reject Service Modal -->
-    <div id="rejectServiceModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
-            <div class="sticky top-0 bg-white px-6 py-5 rounded-t-xl border-b border-gray-200 z-10">
+    <div id="rejectServiceModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[9999]">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
+            <div class="sticky top-0 bg-white px-6 py-5 rounded-t-2xl border-b border-gray-200 z-10">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                        <div class="h-10 w-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
-                            <i class="fas fa-times-circle text-red-600"></i>
+                        <div class="h-12 w-12 bg-red-100 rounded-xl flex items-center justify-center mr-3">
+                            <i class="fas fa-times-circle text-red-600 text-xl"></i>
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-gray-900">Kataa Huduma</h3>
@@ -444,13 +444,13 @@
 
     @if($service->status == 'Imeidhinishwa')
     <!-- Complete Service Modal -->
-    <div id="completeServiceModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
-            <div class="sticky top-0 bg-white px-6 py-5 rounded-t-xl border-b border-gray-200 z-10">
+    <div id="completeServiceModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[9999]">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
+            <div class="sticky top-0 bg-white px-6 py-5 rounded-t-2xl border-b border-gray-200 z-10">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                        <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                            <i class="fas fa-check-double text-purple-600"></i>
+                        <div class="h-12 w-12 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
+                            <i class="fas fa-check-double text-purple-600 text-xl"></i>
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-gray-900">Kamilisha Huduma</h3>

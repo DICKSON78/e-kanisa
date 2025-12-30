@@ -61,13 +61,25 @@ class SettingSeeder extends Seeder
             ],
             [
                 'key' => 'phone',
-                'value' => '+255 000 000 000',
+                'value' => '+255 712 345 678',
+                'type' => 'text',
+                'group' => 'contact',
+            ],
+            [
+                'key' => 'church_phone',
+                'value' => '+255 712 345 678',
                 'type' => 'text',
                 'group' => 'contact',
             ],
             [
                 'key' => 'email',
-                'value' => 'info@agapekanisa.or.tz',
+                'value' => 'info@kkkt-agape.org',
+                'type' => 'email',
+                'group' => 'contact',
+            ],
+            [
+                'key' => 'church_email',
+                'value' => 'info@kkkt-agape.org',
                 'type' => 'email',
                 'group' => 'contact',
             ],

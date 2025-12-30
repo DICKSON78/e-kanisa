@@ -580,8 +580,8 @@
         <div class="sticky top-0 bg-white px-6 py-5 rounded-t-xl border-b border-gray-200 z-10">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <div class="h-10 w-10 bg-primary-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-hand-holding-heart text-primary-600"></i>
+                    <div class="h-12 w-12 bg-primary-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-hand-holding-heart text-primary-600 text-xl"></i>
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-gray-900">Ingiza Sadaka Mpya</h3>
@@ -635,8 +635,8 @@
         <div class="sticky top-0 bg-white px-6 py-5 rounded-t-xl border-b border-gray-200 z-10">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-hands-praying text-purple-600"></i>
+                    <div class="h-12 w-12 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-hands-praying text-purple-600 text-xl"></i>
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-gray-900">Ahadi Mpya</h3>
@@ -697,8 +697,8 @@
         <div class="sticky top-0 bg-white px-6 py-5 rounded-t-xl border-b border-gray-200 z-10">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-coins text-green-600"></i>
+                    <div class="h-12 w-12 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-coins text-green-600 text-xl"></i>
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-gray-900">Rekodi Malipo</h3>
@@ -760,8 +760,8 @@
         <div class="sticky top-0 bg-white px-6 py-5 rounded-t-xl border-b border-gray-200 z-10">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-calculator text-blue-600"></i>
+                    <div class="h-12 w-12 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-calculator text-blue-600 text-xl"></i>
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-gray-900">Kikokotoo cha Noti na Sarafu</h3>
@@ -1471,13 +1471,13 @@
 
     // Additional view/delete functions
     function viewSadakaDetails(id) {
-        window.location.href = '/panel/sadaka/' + id;
+        window.location.href = '/panel/offerings/' + id;
     }
 
     async function deleteSadaka(id) {
         const confirmed = await showConfirm('Je, una uhakika unataka kufuta rekodi hii ya sadaka?', 'Thibitisha Kufuta');
         if (confirmed) {
-            fetch('/panel/sadaka/' + id, {
+            fetch('/panel/offerings/' + id, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -1554,7 +1554,7 @@
         overflow: visible !important;
     }
     #sadakaModal, #ahadiModal, #malipoModal, #calculatorModal {
-        z-index: 1000 !important;
+        z-index: 9999 !important;
     }
     .sticky {
         position: -webkit-sticky;
@@ -1604,9 +1604,6 @@
         transform: translateY(-1px);
     }
 
-    /* Modal backdrop */
-    .fixed.inset-0 {
-        backdrop-filter: blur(2px);
-    }
+    /* Modal backdrop - no blur per user request */
 </style>
 @endsection

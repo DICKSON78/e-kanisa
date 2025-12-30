@@ -57,12 +57,16 @@ class ExpenseController extends Controller
 
             for ($month = 1; $month <= 12; $month++) {
                 $key = $category->id . '_' . $month;
-                $expense = $expenses->get($key)?->first();
+                $expenseCollection = $expenses->get($key);
 
-                $amount = $expense ? $expense->amount : 0;
+                // Sum all expenses for this category/month
+                $amount = $expenseCollection ? $expenseCollection->sum('amount') : 0;
+                $expenseCount = $expenseCollection ? $expenseCollection->count() : 0;
+
                 $categoryRow['months'][$month] = [
                     'amount' => $amount,
-                    'expense' => $expense
+                    'expenses' => $expenseCollection,
+                    'expense_count' => $expenseCount
                 ];
                 $categoryRow['total'] += $amount;
                 $monthlyTotals[$month] += $amount;
@@ -116,10 +120,12 @@ class ExpenseController extends Controller
             'expense_category_id' => 'required|exists:expense_categories,id',
             'year' => 'required|integer|min:2000|max:2100',
             'month' => 'required|integer|min:1|max:12',
+            'expense_date' => 'required|date',
             'amount' => 'required|numeric|min:0|max:999999999999.99',
             'payee' => 'nullable|string|max:255',
             'receipt_number' => 'nullable|string|max:50',
             'notes' => 'nullable|string|max:1000',
+            'confirm_past_month' => 'nullable|boolean',
         ], [
             'expense_category_id.required' => 'Tafadhali chagua kategoria ya matumizi',
             'expense_category_id.exists' => 'Kategoria iliyochaguliwa haipo',
@@ -131,6 +137,8 @@ class ExpenseController extends Controller
             'month.integer' => 'Mwezi si sahihi',
             'month.min' => 'Mwezi si sahihi',
             'month.max' => 'Mwezi si sahihi',
+            'expense_date.required' => 'Tafadhali ingiza tarehe ya matumizi',
+            'expense_date.date' => 'Tarehe si sahihi',
             'amount.required' => 'Tafadhali ingiza kiasi',
             'amount.numeric' => 'Kiasi lazima kiwe nambari',
             'amount.min' => 'Kiasi lazima kiwe chanya',
@@ -140,19 +148,25 @@ class ExpenseController extends Controller
             'notes.max' => 'Maelezo ni marefu mno',
         ]);
 
-        // Check for unique constraint (one expense per category per month)
-        $exists = Expense::where('expense_category_id', $validated['expense_category_id'])
-            ->where('year', $validated['year'])
-            ->where('month', $validated['month'])
-            ->exists();
+        // Check if the selected month is in the past (requires confirmation)
+        $currentYear = (int) date('Y');
+        $currentMonth = (int) date('n');
+        $selectedYear = (int) $validated['year'];
+        $selectedMonth = (int) $validated['month'];
 
-        if ($exists) {
+        $isPastMonth = ($selectedYear < $currentYear) ||
+                       ($selectedYear == $currentYear && $selectedMonth < $currentMonth);
+
+        // If past month and no confirmation, return with warning
+        if ($isPastMonth && !$request->input('confirm_past_month')) {
             return redirect()->back()
-                ->with('error', 'Matumizi ya kategoria hii kwa mwezi huu tayari yamerekodiwa. Tafadhali hariri rekodi iliyopo.')
+                ->with('past_month_warning', true)
+                ->with('warning_message', 'Unaongeza matumizi kwa mwezi uliopita. Je, una uhakika unataka kuendelea?')
                 ->withInput();
         }
 
         $validated['created_by'] = Auth::id();
+        unset($validated['confirm_past_month']);
 
         Expense::create($validated);
 
@@ -192,6 +206,7 @@ class ExpenseController extends Controller
             'expense_category_id' => 'required|exists:expense_categories,id',
             'year' => 'required|integer|min:2000|max:2100',
             'month' => 'required|integer|min:1|max:12',
+            'expense_date' => 'required|date',
             'amount' => 'required|numeric|min:0|max:999999999999.99',
             'payee' => 'nullable|string|max:255',
             'receipt_number' => 'nullable|string|max:50',
@@ -207,6 +222,8 @@ class ExpenseController extends Controller
             'month.integer' => 'Mwezi si sahihi',
             'month.min' => 'Mwezi si sahihi',
             'month.max' => 'Mwezi si sahihi',
+            'expense_date.required' => 'Tafadhali ingiza tarehe ya matumizi',
+            'expense_date.date' => 'Tarehe si sahihi',
             'amount.required' => 'Tafadhali ingiza kiasi',
             'amount.numeric' => 'Kiasi lazima kiwe nambari',
             'amount.min' => 'Kiasi lazima kiwe chanya',
@@ -216,25 +233,99 @@ class ExpenseController extends Controller
             'notes.max' => 'Maelezo ni marefu mno',
         ]);
 
-        // Check for unique constraint (excluding current record)
-        $exists = Expense::where('expense_category_id', $validated['expense_category_id'])
-            ->where('year', $validated['year'])
-            ->where('month', $validated['month'])
-            ->where('id', '!=', $id)
-            ->exists();
-
-        if ($exists) {
-            return redirect()->back()
-                ->with('error', 'Matumizi ya kategoria hii kwa mwezi huu tayari yamerekodiwa.')
-                ->withInput();
-        }
-
         $validated['updated_by'] = Auth::id();
 
         $expense->update($validated);
 
         return redirect()->route('expenses.index', ['year' => $validated['year']])
             ->with('success', 'Matumizi yamebadilishwa kikamilifu');
+    }
+
+    /**
+     * Display expenses for a specific month in calendar view
+     */
+    public function monthlyExpenses($year, $month)
+    {
+        $monthNames = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Machi', 4 => 'Aprili',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Julai', 8 => 'Agosti',
+            9 => 'Septemba', 10 => 'Oktoba', 11 => 'Novemba', 12 => 'Desemba'
+        ];
+
+        $monthName = $monthNames[(int)$month] ?? 'Mwezi';
+
+        // Get all expenses for this month
+        $expenses = Expense::where('year', $year)
+            ->where('month', $month)
+            ->with('category')
+            ->orderBy('expense_date')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Group expenses by date for calendar
+        $expensesByDate = $expenses->groupBy(function($expense) {
+            return $expense->expense_date ? $expense->expense_date->format('Y-m-d') : null;
+        });
+
+        // Get all categories with colors for legend
+        $allCategories = ExpenseCategory::active()->ordered()->get();
+
+        // Assign colors to categories
+        $categoryColors = [
+            'red', 'blue', 'green', 'purple', 'orange', 'pink', 'teal', 'indigo',
+            'amber', 'cyan', 'lime', 'emerald', 'violet', 'fuchsia', 'rose', 'sky'
+        ];
+
+        $categoriesWithColors = [];
+        foreach ($allCategories as $index => $category) {
+            $colorIndex = $index % count($categoryColors);
+            $categoriesWithColors[$category->id] = [
+                'category' => $category,
+                'color' => $categoryColors[$colorIndex]
+            ];
+        }
+
+        // Calculate calendar data
+        $firstDayOfMonth = Carbon::createFromDate($year, $month, 1);
+        $lastDayOfMonth = $firstDayOfMonth->copy()->endOfMonth();
+        $daysInMonth = $lastDayOfMonth->day;
+        $startDayOfWeek = $firstDayOfMonth->dayOfWeek; // 0 = Sunday, 1 = Monday, etc.
+
+        // Calculate totals
+        $totalAmount = $expenses->sum('amount');
+        $totalCount = $expenses->count();
+        $categoryCount = $expenses->pluck('expense_category_id')->unique()->count();
+        $avgPerCategory = $categoryCount > 0 ? $totalAmount / $categoryCount : 0;
+
+        // Get days with expenses and their totals
+        $daysWithExpenses = [];
+        foreach ($expensesByDate as $date => $dayExpenses) {
+            if ($date) {
+                $day = Carbon::parse($date)->day;
+                $daysWithExpenses[$day] = [
+                    'expenses' => $dayExpenses,
+                    'total' => $dayExpenses->sum('amount'),
+                    'count' => $dayExpenses->count()
+                ];
+            }
+        }
+
+        return view('panel.expenses.monthly', compact(
+            'expenses',
+            'expensesByDate',
+            'categoriesWithColors',
+            'year',
+            'month',
+            'monthName',
+            'totalAmount',
+            'totalCount',
+            'categoryCount',
+            'avgPerCategory',
+            'daysInMonth',
+            'startDayOfWeek',
+            'daysWithExpenses',
+            'firstDayOfMonth'
+        ));
     }
 
     /**
@@ -248,5 +339,30 @@ class ExpenseController extends Controller
 
         return redirect()->route('expenses.index', ['year' => $year])
             ->with('success', 'Matumizi yamefutwa kikamilifu');
+    }
+
+    /**
+     * Display expense categories
+     */
+    public function categories()
+    {
+        $categories = ExpenseCategory::orderBy('name')->get();
+        return view('panel.expenses.categories', compact('categories'));
+    }
+
+    /**
+     * Store a new expense category
+     */
+    public function storeCategory(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:expense_categories,name',
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        ExpenseCategory::create($validated);
+
+        return redirect()->route('expenses.categories')
+            ->with('success', 'Kategoria imeongezwa kikamilifu!');
     }
 }

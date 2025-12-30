@@ -36,7 +36,7 @@ class RequestController extends Controller
         }
 
         // Get requests ordered by date descending
-        $requests = $query->orderBy('requested_date', 'desc')->paginate(20);
+        $requests = $query->orderBy('requested_date', 'desc')->paginate(7);
 
         // Get statistics
         $stats = [
@@ -177,7 +177,10 @@ class RequestController extends Controller
             'Watoto'
         ];
 
-        return view('panel.requests.edit', compact('requestModel', 'departments'));
+        return view('panel.requests.edit', [
+            'request' => $requestModel,
+            'departments' => $departments
+        ]);
     }
 
     /**

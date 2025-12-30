@@ -29,7 +29,7 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center justify-between">
                 <div>
@@ -50,6 +50,18 @@
                 </div>
                 <div class="h-12 w-12 bg-green-100 rounded-xl flex items-center justify-center">
                     <i class="fas fa-user-check text-xl text-green-600"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Wanaosubiri Idhini</p>
+                    <p class="text-2xl font-bold text-yellow-600">{{ $stats['inactive'] ?? 0 }}</p>
+                </div>
+                <div class="h-12 w-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-user-clock text-xl text-yellow-600"></i>
                 </div>
             </div>
         </div>
@@ -339,8 +351,8 @@
                                     <i class="fas fa-check-circle mr-1"></i>Hai
                                 </span>
                             @else
-                                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-red-100 text-red-800 whitespace-nowrap">
-                                    <i class="fas fa-times-circle mr-1"></i>Si Hai
+                                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 whitespace-nowrap">
+                                    <i class="fas fa-clock mr-1"></i>Inasubiri Idhini
                                 </span>
                             @endif
                         </td>

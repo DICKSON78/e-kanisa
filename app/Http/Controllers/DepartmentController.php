@@ -12,7 +12,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = Department::withCount('members', 'users')->orderBy('name')->paginate(20);
+        $departments = Department::withCount('members', 'users')->orderBy('name')->paginate(7);
         return view('panel.departments.index', compact('departments'));
     }
 
@@ -54,8 +54,8 @@ class DepartmentController extends Controller
     public function show(string $id)
     {
         $department = Department::withCount('members', 'users')->findOrFail($id);
-        $members = $department->members()->with('user')->paginate(20);
-        $users = $department->users()->with('role')->paginate(20);
+        $members = $department->members()->with('user')->paginate(7);
+        $users = $department->users()->with('role')->paginate(7);
 
         return view('panel.departments.show', compact('department', 'members', 'users'));
     }

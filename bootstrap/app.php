@@ -14,6 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
             'permission' => \App\Http\Middleware\CheckPermission::class,
+            'nocache' => \App\Http\Middleware\NoCacheMiddleware::class,
+        ]);
+
+        // Add no-cache middleware to all web routes
+        $middleware->web(append: [
+            \App\Http\Middleware\NoCacheMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

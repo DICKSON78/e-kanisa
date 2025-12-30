@@ -55,6 +55,11 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::prefix('panel')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        // Session check endpoint for AJAX calls
+        Route::get('/check-session', function () {
+            return response()->json(['authenticated' => true]);
+        })->name('check.session');
     });
 
     // Member Portal Routes
@@ -103,7 +108,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export-excel/kiwanja', [ExportExcelController::class, 'exportKiwanja'])->name('export.excel.kiwanja');
         Route::post('/export-excel/matumizi', [ExportExcelController::class, 'exportMatumizi'])->name('export.excel.matumizi');
         // Add this route for bulk delete
-Route::delete('/panel/export-excel/bulk-delete', [ExportExcelController::class, 'bulkDelete'])->name('export.excel.bulk-delete');
+        Route::delete('/export-excel/bulk-delete', [ExportExcelController::class, 'bulkDelete'])->name('export.excel.bulk-delete');
         Route::delete('/export-excel/delete/{id}', [ExportExcelController::class, 'deleteExport'])->name('export.excel.delete');
         Route::post('/export-excel/custom', [ExportExcelController::class, 'customExport'])->name('export.excel.custom');
     });
@@ -178,6 +183,7 @@ Route::delete('/panel/export-excel/bulk-delete', [ExportExcelController::class, 
     // Expenses Management
     Route::prefix('panel')->group(function () {
         Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+        Route::get('/expenses/monthly/{year}/{month}', [ExpenseController::class, 'monthlyExpenses'])->name('expenses.monthly');
         Route::get('/expenses/create', [ExpenseController::class, 'create'])->name('expenses.create');
         Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
         Route::get('/expenses/{id}', [ExpenseController::class, 'show'])->name('expenses.show');
@@ -233,6 +239,8 @@ Route::delete('/panel/export-excel/bulk-delete', [ExportExcelController::class, 
     Route::prefix('panel')->group(function () {
         Route::get('/pastoral-services', [PastoralServiceController::class, 'index'])->name('pastoral-services.index');
         Route::get('/pastoral-services/create', [PastoralServiceController::class, 'create'])->name('pastoral-services.create');
+        Route::get('/pastoral-services/report', [PastoralServiceController::class, 'report'])->name('pastoral-services.report');
+        Route::get('/pastoral-services/export', [PastoralServiceController::class, 'export'])->name('pastoral-services.export');
         Route::post('/pastoral-services', [PastoralServiceController::class, 'store'])->name('pastoral-services.store');
         Route::get('/pastoral-services/{id}', [PastoralServiceController::class, 'show'])->name('pastoral-services.show');
         Route::get('/pastoral-services/{id}/edit', [PastoralServiceController::class, 'edit'])->name('pastoral-services.edit');

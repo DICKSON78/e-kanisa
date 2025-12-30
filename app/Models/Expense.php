@@ -13,6 +13,7 @@ class Expense extends Model
         'expense_category_id',
         'year',
         'month',
+        'expense_date',
         'amount',
         'notes',
         'receipt_number',
@@ -24,6 +25,7 @@ class Expense extends Model
     protected $casts = [
         'year' => 'integer',
         'month' => 'integer',
+        'expense_date' => 'date',
         'amount' => 'decimal:2',
     ];
 

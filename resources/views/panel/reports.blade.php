@@ -498,7 +498,7 @@
 </div>
 
 <!-- Bulk Delete Modal -->
-<div id="bulkDeleteModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+<div id="bulkDeleteModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
         <div class="sticky top-0 bg-white px-6 py-5 rounded-t-xl border-b border-gray-200 z-10">
             <div class="flex items-center justify-between">
@@ -541,7 +541,7 @@
 </div>
 
 <!-- Loading Modal -->
-<div id="loadingModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+<div id="loadingModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300">
         <div class="p-6 text-center">
             <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-primary-100 flex items-center justify-center">

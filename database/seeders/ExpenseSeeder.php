@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Expense;
+use App\Models\User;
 use Carbon\Carbon;
 
 class ExpenseSeeder extends Seeder
@@ -15,6 +16,11 @@ class ExpenseSeeder extends Seeder
     {
         $currentYear = Carbon::now()->year;
         $currentMonth = Carbon::now()->month;
+
+        // Get admin user dynamically
+        $year = date('Y');
+        $adminUser = User::where('email', "KKKT-AGAPE-{$year}-0001@kkkt-agape.org")->first();
+        $createdBy = $adminUser ? $adminUser->id : 1;
 
         $expenses = [];
 
@@ -35,7 +41,7 @@ class ExpenseSeeder extends Seeder
                 'notes' => 'Posho ya Mwinjilisti - ' . $date->translatedFormat('F Y'),
                 'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '001',
                 'payee' => 'Mwinjilisti Petro Mwakasege',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => $date,
                 'updated_at' => $date,
             ];
@@ -49,7 +55,7 @@ class ExpenseSeeder extends Seeder
                 'notes' => 'Posho ya Mhudumu - ' . $date->translatedFormat('F Y'),
                 'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '002',
                 'payee' => 'Mhudumu Josephat Kisamo',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => $date,
                 'updated_at' => $date,
             ];
@@ -63,7 +69,7 @@ class ExpenseSeeder extends Seeder
                 'notes' => 'Posho ya Wahubiri - ' . $date->translatedFormat('F Y'),
                 'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '003',
                 'payee' => 'Wahubiri Wasaidizi',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => $date,
                 'updated_at' => $date,
             ];
@@ -77,7 +83,7 @@ class ExpenseSeeder extends Seeder
                 'notes' => 'Posho ya Mlinzi - ' . $date->translatedFormat('F Y'),
                 'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '004',
                 'payee' => 'Mlinzi Bakari Mwinyipembe',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => $date,
                 'updated_at' => $date,
             ];
@@ -91,7 +97,7 @@ class ExpenseSeeder extends Seeder
                 'notes' => 'Posho ya Mwalimu Kanisa Kuu - ' . $date->translatedFormat('F Y'),
                 'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '005',
                 'payee' => 'Mwalimu Sarah Mwakawago',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => $date,
                 'updated_at' => $date,
             ];
@@ -105,7 +111,7 @@ class ExpenseSeeder extends Seeder
                 'notes' => 'Posho ya Mwalimu Kanisa Vijana - ' . $date->translatedFormat('F Y'),
                 'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '006',
                 'payee' => 'Mwalimu Emmanuel Lyimo',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => $date,
                 'updated_at' => $date,
             ];
@@ -119,7 +125,7 @@ class ExpenseSeeder extends Seeder
                 'notes' => 'Posho ya Store Keeper - ' . $date->translatedFormat('F Y'),
                 'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '007',
                 'payee' => 'Store Keeper Grace Mushi',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => $date,
                 'updated_at' => $date,
             ];
@@ -133,7 +139,7 @@ class ExpenseSeeder extends Seeder
                 'notes' => 'Malipo ya Umeme - ' . $date->translatedFormat('F Y'),
                 'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '008',
                 'payee' => 'TANESCO',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => $date,
                 'updated_at' => $date,
             ];
@@ -147,7 +153,7 @@ class ExpenseSeeder extends Seeder
                 'notes' => 'Maji, usafi na chakula - ' . $date->translatedFormat('F Y'),
                 'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '009',
                 'payee' => 'Maduka Mbalimbali',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => $date,
                 'updated_at' => $date,
             ];
@@ -162,7 +168,7 @@ class ExpenseSeeder extends Seeder
                 'notes' => '8% ya mapato yanayotolewa kwa Jimbo - ' . $date->translatedFormat('F Y'),
                 'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '010',
                 'payee' => 'Jimbo la Magharibi',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => $date,
                 'updated_at' => $date,
             ];
@@ -177,7 +183,7 @@ class ExpenseSeeder extends Seeder
                     'notes' => 'Ununuzi wa vifaa vya ofisi - ' . $date->translatedFormat('F Y'),
                     'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '011',
                     'payee' => 'Stationers Ltd',
-                    'created_by' => 1,
+                    'created_by' => $createdBy,
                     'created_at' => $date,
                     'updated_at' => $date,
                 ];
@@ -193,7 +199,7 @@ class ExpenseSeeder extends Seeder
                 'notes' => 'Nauli za Bible Study - ' . $date->translatedFormat('F Y'),
                 'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '012',
                 'payee' => 'Nauli Mbalimbali',
-                'created_by' => 1,
+                'created_by' => $createdBy,
                 'created_at' => $date,
                 'updated_at' => $date,
             ];
@@ -208,7 +214,7 @@ class ExpenseSeeder extends Seeder
                     'notes' => 'Huduma za Kichungaji - Roho, Safari, n.k - ' . $date->translatedFormat('F Y'),
                     'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '013',
                     'payee' => 'Mchungaji Msaidizi',
-                    'created_by' => 1,
+                    'created_by' => $createdBy,
                     'created_at' => $date,
                     'updated_at' => $date,
                 ];
@@ -224,7 +230,7 @@ class ExpenseSeeder extends Seeder
                     'notes' => 'Msaada kwa wahitaji - ' . $date->translatedFormat('F Y'),
                     'receipt_number' => 'EXP' . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . '014',
                     'payee' => 'Wanachama Wahitaji',
-                    'created_by' => 1,
+                    'created_by' => $createdBy,
                     'created_at' => $date,
                     'updated_at' => $date,
                 ];
@@ -243,7 +249,7 @@ class ExpenseSeeder extends Seeder
             'notes' => 'Ukarabati wa paa la kanisa',
             'receipt_number' => 'EXP' . $constructionDate->format('Ym') . 'CONST001',
             'payee' => 'Kampuni ya Ujenzi ABC',
-            'created_by' => 1,
+            'created_by' => $createdBy,
             'created_at' => $constructionDate,
             'updated_at' => $constructionDate,
         ];
@@ -258,7 +264,7 @@ class ExpenseSeeder extends Seeder
             'notes' => 'Semina ya Viongozi wa Kanisa',
             'receipt_number' => 'EXP' . $seminaDate->format('Ym') . 'SEM001',
             'payee' => 'Hotel XYZ',
-            'created_by' => 1,
+            'created_by' => $createdBy,
             'created_at' => $seminaDate,
             'updated_at' => $seminaDate,
         ];
@@ -273,7 +279,7 @@ class ExpenseSeeder extends Seeder
             'notes' => 'Kanzu mpya za kwaya kuu',
             'receipt_number' => 'EXP' . $kwayaDate->format('Ym') . 'KWA001',
             'payee' => 'Tailors Group',
-            'created_by' => 1,
+            'created_by' => $createdBy,
             'created_at' => $kwayaDate,
             'updated_at' => $kwayaDate,
         ];
@@ -288,7 +294,7 @@ class ExpenseSeeder extends Seeder
             'notes' => 'Tamasha la Vijana - Chakula, Nauli, Shughuli',
             'receipt_number' => 'EXP' . $tamashaDate->format('Ym') . 'VIJ001',
             'payee' => 'Kamati ya Vijana',
-            'created_by' => 1,
+            'created_by' => $createdBy,
             'created_at' => $tamashaDate,
             'updated_at' => $tamashaDate,
         ];
