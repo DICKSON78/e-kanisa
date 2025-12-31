@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Member;
 use App\Models\Income;
 use App\Models\Expense;
@@ -14,6 +15,11 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        // Redirect regular members to their portal - they cannot access the main dashboard
+        if (Auth::user()->isMwanachama()) {
+            return redirect()->route('member.portal');
+        }
+
         // Member statistics
         $totalMembers = Member::count();
         $activeMembers = Member::where('is_active', true)->count();

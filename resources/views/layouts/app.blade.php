@@ -1113,12 +1113,14 @@
 
             <!-- Navigation -->
             <nav class="sidebar-nav">
-                <!-- Dashboard - Visible to All -->
+                <!-- Dashboard - Visible to Mchungaji & Muhasibu ONLY -->
+                @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
                 <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                     <i class="fas fa-home"></i>
                     <span class="sidebar-text">Dashboard</span>
                     <div class="sidebar-tooltip">Dashboard</div>
                 </a>
+                @endif
 
                 <!-- Member Portal - Visible to All -->
                 <a href="{{ route('member.portal') }}" class="sidebar-link {{ request()->routeIs('member.*') ? 'active' : '' }}">
@@ -1127,64 +1129,64 @@
                     <div class="sidebar-tooltip">Portal Yangu</div>
                 </a>
 
-                <!-- Members - Visible to Admin & Pastor -->
+                <!-- SECTION FOR MCHUNGAJI AND MUHASIBU ONLY -->
                 @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
-                <a href="{{ route('members.index') }}" class="sidebar-link {{ request()->routeIs('members.*') ? 'active' : '' }}">
-                    <i class="fas fa-users"></i>
-                    <span class="sidebar-text">Waumini</span>
-                    <div class="sidebar-tooltip">Waumini</div>
-                </a>
+                    <!-- Members - Only for Admin & Pastor -->
+                    <a href="{{ route('members.index') }}" class="sidebar-link {{ request()->routeIs('members.*') ? 'active' : '' }}">
+                        <i class="fas fa-users"></i>
+                        <span class="sidebar-text">Waumini</span>
+                        <div class="sidebar-tooltip">Waumini</div>
+                    </a>
+
+                    <!-- Financial Sections - Only for Admin & Accountant -->
+                    <a href="{{ route('income.index') }}" class="sidebar-link {{ request()->routeIs('income.*') ? 'active' : '' }}">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <span class="sidebar-text">Mapato</span>
+                        <div class="sidebar-tooltip">Mapato</div>
+                    </a>
+                    <a href="{{ route('expenses.index') }}" class="sidebar-link {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
+                        <i class="fas fa-receipt"></i>
+                        <span class="sidebar-text">Matumizi</span>
+                        <div class="sidebar-tooltip">Matumizi</div>
+                    </a>
+                    <a href="{{ route('offerings.index') }}" class="sidebar-link {{ request()->routeIs('offerings.*') ? 'active' : '' }}">
+                        <i class="fas fa-gift"></i>
+                        <span class="sidebar-text">Sadaka</span>
+                        <div class="sidebar-tooltip">Sadaka</div>
+                    </a>
+                    <a href="{{ route('requests.index') }}" class="sidebar-link {{ request()->routeIs('requests.*') ? 'active' : '' }}">
+                        <i class="fas fa-paper-plane"></i>
+                        <span class="sidebar-text">Maombi ya Fedha</span>
+                        <div class="sidebar-tooltip">Maombi ya Fedha</div>
+                    </a>
                 @endif
 
-                <!-- Financial Sections - Visible to Admin & Accountant -->
-                @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
-                <a href="{{ route('income.index') }}" class="sidebar-link {{ request()->routeIs('income.*') ? 'active' : '' }}">
-                    <i class="fas fa-hand-holding-usd"></i>
-                    <span class="sidebar-text">Mapato</span>
-                    <div class="sidebar-tooltip">Mapato</div>
-                </a>
-                <a href="{{ route('expenses.index') }}" class="sidebar-link {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
-                    <i class="fas fa-receipt"></i>
-                    <span class="sidebar-text">Matumizi</span>
-                    <div class="sidebar-tooltip">Matumizi</div>
-                </a>
-                <a href="{{ route('offerings.index') }}" class="sidebar-link {{ request()->routeIs('offerings.*') ? 'active' : '' }}">
-                    <i class="fas fa-gift"></i>
-                    <span class="sidebar-text">Sadaka</span>
-                    <div class="sidebar-tooltip">Sadaka</div>
-                </a>
-                <a href="{{ route('requests.index') }}" class="sidebar-link {{ request()->routeIs('requests.*') ? 'active' : '' }}">
-                    <i class="fas fa-paper-plane"></i>
-                    <span class="sidebar-text">Maombi ya Fedha</span>
-
-                    <div class="sidebar-tooltip">Maombi ya Fedha</div>
-                </a>
-                @endif
-
-                <!-- Pastoral Services - Visible to All (Members see only their own) -->
+                <!-- SECTION FOR ALL USERS (MWANACHAMA, MCHUNGAJI, MUHASIBU) -->
+                <!-- Pastoral Services - Visible to All -->
                 <a href="{{ route('pastoral-services.index') }}" class="sidebar-link {{ request()->routeIs('pastoral-services.*') ? 'active' : '' }}">
                     <i class="fas fa-praying-hands"></i>
                     <span class="sidebar-text">Huduma za Kichungaji</span>
                     <div class="sidebar-tooltip">Huduma za Kichungaji</div>
                 </a>
 
-                <!-- Events - Visible to All (Members see only public events) -->
+                <!-- Events - Visible to All -->
                 <a href="{{ route('events.index') }}" class="sidebar-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
                     <i class="fas fa-calendar-alt"></i>
                     <span class="sidebar-text">Matukio</span>
                     <div class="sidebar-tooltip">Matukio</div>
                 </a>
 
-                <!-- Reports - Visible to Admin & Accountant Only -->
+                <!-- SECTION FOR MCHUNGAJI AND MUHASIBU ONLY -->
                 @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
-                <a href="{{ route('export.excel') }}" class="sidebar-link {{ request()->routeIs('export.excel*') || request()->routeIs('reports.*') ? 'active' : '' }}">
-                    <i class="fas fa-chart-bar"></i>
-                    <span class="sidebar-text">Ripoti</span>
-                    <div class="sidebar-tooltip">Ripoti</div>
-                </a>
+                    <!-- Reports - Only for Admin & Accountant -->
+                    <a href="{{ route('export.excel') }}" class="sidebar-link {{ request()->routeIs('export.excel*') || request()->routeIs('reports.*') ? 'active' : '' }}">
+                        <i class="fas fa-chart-bar"></i>
+                        <span class="sidebar-text">Ripoti</span>
+                        <div class="sidebar-tooltip">Ripoti</div>
+                    </a>
                 @endif
 
-                <!-- Settings - Visible to All (Members see only their settings) -->
+                <!-- Settings - Visible to All -->
                 <a href="{{ route('settings.index') }}" class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
                     <i class="fas fa-cog"></i>
                     <span class="sidebar-text">Mipangilio</span>
@@ -1226,7 +1228,12 @@
                             @php
                                 $pendingRequests = \App\Models\Request::where('status', 'Inasubiri')->count();
                                 $pendingPastoral = \App\Models\PastoralService::where('status', 'Inasubiri')->count();
-                                $totalNotifications = $pendingRequests + $pendingPastoral;
+                                // Count pending member registrations (only for admin/mchungaji)
+                                $pendingMembers = 0;
+                                if (Auth::user()->isMchungaji() || Auth::user()->isMhasibu()) {
+                                    $pendingMembers = \App\Models\User::where('is_active', false)->count();
+                                }
+                                $totalNotifications = $pendingRequests + $pendingPastoral + $pendingMembers;
                             @endphp
                             @if($totalNotifications > 0)
                             <span class="notification-badge" id="notificationBadge">{{ $totalNotifications }}</span>
@@ -1269,6 +1276,19 @@
                                             <p class="notification-item-desc">{{ $pendingPastoral }} maombi yanasubiri kuidhinishwa</p>
                                         </div>
                                         <span class="notification-item-badge bg-purple-500">{{ $pendingPastoral }}</span>
+                                    </a>
+                                    @endif
+
+                                    @if($pendingMembers > 0)
+                                    <a href="{{ route('members.index') }}?status=pending" class="notification-item">
+                                        <div class="notification-item-icon bg-green-100">
+                                            <i class="fas fa-user-plus text-green-600"></i>
+                                        </div>
+                                        <div class="notification-item-content">
+                                            <p class="notification-item-title">Usajili Mpya</p>
+                                            <p class="notification-item-desc">{{ $pendingMembers }} wanachama wanasubiri kuidhinishwa</p>
+                                        </div>
+                                        <span class="notification-item-badge bg-green-500">{{ $pendingMembers }}</span>
                                     </a>
                                     @endif
                                 @endif
@@ -1547,28 +1567,159 @@
             updateDateDisplay();
         });
 
-        // Auto-refresh sidebar badge for pending requests
-        function refreshSidebarBadge() {
-            fetch('/api/dashboard-stats')
-                .then(response => response.json())
-                .then(data => {
-                    const badge = document.getElementById('sidebarRequestsBadge');
-                    if (badge && data.pending_requests !== undefined) {
-                        badge.textContent = data.pending_requests;
+        // ============================================
+        // REAL-TIME NOTIFICATION UPDATES
+        // ============================================
+        let lastNotificationCount = {{ $totalNotifications }};
+
+        function refreshNotifications() {
+            fetch('/panel/notifications', {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('notificationBadge');
+                const dropdownBody = document.querySelector('.notification-dropdown-body');
+                const countSpan = document.querySelector('.notification-count');
+
+                // Update badge
+                if (data.total > 0) {
+                    if (badge) {
+                        badge.textContent = data.total;
+                        badge.classList.remove('hidden');
+                    } else {
+                        // Create badge if it doesn't exist
+                        const btn = document.getElementById('notificationToggle');
+                        const newBadge = document.createElement('span');
+                        newBadge.className = 'notification-badge';
+                        newBadge.id = 'notificationBadge';
+                        newBadge.textContent = data.total;
+                        btn.appendChild(newBadge);
                     }
-                })
-                .catch(error => {
-                    console.error('Error refreshing sidebar badge:', error);
-                });
+
+                    // Show toast notification if count increased
+                    if (data.total > lastNotificationCount) {
+                        const diff = data.total - lastNotificationCount;
+                        showNotificationToast(diff);
+                    }
+                } else {
+                    if (badge) {
+                        badge.classList.add('hidden');
+                    }
+                }
+
+                // Update count in dropdown header
+                if (countSpan) {
+                    countSpan.textContent = data.total + ' mpya';
+                }
+
+                // Update dropdown body content
+                if (dropdownBody) {
+                    updateNotificationDropdown(data);
+                }
+
+                lastNotificationCount = data.total;
+            })
+            .catch(error => {
+                console.error('Error refreshing notifications:', error);
+            });
         }
 
-        // Refresh badge every 30 seconds
-        setInterval(refreshSidebarBadge, 30000);
+        function updateNotificationDropdown(data) {
+            const dropdownBody = document.querySelector('.notification-dropdown-body');
+            if (!dropdownBody) return;
+
+            let html = '';
+
+            if (data.total === 0) {
+                html = `
+                    <div class="notification-empty">
+                        <i class="fas fa-check-circle text-green-500 text-3xl mb-2"></i>
+                        <p>Hakuna arifa mpya</p>
+                    </div>
+                `;
+            } else {
+                if (data.pending_requests > 0) {
+                    html += `
+                        <a href="{{ route('requests.index') }}" class="notification-item">
+                            <div class="notification-item-icon bg-yellow-100">
+                                <i class="fas fa-paper-plane text-yellow-600"></i>
+                            </div>
+                            <div class="notification-item-content">
+                                <p class="notification-item-title">Maombi ya Fedha</p>
+                                <p class="notification-item-desc">${data.pending_requests} maombi yanasubiri kuidhinishwa</p>
+                            </div>
+                            <span class="notification-item-badge bg-yellow-500">${data.pending_requests}</span>
+                        </a>
+                    `;
+                }
+
+                if (data.pending_pastoral > 0) {
+                    html += `
+                        <a href="{{ route('pastoral-services.index') }}" class="notification-item">
+                            <div class="notification-item-icon bg-purple-100">
+                                <i class="fas fa-praying-hands text-purple-600"></i>
+                            </div>
+                            <div class="notification-item-content">
+                                <p class="notification-item-title">Huduma za Kichungaji</p>
+                                <p class="notification-item-desc">${data.pending_pastoral} maombi yanasubiri kuidhinishwa</p>
+                            </div>
+                            <span class="notification-item-badge bg-purple-500">${data.pending_pastoral}</span>
+                        </a>
+                    `;
+                }
+
+                if (data.pending_members > 0) {
+                    html += `
+                        <a href="{{ route('members.index') }}?status=pending" class="notification-item">
+                            <div class="notification-item-icon bg-green-100">
+                                <i class="fas fa-user-plus text-green-600"></i>
+                            </div>
+                            <div class="notification-item-content">
+                                <p class="notification-item-title">Usajili Mpya</p>
+                                <p class="notification-item-desc">${data.pending_members} wanachama wanasubiri kuidhinishwa</p>
+                            </div>
+                            <span class="notification-item-badge bg-green-500">${data.pending_members}</span>
+                        </a>
+                    `;
+                }
+            }
+
+            dropdownBody.innerHTML = html;
+        }
+
+        function showNotificationToast(count) {
+            const message = count === 1
+                ? 'Una arifa mpya 1'
+                : `Una arifa mpya ${count}`;
+
+            // Use existing notification system
+            if (typeof showNotification === 'function') {
+                showNotification(message, 'info', 'Arifa');
+            }
+
+            // Add visual pulse to bell icon
+            const bellIcon = document.querySelector('#notificationToggle i');
+            if (bellIcon) {
+                bellIcon.classList.add('fa-shake');
+                setTimeout(() => {
+                    bellIcon.classList.remove('fa-shake');
+                }, 1000);
+            }
+        }
+
+        // Refresh notifications every 15 seconds
+        setInterval(refreshNotifications, 15000);
 
         // Also refresh when page becomes visible
         document.addEventListener('visibilitychange', function() {
             if (!document.hidden) {
-                refreshSidebarBadge();
+                refreshNotifications();
             }
         });
 

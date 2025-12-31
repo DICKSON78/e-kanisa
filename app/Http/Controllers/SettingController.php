@@ -22,6 +22,7 @@ class SettingController extends Controller
         $contactSettings = Setting::byGroup('contact')->get()->keyBy('key');
         $financialSettings = Setting::byGroup('financial')->get()->keyBy('key');
         $systemSettings = Setting::byGroup('system')->get()->keyBy('key');
+        
 
         // Get jumuiyas for admin with members count
         $jumuiyas = Jumuiya::with('leader')->withCount('members')->orderBy('name')->get();

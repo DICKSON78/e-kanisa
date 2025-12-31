@@ -54,17 +54,17 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
+        <a href="{{ route('members.index') }}?status=pending" class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md hover:border-yellow-300 transition-all duration-200 block {{ request('status') === 'pending' ? 'ring-2 ring-yellow-400 border-yellow-400' : '' }}">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600 mb-1">Wanaosubiri Idhini</p>
-                    <p class="text-2xl font-bold text-yellow-600">{{ $stats['inactive'] ?? 0 }}</p>
+                    <p class="text-2xl font-bold text-yellow-600">{{ $stats['pending'] ?? 0 }}</p>
                 </div>
                 <div class="h-12 w-12 bg-yellow-100 rounded-xl flex items-center justify-center">
                     <i class="fas fa-user-clock text-xl text-yellow-600"></i>
                 </div>
             </div>
-        </div>
+        </a>
 
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center justify-between">

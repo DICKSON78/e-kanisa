@@ -142,3 +142,5 @@ function closeAddCategoryModal() {
 @endpush
 @endsection
 
+
+

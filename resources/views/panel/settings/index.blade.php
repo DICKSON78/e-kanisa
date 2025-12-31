@@ -9,12 +9,18 @@
     <div class="card bg-white rounded-xl shadow-sm mb-6">
         <div class="border-b border-gray-200">
             <nav class="flex -mb-px overflow-x-auto">
+                @if(!Auth::user()->isMwanachama())
                 <button onclick="switchTab('church')" id="tab-church" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-primary-500 text-primary-600 whitespace-nowrap">
                     <i class="fas fa-church mr-2"></i>Kanisa
                 </button>
                 <button onclick="switchTab('profile')" id="tab-profile" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
                     <i class="fas fa-user mr-2"></i>Wasifu
                 </button>
+                @else
+                <button onclick="switchTab('profile')" id="tab-profile" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-primary-500 text-primary-600 whitespace-nowrap">
+                    <i class="fas fa-user mr-2"></i>Wasifu
+                </button>
+                @endif
                 <button onclick="switchTab('password')" id="tab-password" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
                     <i class="fas fa-key mr-2"></i>Nywila
                 </button>
@@ -26,7 +32,8 @@
             </nav>
         </div>
 
-        <!-- Church Settings Tab -->
+        <!-- Church Settings Tab (hidden for members) -->
+        @if(!Auth::user()->isMwanachama())
         <div id="content-church" class="tab-content p-6">
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Taarifa za Kanisa</h3>
             <form action="{{ route('settings.church.update') }}" method="POST">
@@ -93,9 +100,10 @@
                 </button>
             </form>
         </div>
+        @endif
 
         <!-- Profile Settings Tab -->
-        <div id="content-profile" class="tab-content p-6 hidden">
+        <div id="content-profile" class="tab-content p-6 {{ Auth::user()->isMwanachama() ? '' : 'hidden' }}">
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Wasifu Wako</h3>
             <form action="{{ route('settings.profile.update') }}" method="POST">
                 @csrf

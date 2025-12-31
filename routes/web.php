@@ -60,6 +60,25 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/check-session', function () {
             return response()->json(['authenticated' => true]);
         })->name('check.session');
+
+        // Notifications endpoint for real-time updates
+        Route::get('/notifications', function () {
+            $user = auth()->user();
+            $pendingRequests = \App\Models\Request::where('status', 'Inasubiri')->count();
+            $pendingPastoral = \App\Models\PastoralService::where('status', 'Inasubiri')->count();
+
+            $pendingMembers = 0;
+            if ($user->isMchungaji() || $user->isMhasibu()) {
+                $pendingMembers = \App\Models\User::where('is_active', false)->count();
+            }
+
+            return response()->json([
+                'pending_requests' => $pendingRequests,
+                'pending_pastoral' => $pendingPastoral,
+                'pending_members' => $pendingMembers,
+                'total' => $pendingRequests + $pendingPastoral + $pendingMembers
+            ]);
+        })->name('notifications.count');
     });
 
     // Member Portal Routes

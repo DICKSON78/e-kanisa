@@ -37,13 +37,46 @@ class AuthController extends Controller
 
         $remember = $request->has('remember');
 
-        // Check if input is member number (format: KKKT-AGAPE-YYYY-NNNN)
-        $login = $request->input('email');
-        $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'email';
+        // Get login input
+        $login = trim($request->input('email'));
 
-        // If it looks like a member number, convert to email format
-        if (preg_match('/^KKKT-AGAPE-\d{4}-\d{4}$/', $login)) {
-            $credentials['email'] = $login . '@kkkt-agape.org';
+        // Determine login method and get correct email for authentication
+        if (preg_match('/^KKKT-AGAPE-\d{4}-\d{4}$/i', $login)) {
+            // Input is member number - use it directly as email (new format)
+            // Also check for legacy users with @kkkt-agape.org format
+            $memberNumber = strtoupper($login);
+            $user = User::where('email', $memberNumber)->first();
+
+            if (!$user) {
+                // Check legacy format
+                $user = User::where('email', $memberNumber . '@kkkt-agape.org')->first();
+            }
+
+            if (!$user) {
+                // Find via member relationship
+                $member = Member::where('member_number', $memberNumber)->first();
+                if ($member && $member->user) {
+                    $user = $member->user;
+                }
+            }
+
+            if ($user) {
+                $credentials['email'] = $user->email;
+            } else {
+                $credentials['email'] = $memberNumber; // Will fail but with correct error
+            }
+        } elseif (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            // Input is email - check if it's in User table or Member table
+            $user = User::where('email', $login)->first();
+
+            if (!$user) {
+                // Check if email is in Member table
+                $member = Member::where('email', $login)->first();
+                if ($member && $member->user) {
+                    $credentials['email'] = $member->user->email;
+                }
+            }
+            // If found directly in User table, credentials['email'] stays as is
         }
 
         if (Auth::attempt($credentials, $remember)) {
@@ -284,8 +317,9 @@ class AuthController extends Controller
         // Get or create member role
         $memberRole = Role::where('name', 'Mwanachama')->first();
 
-        // Generate email for login if not provided
-        $loginEmail = $validated['email'] ?? $memberNumber . '@kkkt-agape.org';
+        // Use member number as login identifier (stored in email field)
+        // Real email is stored only in member table
+        $loginEmail = $memberNumber;
 
         // Auto-generate password from last name (lowercase)
         $autoPassword = strtolower(trim($validated['last_name']));
@@ -293,7 +327,7 @@ class AuthController extends Controller
         // Create user account (inactive until approved)
         $user = User::create([
             'name' => trim($validated['first_name'] . ' ' . ($validated['middle_name'] ?? '') . ' ' . $validated['last_name']),
-            'email' => $loginEmail,
+            'email' => $loginEmail, // Member number as login identifier
             'password' => Hash::make($autoPassword),
             'role_id' => $memberRole ? $memberRole->id : null,
             'is_active' => false, // Inactive until admin approves
@@ -332,11 +366,16 @@ class AuthController extends Controller
             'user_id' => $user->id,
         ]);
 
+        $loginInfo = 'Unaweza kuingia kwa kutumia namba yako ya kadi: ' . $memberNumber;
+        if (!empty($validated['email'])) {
+            $loginInfo .= ' au barua pepe yako: ' . $validated['email'];
+        }
+
         return redirect()->route('login')->with('success',
             'Usajili umefanikiwa! Namba yako ya muumini ni: ' . $memberNumber . '. ' .
             'Nenosiri lako ni: ' . $autoPassword . ' (jina lako la ukoo kwa herufi ndogo). ' .
-            'MUHIMU: Akaunti yako bado haijaidhinishwa. Tafadhali subiri msimamizi wa kanisa aidhinishe akaunti yako kabla ya kuweza kuingia kwenye mfumo. ' .
-            'Utapokea taarifa wakati akaunti yako itakapoidhinishwa.'
+            $loginInfo . '. ' .
+            'MUHIMU: Akaunti yako bado haijaidhinishwa. Tafadhali subiri msimamizi wa kanisa aidhinishe akaunti yako kabla ya kuweza kuingia kwenye mfumo.'
         );
     }
 }

@@ -93,7 +93,8 @@
         </div>
     </div>
 
-    <!-- Filter Form -->
+    <!-- Filter Form (hidden for members) -->
+    @if(!Auth::user()->isMwanachama())
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
         <div class="mb-4">
             <h3 class="text-lg font-semibold text-gray-900 flex items-center">
@@ -151,6 +152,7 @@
             </div>
         </form>
     </div>
+    @endif
 
     <!-- Services Table -->
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">

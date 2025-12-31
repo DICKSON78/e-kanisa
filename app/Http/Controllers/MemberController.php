@@ -83,6 +83,11 @@ class MemberController extends Controller
             $query->where('is_active', $request->is_active == '1');
         }
 
+        // Filter by pending status (for notification link)
+        if ($request->get('status') === 'pending') {
+            $query->where('is_active', false);
+        }
+
         // Order by latest
         $members = $query->orderBy('created_at', 'desc')->paginate(7);
 
@@ -91,6 +96,7 @@ class MemberController extends Controller
             'total' => Member::count(),
             'active' => Member::active()->count(),
             'inactive' => Member::where('is_active', false)->count(),
+            'pending' => User::where('is_active', false)->count(),
             'male' => Member::where('gender', 'Mme')->count(),
             'female' => Member::where('gender', 'Mke')->count(),
         ];
