@@ -12,6 +12,7 @@
             <h1 class="text-3xl font-bold text-gray-900">Waumini wa Kanisa</h1>
             <p class="text-gray-600 mt-2">Usimamizi kamili wa orodha ya waumini wote</p>
         </div>
+        @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
         <div class="flex flex-wrap gap-3">
             <a href="{{ route('quick-entry.login') }}" class="text-white px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700" target="_blank">
                 <i class="fas fa-qrcode"></i>
@@ -26,6 +27,7 @@
                 <span class="font-medium">Sajili Muumini</span>
             </a>
         </div>
+        @endif
     </div>
 
     <!-- Stats Cards -->
@@ -365,6 +367,7 @@
                                    title="Angalia Maelezo">
                                     <i class="fas fa-eye text-sm"></i>
                                 </a>
+                                @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
                                 <a href="{{ route('members.edit', $member->id) }}"
                                    class="h-8 w-8 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center hover:bg-primary-200 transition-all duration-200"
                                    title="Hariri">
@@ -403,6 +406,7 @@
                                     @csrf
                                     @method('DELETE')
                                 </form>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -413,10 +417,12 @@
                                 <i class="fas fa-users text-gray-400 text-2xl"></i>
                             </div>
                             <h3 class="text-lg font-medium text-gray-900 mb-2">Hakuna waumini waliopatikana</h3>
-                            <p class="text-gray-500 mb-6">Hakuna waumini wanaolingana na vichujio vyako.</p>
+                            <p class="text-gray-500 {{ Auth::user()->isMchungaji() || Auth::user()->isMhasibu() ? 'mb-6' : '' }}">Hakuna waumini wanaolingana na vichujio vyako.</p>
+                            @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
                             <a href="{{ route('members.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200">
                                 <i class="fas fa-user-plus mr-2"></i> Sajili Muumini Mpya
                             </a>
+                            @endif
                         </td>
                     </tr>
                     @endforelse

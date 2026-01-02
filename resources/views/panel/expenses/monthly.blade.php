@@ -93,7 +93,8 @@
                 <i class="fas fa-chevron-right text-sm"></i>
             </a>
 
-            <!-- Add Expense Button -->
+            <!-- Add Expense Button (Admin only) -->
+            @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
             <a href="{{ route('expenses.create', ['year' => $year, 'month' => $month]) }}"
                class="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white border border-primary-600
                       rounded-lg hover:bg-primary-700 hover:border-primary-700 transition-all duration-200
@@ -101,6 +102,7 @@
                 <i class="fas fa-plus"></i>
                 <span class="font-medium">Ongeza Matumizi</span>
             </a>
+            @endif
         </div>
     </div>
 
@@ -336,7 +338,8 @@
                                     </div>
                                 </div>
 
-                                <!-- Tooltip Footer -->
+                                <!-- Tooltip Footer (Admin only) -->
+                                @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
                                 <div class="p-3 bg-gray-50 border-t border-gray-100">
                                     <a href="{{ route('expenses.create', ['year' => $year, 'month' => $month, 'day' => $day]) }}"
                                        class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors">
@@ -344,6 +347,7 @@
                                         Ongeza Matumizi
                                     </a>
                                 </div>
+                                @endif
                             </div>
                         @else
                             <!-- Empty day state -->
@@ -401,11 +405,15 @@
             <i class="fas fa-calendar-times text-gray-400 text-3xl"></i>
         </div>
         <h3 class="text-xl font-bold text-gray-900 mb-2">Hakuna Matumizi Yaliyopatikana</h3>
+        @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
         <p class="text-gray-500 mb-6 max-w-md mx-auto">Hakuna matumizi yaliyorekodiwa kwa mwezi wa {{ $monthName }} {{ $year }}. Bofya kitufe hapa chini kuongeza matumizi ya kwanza.</p>
         <a href="{{ route('expenses.create', ['year' => $year, 'month' => $month]) }}"
            class="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl">
             <i class="fas fa-plus mr-2"></i> Ongeza Matumizi ya Kwanza
         </a>
+        @else
+        <p class="text-gray-500 max-w-md mx-auto">Hakuna matumizi yaliyorekodiwa kwa mwezi wa {{ $monthName }} {{ $year }}.</p>
+        @endif
     </div>
     @endif
 

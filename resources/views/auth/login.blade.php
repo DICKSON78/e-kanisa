@@ -203,8 +203,11 @@
                         <i class="fas fa-lock text-gray-400"></i>
                     </div>
                     <input id="password" name="password" type="password" required
-                           class="pl-10 input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none transition bg-white text-gray-800"
+                           class="pl-10 pr-10 input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none transition bg-white text-gray-800"
                            placeholder="••••••••">
+                    <button type="button" onclick="togglePassword('password')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-eye" id="password_icon"></i>
+                    </button>
                 </div>
             </div>
 
@@ -445,6 +448,22 @@
             messageEl.textContent = message;
 
             openModal('loginAlertModal');
+        }
+
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + '_icon');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
         }
 
         // Auto-focus on email input

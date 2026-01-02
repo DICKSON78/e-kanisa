@@ -12,6 +12,7 @@
             <h1 class="text-3xl font-bold text-gray-900">Matumizi ya Kanisa</h1>
             <p class="text-gray-600 mt-2">Usimamizi kamili wa rekodi za matumizi ya kanisa</p>
         </div>
+        @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
         <div class="flex flex-wrap gap-3">
             <button onclick="exportMatumizi()" class="text-white px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700">
                 <i class="fas fa-file-excel"></i>
@@ -22,6 +23,7 @@
                 <span class="font-medium">Ongeza Matumizi</span>
             </a>
         </div>
+        @endif
     </div>
 
     <!-- Stats Cards -->
@@ -124,12 +126,14 @@
                     </span>
                 </h3>
             </div>
+            @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
             <div class="mt-3 sm:mt-0">
                 <div class="flex items-center gap-2 text-sm text-gray-600">
                     <i class="fas fa-mouse-pointer text-primary-500"></i>
                     <span>Bofya kiasi kuhariri</span>
                 </div>
             </div>
+            @endif
         </div>
 
         <!-- Table -->

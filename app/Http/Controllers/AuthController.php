@@ -329,6 +329,7 @@ class AuthController extends Controller
             'name' => trim($validated['first_name'] . ' ' . ($validated['middle_name'] ?? '') . ' ' . $validated['last_name']),
             'email' => $loginEmail, // Member number as login identifier
             'password' => Hash::make($autoPassword),
+            'password_changed' => false, // Default password - user must change it
             'role_id' => $memberRole ? $memberRole->id : null,
             'is_active' => false, // Inactive until admin approves
         ]);

@@ -10,6 +10,45 @@
     <meta http-equiv="Expires" content="0">
     <title>@yield('title', 'Mfumo wa Kanisa')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/kkkt_logo.png') }}">
+
+    <!-- CRITICAL: Prevent FOUC - Hide page until CSS loads -->
+    <style id="critical-css">
+        /* Hide everything until CSS is ready */
+        html { visibility: hidden; opacity: 0; }
+        html.css-ready { visibility: visible; opacity: 1; transition: opacity 0.15s ease; }
+
+        /* Critical layout - ensure sidebar and content don't overlap */
+        .sidebar {
+            position: fixed !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 280px !important;
+            height: 100vh !important;
+            z-index: 1000 !important;
+            background: linear-gradient(180deg, #360958 0%, #2a0745 50%, #1f0533 100%) !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .main-content {
+            margin-left: 280px !important;
+            width: calc(100% - 280px) !important;
+            min-height: 100vh !important;
+            background: #f8fafc !important;
+        }
+        /* Collapsed sidebar state */
+        body.sidebar-collapsed-state .sidebar { width: 70px !important; }
+        body.sidebar-collapsed-state .main-content { margin-left: 70px !important; width: calc(100% - 70px) !important; }
+
+        @media (max-width: 1024px) {
+            .sidebar { width: 70px !important; }
+            .main-content { margin-left: 70px !important; width: calc(100% - 70px) !important; }
+        }
+        @media (max-width: 480px) {
+            .sidebar { width: 60px !important; }
+            .main-content { margin-left: 60px !important; width: calc(100% - 60px) !important; }
+        }
+    </style>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -61,14 +100,13 @@
             left: 0;
             top: 0;
             height: 100vh;
-            background: #2a0745;
+            background: linear-gradient(180deg, #360958 0%, #2a0745 50%, #1f0533 100%);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
             display: flex;
             flex-direction: column;
-            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-            overflow-x: hidden;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
         }
 
         /* Scrollbar styling */
@@ -231,29 +269,32 @@
             display: flex;
             align-items: center;
             padding: 1.5rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
             margin-bottom: 1.5rem;
             transition: all 0.3s ease;
+            height: 80px;
+            flex-shrink: 0;
         }
 
         .logo-icon {
-            width: 44px;
-            height: 44px;
-            background: white;
-            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #ffffff 0%, #f3e8ff 100%);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .logo-text {
             margin-left: 1rem;
-            font-size: 1.5rem;
+            font-size: 1.375rem;
             font-weight: 700;
             color: white;
             white-space: nowrap;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         /* Navigation */
@@ -262,6 +303,18 @@
             overflow-y: auto;
             overflow-x: hidden;
             padding: 0;
+            min-height: 0;
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
         }
 
         .sidebar-link {
@@ -275,6 +328,8 @@
             transition: all 0.3s ease;
             position: relative;
             cursor: pointer;
+            height: 48px;
+            flex-shrink: 0;
         }
 
         .sidebar-link:hover {
@@ -362,8 +417,11 @@
         /* User Profile Section */
         .sidebar-user {
             padding: 1.25rem 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
             margin-top: auto;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
+            height: 80px;
+            flex-shrink: 0;
         }
 
         .user-container {
@@ -374,18 +432,19 @@
         .user-avatar {
             width: 44px;
             height: 44px;
-            background: white;
+            background: linear-gradient(135deg, #ffffff 0%, #f3e8ff 100%);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
         }
 
         .user-details {
             margin-left: 1rem;
             flex: 1;
+            min-width: 0;
         }
 
         .user-details p:first-child {
@@ -1090,6 +1149,9 @@
 </head>
 <body class="bg-gray-50">
     <script>
+        // Mark CSS as ready to show page
+        document.documentElement.classList.add('css-ready');
+
         // Apply sidebar state immediately to prevent flash
         (function() {
             if (window.innerWidth > 1024 && localStorage.getItem('sidebarCollapsed') === 'true') {
@@ -1176,6 +1238,19 @@
                     <div class="sidebar-tooltip">Matukio</div>
                 </a>
 
+                <!-- Messages - Visible to All -->
+                @php
+                    $sidebarUnreadMessages = \App\Models\Message::where('receiver_id', Auth::id())->where('is_read', false)->count();
+                @endphp
+                <a href="{{ route('messages.index') }}" class="sidebar-link {{ request()->routeIs('messages.*') ? 'active' : '' }}">
+                    <i class="fas fa-comments"></i>
+                    <span class="sidebar-text">Ujumbe</span>
+                    @if($sidebarUnreadMessages > 0)
+                        <span class="request-badge">{{ $sidebarUnreadMessages }}</span>
+                    @endif
+                    <div class="sidebar-tooltip">Ujumbe</div>
+                </a>
+
                 <!-- SECTION FOR MCHUNGAJI AND MUHASIBU ONLY -->
                 @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
                     <!-- Reports - Only for Admin & Accountant -->
@@ -1201,7 +1276,8 @@
                         <i class="fas fa-user text-primary-500"></i>
                     </div>
                     <div class="user-details">
-                        <h2 class="text-lg font-semibold">{{ Auth::user()->role->name ?? 'Muumini' }}</h2>
+                        <p style="font-size: 0.9375rem; font-weight: 600; color: white; margin-bottom: 0.125rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">{{ Auth::user()->name }}</p>
+                        <p style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.7);">{{ Auth::user()->role->name ?? 'Muumini' }}</p>
                     </div>
                 </div>
             </div>
@@ -1221,19 +1297,54 @@
                     </div>
                 </div>
                 <div class="header-right">
+                    <!-- Messages Button -->
+                    <a href="{{ route('messages.index') }}" class="notification-btn" aria-label="Ujumbe" title="Ujumbe">
+                        <i class="fas fa-comment-dots"></i>
+                        @php
+                            $headerUnreadMessages = \App\Models\Message::where('receiver_id', Auth::id())->where('is_read', false)->count();
+                        @endphp
+                        @if($headerUnreadMessages > 0)
+                        <span class="notification-badge" style="background: linear-gradient(135deg, #360958, #8a2be2);">{{ $headerUnreadMessages }}</span>
+                        @endif
+                    </a>
+
                     <!-- Notification Dropdown -->
                     <div class="relative" id="notificationWrapper">
                         <button class="notification-btn" id="notificationToggle" aria-label="Notifications">
                             <i class="fas fa-bell"></i>
                             @php
-                                $pendingRequests = \App\Models\Request::where('status', 'Inasubiri')->count();
-                                $pendingPastoral = \App\Models\PastoralService::where('status', 'Inasubiri')->count();
-                                // Count pending member registrations (only for admin/mchungaji)
-                                $pendingMembers = 0;
-                                if (Auth::user()->isMchungaji() || Auth::user()->isMhasibu()) {
-                                    $pendingMembers = \App\Models\User::where('is_active', false)->count();
+                                // Check if user needs to change password
+                                $needsPasswordChange = Auth::user()->needsPasswordChange();
+
+                                // Different notifications for members vs admin
+                                if (Auth::user()->isMwanachama()) {
+                                    // Member sees only their pastoral service updates and new events
+                                    $memberPastoral = 0;
+                                    if (Auth::user()->member) {
+                                        $memberPastoral = \App\Models\PastoralService::where('member_id', Auth::user()->member->id)
+                                            ->whereIn('status', ['Imeidhinishwa', 'Imekataliwa', 'Imekamilika'])
+                                            ->where('updated_at', '>=', now()->subDays(7))
+                                            ->count();
+                                    }
+                                    $newEvents = \App\Models\Event::where('is_active', true)
+                                        ->where('created_at', '>=', now()->subDays(7))
+                                        ->where('event_date', '>=', now())
+                                        ->count();
+                                    $pendingRequests = 0;
+                                    $pendingPastoral = $memberPastoral;
+                                    $pendingMembers = 0;
+                                    $totalNotifications = $memberPastoral + $newEvents + ($needsPasswordChange ? 1 : 0);
+                                } else {
+                                    // Admin/Pastor sees all pending items
+                                    $pendingRequests = \App\Models\Request::where('status', 'Inasubiri')->count();
+                                    $pendingPastoral = \App\Models\PastoralService::where('status', 'Inasubiri')->count();
+                                    $pendingMembers = 0;
+                                    $newEvents = 0;
+                                    if (Auth::user()->isMchungaji() || Auth::user()->isMhasibu()) {
+                                        $pendingMembers = \App\Models\User::where('is_active', false)->count();
+                                    }
+                                    $totalNotifications = $pendingRequests + $pendingPastoral + $pendingMembers + ($needsPasswordChange ? 1 : 0);
                                 }
-                                $totalNotifications = $pendingRequests + $pendingPastoral + $pendingMembers;
                             @endphp
                             @if($totalNotifications > 0)
                             <span class="notification-badge" id="notificationBadge">{{ $totalNotifications }}</span>
@@ -1253,48 +1364,96 @@
                                     <p>Hakuna arifa mpya</p>
                                 </div>
                                 @else
-                                    @if($pendingRequests > 0)
-                                    <a href="{{ route('requests.index') }}" class="notification-item">
-                                        <div class="notification-item-icon bg-yellow-100">
-                                            <i class="fas fa-paper-plane text-yellow-600"></i>
+                                    {{-- Password change notification (shown first, for all users with default password) --}}
+                                    @if($needsPasswordChange)
+                                    <a href="{{ route('settings.index') }}?tab=password" class="notification-item">
+                                        <div class="notification-item-icon bg-orange-100">
+                                            <i class="fas fa-key text-orange-600"></i>
                                         </div>
                                         <div class="notification-item-content">
-                                            <p class="notification-item-title">Maombi ya Fedha</p>
-                                            <p class="notification-item-desc">{{ $pendingRequests }} maombi yanasubiri kuidhinishwa</p>
+                                            <p class="notification-item-title">Badilisha Nywila</p>
+                                            <p class="notification-item-desc">Unatumia nywila ya msingi. Badilisha kwa usalama wako.</p>
                                         </div>
-                                        <span class="notification-item-badge bg-yellow-500">{{ $pendingRequests }}</span>
+                                        <span class="notification-item-badge bg-orange-500">!</span>
                                     </a>
                                     @endif
 
-                                    @if($pendingPastoral > 0)
-                                    <a href="{{ route('pastoral-services.index') }}" class="notification-item">
-                                        <div class="notification-item-icon bg-purple-100">
-                                            <i class="fas fa-praying-hands text-purple-600"></i>
-                                        </div>
-                                        <div class="notification-item-content">
-                                            <p class="notification-item-title">Huduma za Kichungaji</p>
-                                            <p class="notification-item-desc">{{ $pendingPastoral }} maombi yanasubiri kuidhinishwa</p>
-                                        </div>
-                                        <span class="notification-item-badge bg-purple-500">{{ $pendingPastoral }}</span>
-                                    </a>
-                                    @endif
+                                    @if(Auth::user()->isMwanachama())
+                                        {{-- Member notifications --}}
+                                        @if($pendingPastoral > 0)
+                                        <a href="{{ route('pastoral-services.index') }}" class="notification-item">
+                                            <div class="notification-item-icon bg-purple-100">
+                                                <i class="fas fa-praying-hands text-purple-600"></i>
+                                            </div>
+                                            <div class="notification-item-content">
+                                                <p class="notification-item-title">Huduma za Kichungaji</p>
+                                                <p class="notification-item-desc">{{ $pendingPastoral }} maombi yako yamepata majibu</p>
+                                            </div>
+                                            <span class="notification-item-badge bg-purple-500">{{ $pendingPastoral }}</span>
+                                        </a>
+                                        @endif
 
-                                    @if($pendingMembers > 0)
-                                    <a href="{{ route('members.index') }}?status=pending" class="notification-item">
-                                        <div class="notification-item-icon bg-green-100">
-                                            <i class="fas fa-user-plus text-green-600"></i>
-                                        </div>
-                                        <div class="notification-item-content">
-                                            <p class="notification-item-title">Usajili Mpya</p>
-                                            <p class="notification-item-desc">{{ $pendingMembers }} wanachama wanasubiri kuidhinishwa</p>
-                                        </div>
-                                        <span class="notification-item-badge bg-green-500">{{ $pendingMembers }}</span>
-                                    </a>
+                                        @if($newEvents > 0)
+                                        <a href="{{ route('events.index') }}" class="notification-item">
+                                            <div class="notification-item-icon bg-blue-100">
+                                                <i class="fas fa-calendar-alt text-blue-600"></i>
+                                            </div>
+                                            <div class="notification-item-content">
+                                                <p class="notification-item-title">Matukio Mapya</p>
+                                                <p class="notification-item-desc">{{ $newEvents }} matukio mapya yameongezwa</p>
+                                            </div>
+                                            <span class="notification-item-badge bg-blue-500">{{ $newEvents }}</span>
+                                        </a>
+                                        @endif
+                                    @else
+                                        {{-- Admin/Pastor notifications --}}
+                                        @if($pendingRequests > 0)
+                                        <a href="{{ route('requests.index') }}" class="notification-item">
+                                            <div class="notification-item-icon bg-yellow-100">
+                                                <i class="fas fa-paper-plane text-yellow-600"></i>
+                                            </div>
+                                            <div class="notification-item-content">
+                                                <p class="notification-item-title">Maombi ya Fedha</p>
+                                                <p class="notification-item-desc">{{ $pendingRequests }} maombi yanasubiri kuidhinishwa</p>
+                                            </div>
+                                            <span class="notification-item-badge bg-yellow-500">{{ $pendingRequests }}</span>
+                                        </a>
+                                        @endif
+
+                                        @if($pendingPastoral > 0)
+                                        <a href="{{ route('pastoral-services.index') }}" class="notification-item">
+                                            <div class="notification-item-icon bg-purple-100">
+                                                <i class="fas fa-praying-hands text-purple-600"></i>
+                                            </div>
+                                            <div class="notification-item-content">
+                                                <p class="notification-item-title">Huduma za Kichungaji</p>
+                                                <p class="notification-item-desc">{{ $pendingPastoral }} maombi yanasubiri kuidhinishwa</p>
+                                            </div>
+                                            <span class="notification-item-badge bg-purple-500">{{ $pendingPastoral }}</span>
+                                        </a>
+                                        @endif
+
+                                        @if($pendingMembers > 0)
+                                        <a href="{{ route('members.index') }}?status=pending" class="notification-item">
+                                            <div class="notification-item-icon bg-green-100">
+                                                <i class="fas fa-user-plus text-green-600"></i>
+                                            </div>
+                                            <div class="notification-item-content">
+                                                <p class="notification-item-title">Usajili Mpya</p>
+                                                <p class="notification-item-desc">{{ $pendingMembers }} wanachama wanasubiri kuidhinishwa</p>
+                                            </div>
+                                            <span class="notification-item-badge bg-green-500">{{ $pendingMembers }}</span>
+                                        </a>
+                                        @endif
                                     @endif
                                 @endif
                             </div>
                             <div class="notification-dropdown-footer">
+                                @if(Auth::user()->isMwanachama())
+                                <a href="{{ route('pastoral-services.index') }}">Ona huduma zangu <i class="fas fa-arrow-right ml-1"></i></a>
+                                @else
                                 <a href="{{ route('requests.index') }}">Ona maombi yote <i class="fas fa-arrow-right ml-1"></i></a>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -1722,6 +1881,115 @@
                 refreshNotifications();
             }
         });
+
+        // Session Timeout - Logout after 10 minutes of inactivity
+        const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes in milliseconds
+        const WARNING_TIME = 60 * 1000; // Show warning 1 minute before timeout
+        let inactivityTimer;
+        let warningTimer;
+        let warningShown = false;
+
+        function resetInactivityTimer() {
+            // Clear existing timers
+            clearTimeout(inactivityTimer);
+            clearTimeout(warningTimer);
+            warningShown = false;
+
+            // Hide warning if shown
+            const warningBanner = document.getElementById('sessionWarningBanner');
+            if (warningBanner) {
+                warningBanner.remove();
+            }
+
+            // Set warning timer (1 minute before logout)
+            warningTimer = setTimeout(showSessionWarning, SESSION_TIMEOUT - WARNING_TIME);
+
+            // Set logout timer
+            inactivityTimer = setTimeout(logoutDueToInactivity, SESSION_TIMEOUT);
+        }
+
+        function showSessionWarning() {
+            if (warningShown) return;
+            warningShown = true;
+
+            const warningHTML = `
+                <div id="sessionWarningBanner" class="fixed inset-0 z-[9999] flex items-center justify-center p-4" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);">
+                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" style="animation: modalSlideIn 0.3s ease-out;">
+                        <div class="p-6 text-center">
+                            <div class="h-20 w-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4" style="animation: pulse 2s infinite;">
+                                <i class="fas fa-clock text-orange-600 text-4xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Muda wa Kikao Unakaribia Kuisha!</h3>
+                            <p class="text-gray-600 mb-2">Utaondolewa kwenye mfumo baada ya <span id="countdownSeconds" class="font-bold text-red-600">60</span> sekunde kwa kukosa shughuli.</p>
+                            <p class="text-sm text-gray-500 mb-6">Bofya kitufe hapa chini kuendelea kutumia mfumo.</p>
+                            <button onclick="resetInactivityTimer()" class="w-full px-6 py-3 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #360958 0%, #2a0745 100%);">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Endelea Kutumia Mfumo</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <style>
+                    @keyframes modalSlideIn {
+                        from { opacity: 0; transform: scale(0.9) translateY(-20px); }
+                        to { opacity: 1; transform: scale(1) translateY(0); }
+                    }
+                    @keyframes pulse {
+                        0%, 100% { transform: scale(1); }
+                        50% { transform: scale(1.05); }
+                    }
+                </style>
+            `;
+            document.body.insertAdjacentHTML('afterbegin', warningHTML);
+
+            // Start countdown
+            let seconds = 60;
+            const countdownEl = document.getElementById('countdownSeconds');
+            const countdownInterval = setInterval(() => {
+                seconds--;
+                if (countdownEl) countdownEl.textContent = seconds;
+                if (seconds <= 0) clearInterval(countdownInterval);
+            }, 1000);
+        }
+
+        function logoutDueToInactivity() {
+            // Remove warning modal if exists
+            const warningBanner = document.getElementById('sessionWarningBanner');
+            if (warningBanner) warningBanner.remove();
+
+            // Show styled logout modal
+            const logoutModalHTML = `
+                <div id="sessionLogoutModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);">
+                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" style="animation: modalSlideIn 0.3s ease-out;">
+                        <div class="p-6 text-center">
+                            <div class="h-20 w-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-sign-out-alt text-red-600 text-4xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Kikao Kimeisha</h3>
+                            <p class="text-gray-600 mb-6">Umekuwa bila shughuli kwa muda mrefu. Unaondolewa kwenye mfumo kwa usalama wako.</p>
+                            <div class="flex items-center justify-center gap-2 text-gray-500">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Inaondoka...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('afterbegin', logoutModalHTML);
+
+            // Submit logout form after a brief delay to show the modal
+            setTimeout(() => {
+                document.getElementById('logout-form').submit();
+            }, 1500);
+        }
+
+        // Reset timer on user activity
+        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(function(event) {
+            document.addEventListener(event, resetInactivityTimer, true);
+        });
+
+        // Initialize the timer
+        resetInactivityTimer();
 
         // Global Styled Alert/Confirm Modal System
         const alertModalHTML = `

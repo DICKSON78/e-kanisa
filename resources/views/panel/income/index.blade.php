@@ -12,6 +12,7 @@
             <h1 class="text-3xl font-bold text-gray-900">Mapato ya Kanisa</h1>
             <p class="text-gray-600 mt-2">Usimamizi kamili wa rekodi za mapato ya kanisa</p>
         </div>
+        @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
         <div class="flex flex-wrap gap-3">
             <button onclick="exportMapato()" class="text-white px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700">
                 <i class="fas fa-file-excel"></i>
@@ -26,6 +27,7 @@
                 <span class="font-medium">Ongeza Mapato</span>
             </a>
         </div>
+        @endif
     </div>
 
     <!-- Stats Cards -->

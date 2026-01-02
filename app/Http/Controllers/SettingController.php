@@ -96,12 +96,19 @@ class SettingController extends Controller
     {
         $validated = $request->validate([
             'current_password' => 'required|string',
-            'password' => ['required', 'confirmed', Password::min(8)],
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(6)
+                    ->mixedCase()      // Uppercase and lowercase
+                    ->numbers()        // At least one number
+                    ->symbols(),       // At least one special character
+            ],
         ], [
             'current_password.required' => 'Tafadhali ingiza nywila ya sasa',
             'password.required' => 'Tafadhali ingiza nywila mpya',
             'password.confirmed' => 'Nywila mpya hazifanani',
-            'password.min' => 'Nywila lazima iwe na angalau herufi 8',
+            'password.min' => 'Nywila lazima iwe na angalau herufi 6',
         ]);
 
         $user = Auth::user();
@@ -113,9 +120,10 @@ class SettingController extends Controller
                 ->withInput();
         }
 
-        // Update password
+        // Update password and mark as changed
         $user->update([
-            'password' => Hash::make($validated['password'])
+            'password' => Hash::make($validated['password']),
+            'password_changed' => true
         ]);
 
         return redirect()->route('settings.index')

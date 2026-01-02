@@ -17,6 +17,7 @@ use App\Http\Controllers\ExportExcelController;
 use App\Http\Controllers\QuickEntryController;
 use App\Http\Controllers\MemberPortalController;
 use App\Http\Controllers\JumuiyaController;
+use App\Http\Controllers\MessageController;
 
 // Public Routes
 Route::get('/', function () {
@@ -64,6 +65,36 @@ Route::middleware(['auth'])->group(function () {
         // Notifications endpoint for real-time updates
         Route::get('/notifications', function () {
             $user = auth()->user();
+
+            // Members only see their own pastoral service updates and new events
+            if ($user->isMwanachama()) {
+                $memberPastoral = 0;
+                $newEvents = 0;
+
+                // Count member's own pastoral service updates (not pending - status changed)
+                if ($user->member) {
+                    $memberPastoral = \App\Models\PastoralService::where('member_id', $user->member->id)
+                        ->whereIn('status', ['Imeidhinishwa', 'Imekataliwa', 'Imekamilika'])
+                        ->where('updated_at', '>=', now()->subDays(7))
+                        ->count();
+                }
+
+                // Count new events created in the last 7 days
+                $newEvents = \App\Models\Event::where('is_active', true)
+                    ->where('created_at', '>=', now()->subDays(7))
+                    ->where('event_date', '>=', now())
+                    ->count();
+
+                return response()->json([
+                    'pending_requests' => 0,
+                    'pending_pastoral' => $memberPastoral,
+                    'pending_members' => 0,
+                    'new_events' => $newEvents,
+                    'total' => $memberPastoral + $newEvents
+                ]);
+            }
+
+            // Admin/Pastor view - all notifications
             $pendingRequests = \App\Models\Request::where('status', 'Inasubiri')->count();
             $pendingPastoral = \App\Models\PastoralService::where('status', 'Inasubiri')->count();
 
@@ -326,6 +357,16 @@ Route::middleware(['auth'])->group(function () {
         // System Settings
         Route::get('/settings/system', [SettingController::class, 'system'])->name('settings.system');
         Route::put('/settings/system', [SettingController::class, 'updateSystem'])->name('settings.system.update');
+    });
+
+    // Messages Management
+    Route::prefix('panel')->group(function () {
+        Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+        Route::get('/messages/create', [MessageController::class, 'create'])->name('messages.create');
+        Route::post('/messages/send', [MessageController::class, 'send'])->name('messages.send');
+        Route::get('/messages/conversation/{userId}', [MessageController::class, 'conversation'])->name('messages.conversation');
+        Route::get('/messages/conversation/{userId}/new', [MessageController::class, 'getNewMessages'])->name('messages.new');
+        Route::get('/messages/unread-count', [MessageController::class, 'unreadCount'])->name('messages.unread-count');
     });
 
 });

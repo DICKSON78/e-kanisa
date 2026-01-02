@@ -4,28 +4,99 @@
 @section('page-title', 'Mipangilio')
 @section('page-subtitle', 'Simamia mipangilio ya mfumo')
 
+@section('styles')
+<style>
+    /* Prevent FOUC - Critical inline styles */
+    .settings-container {
+        opacity: 1;
+        transition: opacity 0.2s ease;
+    }
+    .tab-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        border-bottom-width: 2px;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+    }
+    .tab-content {
+        padding: 1.5rem;
+    }
+    .settings-card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+    }
+    .settings-header {
+        padding: 1rem 1.5rem;
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .settings-form-group {
+        margin-bottom: 1rem;
+    }
+    .settings-form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+    .settings-form-group input,
+    .settings-form-group textarea,
+    .settings-form-group select {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+    }
+    .settings-form-group input:focus,
+    .settings-form-group textarea:focus,
+    .settings-form-group select:focus {
+        outline: none;
+        border-color: #360958;
+        box-shadow: 0 0 0 3px rgba(54, 9, 88, 0.1);
+    }
+</style>
+@endsection
+
 @section('content')
-<!-- Tabs -->
-    <div class="card bg-white rounded-xl shadow-sm mb-6">
-        <div class="border-b border-gray-200">
+<div class="space-y-6 settings-container">
+    <!-- Header Section -->
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-2">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Mipangilio</h1>
+            <p class="text-gray-600 mt-2">Simamia mipangilio ya akaunti yako na mfumo</p>
+        </div>
+    </div>
+
+    <!-- Tabs Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <!-- Tab Navigation -->
+        <div class="border-b border-gray-200 bg-gray-50">
             <nav class="flex -mb-px overflow-x-auto">
                 @if(!Auth::user()->isMwanachama())
-                <button onclick="switchTab('church')" id="tab-church" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-primary-500 text-primary-600 whitespace-nowrap">
+                <button onclick="switchTab('church')" id="tab-church" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-primary-500 text-primary-600 bg-white whitespace-nowrap transition-all duration-200">
                     <i class="fas fa-church mr-2"></i>Kanisa
                 </button>
-                <button onclick="switchTab('profile')" id="tab-profile" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                <button onclick="switchTab('profile')" id="tab-profile" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100 whitespace-nowrap transition-all duration-200">
                     <i class="fas fa-user mr-2"></i>Wasifu
                 </button>
                 @else
-                <button onclick="switchTab('profile')" id="tab-profile" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-primary-500 text-primary-600 whitespace-nowrap">
+                <button onclick="switchTab('profile')" id="tab-profile" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-primary-500 text-primary-600 bg-white whitespace-nowrap transition-all duration-200">
                     <i class="fas fa-user mr-2"></i>Wasifu
                 </button>
                 @endif
-                <button onclick="switchTab('password')" id="tab-password" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                <button onclick="switchTab('password')" id="tab-password" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100 whitespace-nowrap transition-all duration-200">
                     <i class="fas fa-key mr-2"></i>Nywila
                 </button>
                 @if(Auth::user()->isMchungaji())
-                <button onclick="switchTab('jumuiya')" id="tab-jumuiya" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                <button onclick="switchTab('jumuiya')" id="tab-jumuiya" class="tab-btn py-4 px-6 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100 whitespace-nowrap transition-all duration-200">
                     <i class="fas fa-users-cog mr-2"></i>Jumuiya
                 </button>
                 @endif
@@ -130,14 +201,34 @@
         <!-- Password Settings Tab -->
         <div id="content-password" class="tab-content p-6 hidden">
             <h3 class="text-lg font-semibold text-gray-700 mb-4">Badilisha Nywila</h3>
+
+            @if(Auth::user()->needsPasswordChange())
+            <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 text-lg"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="text-sm font-medium text-yellow-800">Badilisha Nywila Yako</h4>
+                        <p class="mt-1 text-sm text-yellow-700">Unatumia nywila ya msingi. Tafadhali badilisha nywila yako kwa usalama zaidi.</p>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <form action="{{ route('settings.password.update') }}" method="POST">
                 @csrf
                 @method('PUT')
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Nywila ya Sasa *</label>
-                    <input type="password" name="current_password" required
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 @error('current_password') border-red-500 @enderror">
+                    <div class="relative">
+                        <input type="password" name="current_password" id="current_password" required
+                               class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 @error('current_password') border-red-500 @enderror">
+                        <button type="button" onclick="togglePassword('current_password')" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-eye" id="current_password_icon"></i>
+                        </button>
+                    </div>
                     @error('current_password')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -145,18 +236,37 @@
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Nywila Mpya *</label>
-                    <input type="password" name="password" required
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 @error('password') border-red-500 @enderror">
+                    <div class="relative">
+                        <input type="password" name="password" id="new_password" required
+                               class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 @error('password') border-red-500 @enderror">
+                        <button type="button" onclick="togglePassword('new_password')" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-eye" id="new_password_icon"></i>
+                        </button>
+                    </div>
                     @error('password')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
-                    <p class="mt-1 text-xs text-gray-500">Herufi 8 au zaidi</p>
+                    <div class="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <p class="text-xs font-medium text-gray-700 mb-2">Nywila lazima iwe na:</p>
+                        <ul class="text-xs text-gray-600 space-y-1">
+                            <li id="req-length" class="flex items-center"><i class="fas fa-circle text-gray-300 mr-2 text-[6px]"></i>Angalau herufi 6</li>
+                            <li id="req-upper" class="flex items-center"><i class="fas fa-circle text-gray-300 mr-2 text-[6px]"></i>Herufi kubwa (A-Z)</li>
+                            <li id="req-lower" class="flex items-center"><i class="fas fa-circle text-gray-300 mr-2 text-[6px]"></i>Herufi ndogo (a-z)</li>
+                            <li id="req-number" class="flex items-center"><i class="fas fa-circle text-gray-300 mr-2 text-[6px]"></i>Nambari (0-9)</li>
+                            <li id="req-special" class="flex items-center"><i class="fas fa-circle text-gray-300 mr-2 text-[6px]"></i>Alama maalum (!@#$%^&*)</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Thibitisha Nywila Mpya *</label>
-                    <input type="password" name="password_confirmation" required
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                    <div class="relative">
+                        <input type="password" name="password_confirmation" id="password_confirmation" required
+                               class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                        <button type="button" onclick="togglePassword('password_confirmation')" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-eye" id="password_confirmation_icon"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg">
@@ -394,7 +504,10 @@
         </div>
         @endif
     </div>
+</div>
+@endsection
 
+@section('modals')
 @if(Auth::user()->isMchungaji())
 <!-- Create Jumuiya Modal -->
 <div id="createJumuiyaModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[9999]">
@@ -641,15 +754,32 @@
     </div>
 </div>
 @endif
+@endsection
 
 @section('scripts')
 <script>
+// Toggle Password Visibility
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(inputId + '_icon');
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
 // Tab switching with URL parameter support
 function switchTab(tabName) {
-    // Hide all tabs
+    // Hide all tabs and reset tab button styles
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.tab-btn').forEach(el => {
-        el.classList.remove('border-primary-500', 'text-primary-600');
+        el.classList.remove('border-primary-500', 'text-primary-600', 'bg-white');
         el.classList.add('border-transparent', 'text-gray-500');
     });
 
@@ -660,7 +790,7 @@ function switchTab(tabName) {
     if (content && tab) {
         content.classList.remove('hidden');
         tab.classList.remove('border-transparent', 'text-gray-500');
-        tab.classList.add('border-primary-500', 'text-primary-600');
+        tab.classList.add('border-primary-500', 'text-primary-600', 'bg-white');
     }
 
     // Update URL without reload
@@ -1140,6 +1270,38 @@ document.addEventListener('keydown', function(e) {
     }
 });
 @endif
+
+// Real-time Password Validation
+const passwordInput = document.getElementById('new_password');
+if (passwordInput) {
+    const requirements = {
+        length: { el: document.getElementById('req-length'), regex: /.{6,}/ },
+        upper: { el: document.getElementById('req-upper'), regex: /[A-Z]/ },
+        lower: { el: document.getElementById('req-lower'), regex: /[a-z]/ },
+        number: { el: document.getElementById('req-number'), regex: /[0-9]/ },
+        special: { el: document.getElementById('req-special'), regex: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/ }
+    };
+
+    passwordInput.addEventListener('input', function() {
+        const password = this.value;
+
+        Object.keys(requirements).forEach(key => {
+            const req = requirements[key];
+            const icon = req.el.querySelector('i');
+
+            if (req.regex.test(password)) {
+                // Requirement met - show green check
+                icon.className = 'fas fa-check-circle text-green-500 mr-2 text-xs';
+                req.el.classList.remove('text-gray-600');
+                req.el.classList.add('text-green-600');
+            } else {
+                // Requirement not met - show gray circle
+                icon.className = 'fas fa-circle text-gray-300 mr-2 text-[6px]';
+                req.el.classList.remove('text-green-600');
+                req.el.classList.add('text-gray-600');
+            }
+        });
+    });
+}
 </script>
-@endsection
 @endsection

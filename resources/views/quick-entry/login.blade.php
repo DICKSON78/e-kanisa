@@ -94,9 +94,14 @@
                     <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
                         <i class="fas fa-lock mr-2 text-primary-500"></i>Nywila
                     </label>
-                    <input type="password" name="password" id="password" required
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-200"
-                           placeholder="Ingiza nywila yako">
+                    <div class="relative">
+                        <input type="password" name="password" id="password" required
+                               class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-200"
+                               placeholder="Ingiza nywila yako">
+                        <button type="button" onclick="togglePassword('password')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-eye" id="password_icon"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Login Button -->
@@ -115,5 +120,22 @@
             </p>
         </div>
     </div>
+
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + '_icon');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
 </body>
 </html>

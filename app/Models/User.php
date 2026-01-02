@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'password_changed',
         'role_id',
         'department_id',
         'is_active',
@@ -47,6 +48,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'password_changed' => 'boolean',
             'last_login_at' => 'datetime',
             'is_active' => 'boolean',
         ];
@@ -117,5 +119,13 @@ class User extends Authenticatable
     public function isMwanachama()
     {
         return $this->hasRole('Mwanachama');
+    }
+
+    /**
+     * Check if user needs to change their default password
+     */
+    public function needsPasswordChange()
+    {
+        return !$this->password_changed;
     }
 }
