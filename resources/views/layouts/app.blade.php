@@ -1304,7 +1304,7 @@
                             $headerUnreadMessages = \App\Models\Message::where('receiver_id', Auth::id())->where('is_read', false)->count();
                         @endphp
                         @if($headerUnreadMessages > 0)
-                        <span class="notification-badge" style="background: linear-gradient(135deg, #360958, #8a2be2);">{{ $headerUnreadMessages }}</span>
+                        <span class="notification-badge" style="background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 2px 6px rgba(34, 197, 94, 0.4);">{{ $headerUnreadMessages }}</span>
                         @endif
                     </a>
 

@@ -182,28 +182,28 @@
         font-size: 14px;
     }
 
-    /* Custom Scrollbar for Chats List */
+    /* Custom Scrollbar for Chats List - Like Sidebar */
     .chats-list {
         flex: 1;
         overflow-y: auto;
+        overflow-x: hidden;
         background: var(--whatsapp-chat-bg);
         scrollbar-width: thin;
-        scrollbar-color: var(--whatsapp-primary) var(--whatsapp-border);
+        scrollbar-color: rgba(54, 9, 88, 0.3) transparent;
     }
 
     .chats-list::-webkit-scrollbar {
-        width: 8px;
+        width: 5px;
     }
 
     .chats-list::-webkit-scrollbar-track {
-        background: var(--whatsapp-border);
+        background: rgba(54, 9, 88, 0.05);
         border-radius: 4px;
     }
 
     .chats-list::-webkit-scrollbar-thumb {
-        background: var(--whatsapp-primary);
+        background: linear-gradient(180deg, var(--whatsapp-primary) 0%, var(--whatsapp-primary-dark) 100%);
         border-radius: 4px;
-        border: 2px solid var(--whatsapp-border);
     }
 
     .chats-list::-webkit-scrollbar-thumb:hover {
@@ -296,22 +296,62 @@
         line-height: 1.4;
     }
 
-    /* CHAT ITEMS UNREAD BADGE - PURPLE THEME */
+    /* CHAT ITEMS UNREAD BADGE - RED LIKE NOTIFICATION */
     .chat-unread {
-        background-color: var(--whatsapp-primary);
+        background: linear-gradient(135deg, #ef4444, #dc2626);
         color: white;
         border-radius: 50%;
         min-width: 22px;
         height: 22px;
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 700;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 0 6px;
         margin-left: 8px;
         flex-shrink: 0;
-        box-shadow: 0 2px 4px rgba(54, 9, 88, 0.3);
+        box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Online Status Indicator */
+    .online-indicator {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 14px;
+        height: 14px;
+        background: #22c55e;
+        border: 2px solid white;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .online-indicator.offline {
+        background: #9ca3af;
+    }
+
+    /* Unread Count Badge Above Tabs */
+    .unread-header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    }
+
+    .unread-header-badge i {
+        font-size: 14px;
+    }
+
+    .unread-header-badge.hidden {
+        display: none;
     }
 
     .chat-role {
@@ -547,13 +587,16 @@
     /* Messages Container */
     .messages-container {
         flex: 1;
-        padding: 20px 15% 16px;
+        padding: 16px 12%;
         overflow-y: auto;
+        overflow-x: hidden;
         display: flex;
         flex-direction: column;
         position: relative;
         z-index: 1;
         background: transparent;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(54, 9, 88, 0.4) transparent;
     }
 
     .messages-container::-webkit-scrollbar {
@@ -561,77 +604,104 @@
     }
 
     .messages-container::-webkit-scrollbar-track {
-        background: transparent;
+        background: rgba(54, 9, 88, 0.08);
+        border-radius: 6px;
+        margin: 8px 0;
     }
 
     .messages-container::-webkit-scrollbar-thumb {
-        background: var(--whatsapp-primary);
-        border-radius: 3px;
+        background: linear-gradient(180deg, var(--whatsapp-primary) 0%, var(--whatsapp-primary-dark) 100%);
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* Message Bubbles */
+    .messages-container::-webkit-scrollbar-thumb:hover {
+        background: var(--whatsapp-primary);
+    }
+
+    /* Message Bubbles - Exact Fit Design */
     .message-wrapper {
-        margin-bottom: 10px;
-        max-width: 70%;
-        clear: both;
+        margin-bottom: 4px;
+        max-width: 80%;
         display: flex;
-        flex-direction: column;
     }
 
     .message-wrapper.sent {
-        align-self: flex-end;
+        justify-content: flex-end;
         margin-left: auto;
     }
 
     .message-wrapper.received {
-        align-self: flex-start;
+        justify-content: flex-start;
         margin-right: auto;
     }
 
     .message-bubble {
-        padding: 10px 14px;
-        border-radius: 8px;
-        position: relative;
+        padding: 6px 10px;
+        border-radius: 16px;
         word-wrap: break-word;
-        white-space: pre-wrap;
-        line-height: 1.4;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+        line-height: 1.35;
+        display: inline-flex;
+        align-items: flex-end;
+        gap: 6px;
+        flex-wrap: wrap;
     }
 
     .sent .message-bubble {
-        background: var(--whatsapp-message-sent);
-        border-radius: 8px 8px 2px 8px;
-        border-bottom-right-radius: 2px !important;
+        background: linear-gradient(135deg, var(--whatsapp-primary) 0%, var(--whatsapp-primary-dark) 100%);
+        color: white;
+        border-radius: 16px 16px 4px 16px;
     }
 
     .received .message-bubble {
-        background: var(--whatsapp-message-received);
-        border-radius: 8px 8px 8px 2px;
-        border-bottom-left-radius: 2px !important;
-        border: 1px solid rgba(0, 0, 0, 0.04);
+        background: white;
+        color: var(--whatsapp-dark);
+        border-radius: 16px 16px 16px 4px;
+        border: 1px solid var(--whatsapp-border);
     }
 
     .message-content {
-        font-size: 14.5px;
-        line-height: 1.5;
-        color: var(--whatsapp-dark);
-        margin-bottom: 6px;
+        font-size: 14px;
+        line-height: 1.35;
         word-break: break-word;
     }
 
-    .message-time {
-        text-align: right;
-        font-size: 11px;
-        color: var(--whatsapp-light-gray);
-        margin-top: 4px;
-        display: flex;
+    .sent .message-content {
+        color: white;
+    }
+
+    .received .message-content {
+        color: var(--whatsapp-dark);
+    }
+
+    .message-meta {
+        display: inline-flex;
         align-items: center;
-        justify-content: flex-end;
-        gap: 4px;
+        gap: 3px;
+        flex-shrink: 0;
+    }
+
+    .message-time {
+        font-size: 10px;
+        opacity: 0.7;
     }
 
     .sent .message-time {
-        color: var(--whatsapp-gray);
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .sent .message-meta i {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 10px;
+    }
+
+    .received .message-time {
+        color: var(--whatsapp-light-gray);
+    }
+
+    .received .message-meta i {
+        color: var(--whatsapp-light-gray);
+        font-size: 10px;
     }
 
     /* Date Separator */
@@ -903,11 +973,28 @@
             </div>
         </div>
 
-        <!-- Search and Filter Bar - Contacts FIRST -->
+        <!-- Search and Filter Bar -->
         <div class="search-filter-bar">
             <div class="search-container">
                 <i class="fas fa-search search-icon"></i>
                 <input type="text" class="search-input" id="searchInput" placeholder="Tafuta mazungumzo...">
+            </div>
+
+            <!-- Stats Badges -->
+            @php
+                $totalUnread = $conversations->sum('unread_count');
+            @endphp
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                @if($onlineCount > 0)
+                <div class="unread-header-badge" style="background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);">
+                    <i class="fas fa-circle" style="font-size: 10px;"></i>
+                    <span>{{ $onlineCount }} Online</span>
+                </div>
+                @endif
+                <div class="unread-header-badge {{ $totalUnread == 0 ? 'hidden' : '' }}" id="unreadHeaderBadge">
+                    <i class="fas fa-envelope"></i>
+                    <span id="unreadHeaderCount">{{ $totalUnread }} Isiyosomwa</span>
+                </div>
             </div>
 
             <div class="filter-tabs">
@@ -923,6 +1010,9 @@
                 <button class="filter-tab" data-filter="unread">
                     <i class="fas fa-envelope"></i>
                     <span>Isiyosomwa</span>
+                    @if($totalUnread > 0)
+                    <span class="chat-unread" style="margin-left: 4px; min-width: 18px; height: 18px; font-size: 10px;">{{ $totalUnread }}</span>
+                    @endif
                 </button>
             </div>
         </div>
@@ -931,12 +1021,19 @@
         <div class="chats-list" id="chatsList">
             <!-- Contacts (shown by default) -->
             @foreach($allUsers as $user)
+                @php
+                    $isOnline = $user->last_seen_at && $user->last_seen_at->diffInMinutes(now()) < 5;
+                    $contactUnread = $unreadPerContact[$user->id] ?? 0;
+                @endphp
                 <div class="chat-item contact-item"
                      data-user-id="{{ $user->id }}"
                      data-user-name="{{ $user->name }}"
-                     data-user-role="{{ $user->role->name ?? 'Mwanachama' }}">
+                     data-user-role="{{ $user->role->name ?? 'Mwanachama' }}"
+                     data-online="{{ $isOnline ? 'true' : 'false' }}"
+                     data-unread-count="{{ $contactUnread }}">
                     <div class="chat-avatar">
                         <i class="fas fa-user"></i>
+                        <div class="online-indicator {{ $isOnline ? '' : 'offline' }}"></div>
                     </div>
                     <div class="chat-info">
                         <div class="chat-header">
@@ -945,24 +1042,37 @@
                         </div>
                         <div class="chat-preview">
                             <span class="chat-message" style="color: var(--whatsapp-light-gray);">
-                                <i class="fas fa-paper-plane" style="margin-right: 6px;"></i>
-                                Bonyeza kuanza mazungumzo
+                                @if($isOnline)
+                                    <i class="fas fa-circle" style="color: #22c55e; font-size: 8px; margin-right: 6px;"></i>
+                                    Online sasa
+                                @else
+                                    <i class="fas fa-paper-plane" style="margin-right: 6px;"></i>
+                                    Bonyeza kuanza mazungumzo
+                                @endif
                             </span>
                         </div>
                     </div>
+                    @if($contactUnread > 0)
+                        <div class="chat-unread">{{ $contactUnread }}</div>
+                    @endif
                 </div>
             @endforeach
 
             <!-- Conversations (hidden by default - will show when "Yote" or "Isiyosomwa" tab is active) -->
             @foreach($conversations as $conv)
+                @php
+                    $convUserOnline = $conv['user']->last_seen_at && $conv['user']->last_seen_at->diffInMinutes(now()) < 5;
+                @endphp
                 <div class="chat-item conversation-item"
                      data-user-id="{{ $conv['user']->id }}"
                      data-user-name="{{ $conv['user']->name }}"
                      data-user-role="{{ $conv['user']->role->name ?? 'Mwanachama' }}"
                      data-unread="{{ $conv['unread_count'] > 0 ? 'true' : 'false' }}"
+                     data-online="{{ $convUserOnline ? 'true' : 'false' }}"
                      style="display: none;">
                     <div class="chat-avatar">
                         <i class="fas fa-user"></i>
+                        <div class="online-indicator {{ $convUserOnline ? '' : 'offline' }}"></div>
                     </div>
 
                     <div class="chat-info">
@@ -1314,7 +1424,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Render messages with improved design
+    // Render messages with compact design
     function renderMessages(messages) {
         messagesContainer.innerHTML = '';
 
@@ -1351,11 +1461,11 @@ document.addEventListener('DOMContentLoaded', function() {
             messagesContainer.innerHTML += `
                 <div class="message-wrapper ${isSent ? 'sent' : 'received'}" data-message-id="${message.id}">
                     <div class="message-bubble">
-                        <div class="message-content">${escapeHtml(message.content)}</div>
-                        <div class="message-time">
-                            ${messageTime}
-                            ${isSent ? `<i class="fas ${message.is_read ? 'fa-check-double' : 'fa-check'}"></i>` : ''}
-                        </div>
+                        <span class="message-content">${escapeHtml(message.content)}</span>
+                        <span class="message-meta">
+                            <span class="message-time">${messageTime}</span>
+                            ${isSent ? `<i class="fas ${message.is_read ? 'fa-check-double' : 'fa-check'}"></i>` : '<i class="fas fa-comment-alt"></i>'}
+                        </span>
                     </div>
                 </div>
             `;
@@ -1378,11 +1488,11 @@ document.addEventListener('DOMContentLoaded', function() {
         messagesContainer.innerHTML += `
             <div class="message-wrapper sent" id="${tempId}">
                 <div class="message-bubble">
-                    <div class="message-content">${escapeHtml(content)}</div>
-                    <div class="message-time">
-                        ${formatTime(now.toISOString())}
+                    <span class="message-content">${escapeHtml(content)}</span>
+                    <span class="message-meta">
+                        <span class="message-time">${formatTime(now.toISOString())}</span>
                         <i class="fas fa-clock"></i>
-                    </div>
+                    </span>
                 </div>
             </div>
         `;
@@ -1479,11 +1589,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 messagesContainer.innerHTML += `
                                     <div class="message-wrapper ${isSent ? 'sent' : 'received'}" data-message-id="${message.id}">
                                         <div class="message-bubble">
-                                            <div class="message-content">${escapeHtml(message.content)}</div>
-                                            <div class="message-time">
-                                                ${formatTime(message.created_at)}
-                                                ${isSent ? `<i class="fas ${message.is_read ? 'fa-check-double' : 'fa-check'}"></i>` : ''}
-                                            </div>
+                                            <span class="message-content">${escapeHtml(message.content)}</span>
+                                            <span class="message-meta">
+                                                <span class="message-time">${formatTime(message.created_at)}</span>
+                                                ${isSent ? `<i class="fas ${message.is_read ? 'fa-check-double' : 'fa-check'}"></i>` : '<i class="fas fa-comment-alt"></i>'}
+                                            </span>
                                         </div>
                                     </div>
                                 `;
@@ -1531,15 +1641,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Show/hide based on active filter
         if (activeFilter === 'contacts') {
-            // Show contacts, hide conversations
+            // Show contacts only, hide conversations
             document.querySelectorAll('.conversation-item').forEach(item => {
                 item.style.display = 'none';
             });
-            
+
             document.querySelectorAll('.contact-item').forEach(item => {
                 const name = item.dataset.userName?.toLowerCase() || '';
                 const role = item.dataset.userRole?.toLowerCase() || '';
-                
+
                 if (searchTerm === '' || name.includes(searchTerm) || role.includes(searchTerm)) {
                     item.style.display = 'flex';
                     visibleItems++;
@@ -1548,26 +1658,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     item.style.display = 'none';
                 }
             });
-            
+
         } else if (activeFilter === 'all') {
-            // Show both contacts and conversations
+            // Show conversations only (Yote = All Chats)
             document.querySelectorAll('.contact-item').forEach(item => {
-                const name = item.dataset.userName?.toLowerCase() || '';
-                const role = item.dataset.userRole?.toLowerCase() || '';
-                
-                if (searchTerm === '' || name.includes(searchTerm) || role.includes(searchTerm)) {
-                    item.style.display = 'flex';
-                    visibleItems++;
-                    hasContacts = true;
-                } else {
-                    item.style.display = 'none';
-                }
+                item.style.display = 'none';
             });
-            
+
             document.querySelectorAll('.conversation-item').forEach(item => {
                 const name = item.dataset.userName?.toLowerCase() || '';
                 const message = item.querySelector('.chat-message')?.textContent.toLowerCase() || '';
-                
+
                 if (searchTerm === '' || name.includes(searchTerm) || message.includes(searchTerm)) {
                     item.style.display = 'flex';
                     visibleItems++;
@@ -1576,18 +1677,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     item.style.display = 'none';
                 }
             });
-            
+
         } else if (activeFilter === 'unread') {
             // Show only unread conversations
             document.querySelectorAll('.contact-item').forEach(item => {
                 item.style.display = 'none';
             });
-            
+
             document.querySelectorAll('.conversation-item').forEach(item => {
                 const name = item.dataset.userName?.toLowerCase() || '';
                 const message = item.querySelector('.chat-message')?.textContent.toLowerCase() || '';
                 const hasUnread = item.dataset.unread === 'true';
-                
+
                 if (hasUnread && (searchTerm === '' || name.includes(searchTerm) || message.includes(searchTerm))) {
                     item.style.display = 'flex';
                     visibleItems++;
@@ -1600,19 +1701,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Show/hide appropriate empty messages
         noResultsMessage.style.display = (searchTerm !== '' && visibleItems === 0) ? 'block' : 'none';
-        
+
         if (activeFilter === 'contacts') {
             noContactsMessage.style.display = (!hasContacts && searchTerm === '') ? 'block' : 'none';
             noConversationsMessage.style.display = 'none';
         } else if (activeFilter === 'all') {
             noContactsMessage.style.display = 'none';
-            noConversationsMessage.style.display = (!hasContacts && !hasConversations && searchTerm === '') ? 'block' : 'none';
+            noConversationsMessage.style.display = (!hasConversations && searchTerm === '') ? 'block' : 'none';
+            if (!hasConversations && searchTerm === '') {
+                noConversationsMessage.innerHTML = `
+                    <i class="fas fa-comments"></i>
+                    <h3>Hakuna Mazungumzo</h3>
+                    <p>Bado hujaanza mazungumzo na mtu yeyote</p>
+                `;
+            }
         } else if (activeFilter === 'unread') {
             noContactsMessage.style.display = 'none';
-            const unreadCount = Array.from(document.querySelectorAll('.conversation-item')).filter(item => 
+            const unreadCount = Array.from(document.querySelectorAll('.conversation-item')).filter(item =>
                 item.dataset.unread === 'true'
             ).length;
             noConversationsMessage.style.display = (unreadCount === 0 && searchTerm === '') ? 'block' : 'none';
+            if (unreadCount === 0 && searchTerm === '') {
+                noConversationsMessage.innerHTML = `
+                    <i class="fas fa-check-double" style="color: #22c55e;"></i>
+                    <h3>Umesoma Yote!</h3>
+                    <p>Hakuna ujumbe usiosomwa</p>
+                `;
+            }
         }
     }
 

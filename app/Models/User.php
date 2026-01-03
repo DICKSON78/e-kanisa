@@ -26,6 +26,7 @@ class User extends Authenticatable
         'department_id',
         'is_active',
         'last_login_at',
+        'last_seen_at',
     ];
 
     /**
@@ -50,8 +51,17 @@ class User extends Authenticatable
             'password' => 'hashed',
             'password_changed' => 'boolean',
             'last_login_at' => 'datetime',
+            'last_seen_at' => 'datetime',
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Check if user is currently online (active in last 5 minutes)
+     */
+    public function isOnline()
+    {
+        return $this->last_seen_at && $this->last_seen_at->diffInMinutes(now()) < 5;
     }
 
     // Relationships

@@ -55,7 +55,25 @@ class MessageController extends Controller
                 ->get();
         }
 
-        return view('panel.messages.index', compact('conversations', 'allUsers'));
+        // Calculate unread count per contact
+        $unreadPerContact = Message::where('receiver_id', $userId)
+            ->where('is_read', false)
+            ->selectRaw('sender_id, COUNT(*) as count')
+            ->groupBy('sender_id')
+            ->pluck('count', 'sender_id');
+
+        // Count online users (active in last 5 minutes)
+        // Wrapped in try-catch in case last_seen_at column doesn't exist yet
+        try {
+            $onlineCount = User::where('id', '!=', $userId)
+                ->where('is_active', true)
+                ->where('last_seen_at', '>=', now()->subMinutes(5))
+                ->count();
+        } catch (\Exception $e) {
+            $onlineCount = 0;
+        }
+
+        return view('panel.messages.index', compact('conversations', 'allUsers', 'unreadPerContact', 'onlineCount'));
     }
 
     /**

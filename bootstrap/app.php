@@ -17,9 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'nocache' => \App\Http\Middleware\NoCacheMiddleware::class,
         ]);
 
-        // Add no-cache middleware to all web routes
+        // Add no-cache middleware and last seen tracker to all web routes
         $middleware->web(append: [
             \App\Http\Middleware\NoCacheMiddleware::class,
+            \App\Http\Middleware\UpdateLastSeen::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
