@@ -165,6 +165,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export-excel', [ExportExcelController::class, 'index'])->name('export.excel');
         Route::post('/export-excel/mapato', [ExportExcelController::class, 'exportMapato'])->name('export.excel.mapato');
         Route::get('/export-excel/kiwanja', [ExportExcelController::class, 'exportKiwanja'])->name('export.excel.kiwanja');
+        Route::get('/export-excel/sadaka', [ExportExcelController::class, 'exportSadaka'])->name('export.excel.sadaka');
+        Route::get('/export-excel/ahadi', [ExportExcelController::class, 'exportAhadi'])->name('export.excel.ahadi');
         Route::post('/export-excel/matumizi', [ExportExcelController::class, 'exportMatumizi'])->name('export.excel.matumizi');
         // Add this route for bulk delete
         Route::delete('/export-excel/bulk-delete', [ExportExcelController::class, 'bulkDelete'])->name('export.excel.bulk-delete');
@@ -300,6 +302,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pastoral-services/create', [PastoralServiceController::class, 'create'])->name('pastoral-services.create');
         Route::get('/pastoral-services/report', [PastoralServiceController::class, 'report'])->name('pastoral-services.report');
         Route::get('/pastoral-services/export', [PastoralServiceController::class, 'export'])->name('pastoral-services.export');
+        Route::get('/pastoral-services/export/pdf', [PastoralServiceController::class, 'exportPDF'])->name('pastoral-services.export.pdf');
         Route::post('/pastoral-services', [PastoralServiceController::class, 'store'])->name('pastoral-services.store');
         Route::get('/pastoral-services/{id}', [PastoralServiceController::class, 'show'])->name('pastoral-services.show');
         Route::get('/pastoral-services/{id}/edit', [PastoralServiceController::class, 'edit'])->name('pastoral-services.edit');
@@ -339,6 +342,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reports/offerings', [ReportController::class, 'offerings'])->name('reports.offerings');
         Route::get('/reports/events', [ReportController::class, 'events'])->name('reports.events');
         Route::get('/reports/requests', [ReportController::class, 'requests'])->name('reports.requests');
+
+        Route::get('/reports/download/{filename}', [ReportController::class, 'download'])->name('reports.download');
 
         // Export Reports
         Route::get('/reports/export/financial', [ReportController::class, 'exportFinancial'])->name('reports.export.financial');

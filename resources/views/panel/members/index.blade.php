@@ -56,7 +56,7 @@
             </div>
         </div>
 
-        <a href="{{ route('members.index') }}?status=pending" class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md hover:border-yellow-300 transition-all duration-200 block {{ request('status') === 'pending' ? 'ring-2 ring-yellow-400 border-yellow-400' : '' }}">
+        <a href="javascript:void(0)" onclick="filterByStatus('pending')" class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md hover:border-yellow-300 transition-all duration-200 block {{ request('status') === 'pending' ? 'ring-2 ring-yellow-400 border-yellow-400' : '' }}">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600 mb-1">Wanaosubiri Idhini</p>
@@ -100,7 +100,7 @@
                 <i class="fas fa-filter text-primary-500 mr-2"></i> Chuja Waumini
             </h3>
         </div>
-        <form method="GET" action="{{ route('members.index') }}" data-auto-filter="true" class="space-y-4">
+        <form id="filterForm" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Search Field -->
                 <div class="lg:col-span-2">
@@ -109,14 +109,14 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-search text-gray-400"></i>
                         </div>
-                        <input type="text" name="search" value="{{ request('search') }}" class="pl-10 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Tafuta jina, namba, simu, email...">
+                        <input type="text" name="search" id="searchInput" value="{{ request('search') }}" class="pl-10 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Tafuta jina, namba, simu, email...">
                     </div>
                 </div>
 
                 <!-- Gender -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Jinsia</label>
-                    <select name="gender" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <select name="gender" id="genderFilter" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                         <option value="">Wote</option>
                         @foreach($genders as $gender)
                             <option value="{{ $gender }}" {{ request('gender') == $gender ? 'selected' : '' }}>
@@ -129,10 +129,10 @@
                 <!-- Status -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Hali</label>
-                    <select name="is_active" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <select name="is_active" id="statusFilter" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                         <option value="">Wote</option>
                         <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Hai</option>
-                        <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Si Hai</option>
+                        <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Inasubiri Idhini</option>
                     </select>
                 </div>
             </div>
@@ -141,7 +141,7 @@
                 <!-- Age Group -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Kundi la Umri</label>
-                    <select name="age_group" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <select name="age_group" id="ageGroupFilter" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                         <option value="">Wote</option>
                         @foreach($ageGroups as $ageGroup)
                             @php
@@ -163,7 +163,7 @@
                 <!-- Special Group -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Kundi Maalum</label>
-                    <select name="special_group" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <select name="special_group" id="specialGroupFilter" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                         <option value="">Wote</option>
                         @foreach($specialGroups as $group)
                             <option value="{{ $group }}" {{ request('special_group') == $group ? 'selected' : '' }}>{{ $group }}</option>
@@ -174,7 +174,7 @@
                 <!-- Marital Status -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Hali ya Ndoa</label>
-                    <select name="marital_status" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <select name="marital_status" id="maritalStatusFilter" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                         <option value="">Wote</option>
                         @foreach($maritalStatuses as $maritalStatus)
                             <option value="{{ $maritalStatus }}" {{ request('marital_status') == $maritalStatus ? 'selected' : '' }}>
@@ -185,257 +185,19 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                <button type="button" onclick="clearFilters()" class="px-6 py-2.5 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-all duration-200 flex items-center gap-2">
-                    <i class="fas fa-redo"></i>
+            <!-- Clear Filter Link -->
+            <div class="flex justify-end pt-2">
+                <button type="button" onclick="clearFilters()" class="text-sm text-gray-500 hover:text-primary-600 transition-colors flex items-center gap-1">
+                    <i class="fas fa-redo text-xs"></i>
                     <span>Futa Chujio</span>
-                </button>
-                <button type="submit" class="px-6 py-2.5 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-all duration-200 flex items-center gap-2">
-                    <i class="fas fa-filter"></i>
-                    <span>Tumia Chujio</span>
                 </button>
             </div>
         </form>
     </div>
 
     <!-- Members Table -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <!-- Table Header -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 border-b border-gray-200">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                    <i class="fas fa-list text-primary-500 mr-2"></i> Orodha ya Waumini
-                    <span class="ml-3 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                        {{ $members->total() }} waumini
-                    </span>
-                </h3>
-            </div>
-            <div class="mt-3 sm:mt-0">
-                <div class="flex items-center gap-2 text-sm text-gray-600">
-                    <i class="fas fa-info-circle text-primary-500"></i>
-                    <span>Angalia au hariri taarifa kwa kubofya vitendo</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Table -->
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead>
-                    <tr class="bg-primary-600 text-white text-sm">
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-hashtag mr-2"></i>
-                                Namba
-                            </div>
-                        </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-user mr-2"></i>
-                                Jina
-                            </div>
-                        </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-venus-mars mr-2"></i>
-                                Jinsia
-                            </div>
-                        </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-phone mr-2"></i>
-                                Simu
-                            </div>
-                        </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-envelope mr-2"></i>
-                                Email
-                            </div>
-                        </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-calendar-alt mr-2"></i>
-                                Uanachama
-                            </div>
-                        </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-circle mr-2"></i>
-                                Hali
-                            </div>
-                        </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider sticky right-0 bg-primary-600">
-                            <div class="flex items-center">
-                                <i class="fas fa-cogs mr-2"></i>
-                                Vitendo
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse($members as $member)
-                    <tr class="bg-white hover:bg-gray-50 transition-all duration-200 member-row"
-                        data-name="{{ strtolower($member->first_name . ' ' . $member->middle_name . ' ' . $member->last_name) }}"
-                        data-phone="{{ strtolower($member->phone ?? '') }}"
-                        data-email="{{ strtolower($member->email ?? '') }}"
-                        data-member-number="{{ strtolower($member->member_number ?? '') }}"
-                        data-gender="{{ $member->gender }}"
-                        data-age-group="{{ $member->age_group ?? '' }}"
-                        data-special-group="{{ $member->special_group ?? '' }}"
-                        data-marital-status="{{ $member->marital_status ?? '' }}"
-                        data-is-active="{{ $member->is_active ? '1' : '0' }}">
-                        <!-- Member Number -->
-                        <td class="py-4 px-6 text-sm font-medium text-gray-900">
-                            <div class="flex items-center gap-2">
-                                <span class="font-mono bg-gray-100 px-2 py-1 rounded">{{ $member->member_number }}</span>
-                                <button onclick="viewQrCode('{{ $member->id }}', '{{ $member->member_number }}')"
-                                        class="text-primary-600 hover:text-primary-800 transition-colors"
-                                        title="Angalia QR Code">
-                                    <i class="fas fa-qrcode"></i>
-                                </button>
-                            </div>
-                        </td>
-
-                        <!-- Name -->
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">
-                                {{ $member->first_name }} {{ $member->middle_name }} {{ $member->last_name }}
-                            </div>
-                        </td>
-
-                        <!-- Gender -->
-                        <td class="py-4 px-6 text-sm text-gray-600">
-                            @if($member->gender == 'Mme')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    <i class="fas fa-male mr-1"></i> Me
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
-                                    <i class="fas fa-female mr-1"></i> Ke
-                                </span>
-                            @endif
-                        </td>
-
-                        <!-- Phone -->
-                        <td class="py-4 px-6 text-sm text-gray-600">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-phone text-gray-400"></i>
-                                {{ $member->phone }}
-                            </div>
-                        </td>
-
-                        <!-- Email -->
-                        <td class="py-4 px-6 text-sm text-gray-600">
-                            <div class="flex items-center gap-2 max-w-[180px]">
-                                <i class="fas fa-envelope text-gray-400 flex-shrink-0"></i>
-                                @if($member->email)
-                                    <span class="truncate" title="{{ $member->email }}">{{ $member->email }}</span>
-                                @else
-                                    <span>-</span>
-                                @endif
-                            </div>
-                        </td>
-
-                        <!-- Membership Date -->
-                        <td class="py-4 px-6 text-sm text-gray-600">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-calendar-alt text-gray-400"></i>
-                                {{ \Carbon\Carbon::parse($member->membership_date)->format('d/m/Y') }}
-                            </div>
-                        </td>
-
-                        <!-- Status -->
-                        <td class="py-4 px-6 text-sm">
-                            @if($member->is_active)
-                                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap">
-                                    <i class="fas fa-check-circle mr-1"></i>Hai
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 whitespace-nowrap">
-                                    <i class="fas fa-clock mr-1"></i>Inasubiri Idhini
-                                </span>
-                            @endif
-                        </td>
-
-                        <!-- Actions -->
-                        <td class="py-4 px-6 text-sm sticky right-0 bg-white">
-                            <div class="flex items-center space-x-2">
-                                <a href="{{ route('members.show', $member->id) }}"
-                                   class="h-8 w-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-all duration-200"
-                                   title="Angalia Maelezo">
-                                    <i class="fas fa-eye text-sm"></i>
-                                </a>
-                                @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
-                                <a href="{{ route('members.edit', $member->id) }}"
-                                   class="h-8 w-8 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center hover:bg-primary-200 transition-all duration-200"
-                                   title="Hariri">
-                                    <i class="fas fa-pencil-alt text-sm"></i>
-                                </a>
-                                @if($member->is_active)
-                                <button type="button"
-                                        onclick="confirmAction('deactivate', {{ $member->id }}, '{{ $member->full_name }}')"
-                                        class="h-8 w-8 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center hover:bg-yellow-200 transition-all duration-200"
-                                        title="Simamisha">
-                                    <i class="fas fa-user-slash text-sm"></i>
-                                </button>
-                                @else
-                                <button type="button"
-                                        onclick="confirmAction('activate', {{ $member->id }}, '{{ $member->full_name }}')"
-                                        class="h-8 w-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center hover:bg-green-200 transition-all duration-200"
-                                        title="Anzisha">
-                                    <i class="fas fa-user-check text-sm"></i>
-                                </button>
-                                @endif
-                                <button type="button"
-                                        onclick="confirmAction('delete', {{ $member->id }}, '{{ $member->full_name }}')"
-                                        class="h-8 w-8 bg-red-100 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-200 transition-all duration-200"
-                                        title="Futa">
-                                    <i class="fas fa-trash text-sm"></i>
-                                </button>
-
-                                <!-- Hidden Forms -->
-                                <form id="deactivate-form-{{ $member->id }}" action="{{ route('members.deactivate', $member->id) }}" method="POST" class="hidden">
-                                    @csrf
-                                </form>
-                                <form id="activate-form-{{ $member->id }}" action="{{ route('members.activate', $member->id) }}" method="POST" class="hidden">
-                                    @csrf
-                                </form>
-                                <form id="delete-form-{{ $member->id }}" action="{{ route('members.destroy', $member->id) }}" method="POST" class="hidden">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="8" class="py-12 px-6 text-center">
-                            <div class="mx-auto w-16 h-16 mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                                <i class="fas fa-users text-gray-400 text-2xl"></i>
-                            </div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">Hakuna waumini waliopatikana</h3>
-                            <p class="text-gray-500 {{ Auth::user()->isMchungaji() || Auth::user()->isMhasibu() ? 'mb-6' : '' }}">Hakuna waumini wanaolingana na vichujio vyako.</p>
-                            @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
-                            <a href="{{ route('members.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200">
-                                <i class="fas fa-user-plus mr-2"></i> Sajili Muumini Mpya
-                            </a>
-                            @endif
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pagination -->
-        @if($members->hasPages())
-        <div class="px-6 py-4 border-t border-gray-200">
-            {{ $members->links() }}
-        </div>
-        @endif
+    <div class="mt-6 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden" id="membersTableContainer">
+        @include('panel.members._table')
     </div>
 </div>
 
@@ -462,7 +224,7 @@
     </div>
 </div>
 
-<!-- Alert Modal (Success/Warning/Error) -->
+<!-- Alert Modal -->
 <div id="memberAlertModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[10000]">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95" id="memberAlertModalContent">
         <div class="p-6 text-center">
@@ -481,7 +243,6 @@
 <!-- QR Code Modal -->
 <div id="qrCodeModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[9999]">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
-        <!-- Modal Header -->
         <div class="sticky top-0 bg-white px-6 py-5 rounded-t-xl border-b border-gray-200 z-10">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
@@ -498,24 +259,16 @@
                 </button>
             </div>
         </div>
-
-        <!-- Modal Content -->
         <div class="p-6 text-center">
             <div class="mb-4">
                 <p class="text-gray-700 mb-1">Namba ya Muumini:</p>
                 <p class="text-2xl font-bold text-primary-600" id="qrMemberNumber"></p>
             </div>
-
-            <div id="qrCodeContainer" class="flex justify-center items-center bg-white p-6 rounded-xl border-2 border-gray-200 mb-4">
-                <!-- QR Code will be loaded here -->
-            </div>
-
+            <div id="qrCodeContainer" class="flex justify-center items-center bg-white p-6 rounded-xl border-2 border-gray-200 mb-4"></div>
             <p class="text-sm text-gray-500">
                 <i class="fas fa-info-circle mr-1"></i> Tumia QR code hii kwa ajili ya usajili wa haraka
             </p>
         </div>
-
-        <!-- Modal Footer -->
         <div class="sticky bottom-0 bg-gray-50 px-6 py-5 rounded-b-xl border-t border-gray-200 flex justify-end space-x-3">
             <button onclick="printQrCode()" class="px-5 py-2.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all duration-200 flex items-center gap-2">
                 <i class="fas fa-print"></i>
@@ -528,13 +281,22 @@
     </div>
 </div>
 
+@include('partials.loading-modal')
+@endsection
+
+@section('scripts')
 <script>
 // ========================================
-// Confirm Action Modal Functions
+// Global Variables
 // ========================================
 let currentAction = null;
 let currentMemberId = null;
+let searchTimeout;
+let currentPage = 1;
 
+// ========================================
+// Confirm Action Modal Functions
+// ========================================
 function confirmAction(action, memberId, memberName) {
     currentAction = action;
     currentMemberId = memberId;
@@ -550,7 +312,6 @@ function confirmAction(action, memberId, memberName) {
     const btnIcon = document.getElementById('confirmActionBtnIcon');
     const btnText = document.getElementById('confirmActionBtnText');
 
-    // Configure based on action type
     if (action === 'delete') {
         iconContainer.className = 'h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-red-100';
         iconClass.className = 'fas fa-trash-alt text-3xl text-red-600';
@@ -583,12 +344,7 @@ function confirmAction(action, memberId, memberName) {
         btnText.textContent = 'Anzisha';
     }
 
-    // Set button click handler
-    btn.onclick = function() {
-        executeAction();
-    };
-
-    // Show modal
+    btn.onclick = executeAction;
     modal.classList.remove('hidden');
     setTimeout(() => {
         content.classList.remove('scale-95');
@@ -599,10 +355,8 @@ function confirmAction(action, memberId, memberName) {
 function closeConfirmActionModal() {
     const modal = document.getElementById('confirmActionModal');
     const content = document.getElementById('confirmActionModalContent');
-
     content.classList.remove('scale-100');
     content.classList.add('scale-95');
-
     setTimeout(() => {
         modal.classList.add('hidden');
         currentAction = null;
@@ -617,17 +371,51 @@ function executeAction() {
     const btnIcon = document.getElementById('confirmActionBtnIcon');
     const btnText = document.getElementById('confirmActionBtnText');
 
-    // Show loading state
     btn.disabled = true;
     btnIcon.className = 'fas fa-spinner fa-spin';
     btnText.textContent = 'Inatuma...';
 
-    // Submit the appropriate form
     const formId = `${currentAction}-form-${currentMemberId}`;
     const form = document.getElementById(formId);
 
     if (form) {
-        form.submit();
+        const formData = new FormData(form);
+        const csrf = form.querySelector('input[name="_token"]')?.value;
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {})
+            },
+            body: formData
+        })
+        .then(async (res) => {
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw data;
+                return data;
+            } else {
+                if (!res.ok) throw new Error('Hitilafu imetokea');
+                return { success: true, message: 'Imefanikiwa' };
+            }
+        })
+        .then((data) => {
+            showMemberAlert('success', 'Imefanikiwa', data.message || 'Imefanikiwa');
+            closeConfirmActionModal();
+            setTimeout(() => filterMembers(), 500);
+        })
+        .catch((err) => {
+            const msg = err?.message || 'Hitilafu imetokea. Tafadhali jaribu tena.';
+            showMemberAlert('error', 'Hitilafu', msg);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btnIcon.className = 'fas fa-check';
+            btnText.textContent = 'Thibitisha';
+        });
     } else {
         showMemberAlert('error', 'Hitilafu', 'Fomu haijapatikana. Tafadhali jaribu tena.');
         closeConfirmActionModal();
@@ -645,38 +433,24 @@ function showMemberAlert(type, title, message) {
     const titleEl = document.getElementById('memberAlertTitle');
     const messageEl = document.getElementById('memberAlertMessage');
 
-    // Configure based on type
+    if (!modal) {
+        alert(title + ': ' + message);
+        return;
+    }
+
     const configs = {
-        'success': {
-            bgColor: 'bg-green-100',
-            iconColor: 'text-green-600',
-            icon: 'fas fa-check-circle'
-        },
-        'error': {
-            bgColor: 'bg-red-100',
-            iconColor: 'text-red-600',
-            icon: 'fas fa-times-circle'
-        },
-        'warning': {
-            bgColor: 'bg-yellow-100',
-            iconColor: 'text-yellow-600',
-            icon: 'fas fa-exclamation-triangle'
-        },
-        'info': {
-            bgColor: 'bg-blue-100',
-            iconColor: 'text-blue-600',
-            icon: 'fas fa-info-circle'
-        }
+        'success': { bgColor: 'bg-green-100', iconColor: 'text-green-600', icon: 'fas fa-check-circle' },
+        'error': { bgColor: 'bg-red-100', iconColor: 'text-red-600', icon: 'fas fa-times-circle' },
+        'warning': { bgColor: 'bg-yellow-100', iconColor: 'text-yellow-600', icon: 'fas fa-exclamation-triangle' },
+        'info': { bgColor: 'bg-blue-100', iconColor: 'text-blue-600', icon: 'fas fa-info-circle' }
     };
 
     const config = configs[type] || configs['info'];
-
     iconContainer.className = `h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4 ${config.bgColor}`;
     iconClass.className = `${config.icon} text-3xl ${config.iconColor}`;
     titleEl.textContent = title;
     messageEl.textContent = message;
 
-    // Show modal
     modal.classList.remove('hidden');
     setTimeout(() => {
         content.classList.remove('scale-95');
@@ -687,137 +461,111 @@ function showMemberAlert(type, title, message) {
 function closeMemberAlertModal() {
     const modal = document.getElementById('memberAlertModal');
     const content = document.getElementById('memberAlertModalContent');
-
     content.classList.remove('scale-100');
     content.classList.add('scale-95');
-
-    setTimeout(() => {
-        modal.classList.add('hidden');
-    }, 200);
+    setTimeout(() => modal.classList.add('hidden'), 200);
 }
 
-// Close modals on backdrop click
-document.getElementById('confirmActionModal')?.addEventListener('click', function(e) {
-    if (e.target === this) closeConfirmActionModal();
-});
-document.getElementById('memberAlertModal')?.addEventListener('click', function(e) {
-    if (e.target === this) closeMemberAlertModal();
-});
-
 // ========================================
-// Live Search Functionality
+// Filter & Search Functions (AJAX without page reload)
 // ========================================
-let searchTimeout;
-
-function filterMembers() {
+function filterMembers(page = 1) {
     clearTimeout(searchTimeout);
+    currentPage = page;
 
     searchTimeout = setTimeout(() => {
-        const searchValue = document.querySelector('input[name="search"]').value.toLowerCase();
-        const genderValue = document.querySelector('select[name="gender"]').value;
-        const ageGroupValue = document.querySelector('select[name="age_group"]').value;
-        const specialGroupValue = document.querySelector('select[name="special_group"]').value;
-        const maritalStatusValue = document.querySelector('select[name="marital_status"]').value;
-        const isActiveValue = document.querySelector('select[name="is_active"]').value;
+        const params = new URLSearchParams();
 
-        const rows = document.querySelectorAll('.member-row');
-        let visibleCount = 0;
+        const search = document.getElementById('searchInput')?.value;
+        const gender = document.getElementById('genderFilter')?.value;
+        const isActive = document.getElementById('statusFilter')?.value;
+        const ageGroup = document.getElementById('ageGroupFilter')?.value;
+        const specialGroup = document.getElementById('specialGroupFilter')?.value;
+        const maritalStatus = document.getElementById('maritalStatusFilter')?.value;
 
-        rows.forEach(row => {
-            const name = row.getAttribute('data-name') || '';
-            const phone = row.getAttribute('data-phone') || '';
-            const email = row.getAttribute('data-email') || '';
-            const memberNumber = row.getAttribute('data-member-number') || '';
-            const gender = row.getAttribute('data-gender') || '';
-            const ageGroup = row.getAttribute('data-age-group') || '';
-            const specialGroup = row.getAttribute('data-special-group') || '';
-            const maritalStatus = row.getAttribute('data-marital-status') || '';
-            const isActive = row.getAttribute('data-is-active') || '';
+        if (search) params.append('search', search);
+        if (gender) params.append('gender', gender);
+        if (isActive !== '') params.append('is_active', isActive);
+        if (ageGroup) params.append('age_group', ageGroup);
+        if (specialGroup) params.append('special_group', specialGroup);
+        if (maritalStatus) params.append('marital_status', maritalStatus);
+        if (page > 1) params.append('page', page);
 
-            // Check if row matches search criteria
-            const matchesSearch = searchValue === '' ||
-                name.includes(searchValue) ||
-                phone.includes(searchValue) ||
-                email.includes(searchValue) ||
-                memberNumber.includes(searchValue);
+        const container = document.getElementById('membersTableContainer');
+        if (container) {
+            container.style.opacity = '0.5';
+            container.style.pointerEvents = 'none';
+        }
 
-            const matchesGender = genderValue === '' || gender === genderValue;
-            const matchesAgeGroup = ageGroupValue === '' || ageGroup === ageGroupValue;
-            const matchesSpecialGroup = specialGroupValue === '' || specialGroup === specialGroupValue;
-            const matchesMaritalStatus = maritalStatusValue === '' || maritalStatus === maritalStatusValue;
-            const matchesIsActive = isActiveValue === '' || isActive === isActiveValue;
+        // Update URL without reloading
+        const newUrl = '{{ route("members.index") }}' + (params.toString() ? '?' + params.toString() : '');
+        window.history.pushState({}, '', newUrl);
 
-            // Show or hide row based on all criteria
-            if (matchesSearch && matchesGender && matchesAgeGroup && matchesSpecialGroup && matchesMaritalStatus && matchesIsActive) {
-                row.style.display = '';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
+        fetch(newUrl, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            if (container) {
+                container.innerHTML = html;
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
+                attachPaginationListeners();
+            }
+        })
+        .catch(error => {
+            console.error('Error filtering members:', error);
+            if (container) {
+                container.style.opacity = '1';
+                container.style.pointerEvents = 'auto';
             }
         });
-
-        // Update count or show "no results" message if needed
-        console.log(`Waumini ${visibleCount} wanaoonekana`);
-    }, 300); // 300ms debounce
+    }, 300);
 }
 
-// Clear all filters
+function filterByStatus(status) {
+    const statusFilter = document.getElementById('statusFilter');
+    if (statusFilter) {
+        statusFilter.value = status === 'pending' ? '0' : '';
+        filterMembers();
+    }
+}
+
 function clearFilters() {
-    document.querySelector('input[name="search"]').value = '';
-    document.querySelector('select[name="gender"]').value = '';
-    document.querySelector('select[name="age_group"]').value = '';
-    document.querySelector('select[name="special_group"]').value = '';
-    document.querySelector('select[name="marital_status"]').value = '';
-    document.querySelector('select[name="is_active"]').value = '';
+    document.getElementById('searchInput').value = '';
+    document.getElementById('genderFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('ageGroupFilter').value = '';
+    document.getElementById('specialGroupFilter').value = '';
+    document.getElementById('maritalStatusFilter').value = '';
     filterMembers();
 }
 
-// Add event listeners to all filter inputs
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.querySelector('input[name="search"]');
-    const filterSelects = document.querySelectorAll('select[name="gender"], select[name="age_group"], select[name="special_group"], select[name="marital_status"], select[name="is_active"]');
-
-    // Live search on input
-    if (searchInput) {
-        searchInput.addEventListener('input', filterMembers);
-    }
-
-    // Live filter on select change
-    filterSelects.forEach(select => {
-        select.addEventListener('change', filterMembers);
-    });
-
-    // Prevent form submission on Enter key in search field
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                return false;
-            }
-        });
-    }
-
-    // Remove data-auto-filter attribute to prevent auto-submission
-    const filterForm = document.querySelector('form[data-auto-filter]');
-    if (filterForm) {
-        filterForm.removeAttribute('data-auto-filter');
-        // Prevent form submission
-        filterForm.addEventListener('submit', function(e) {
+function attachPaginationListeners() {
+    // Intercept pagination links for AJAX navigation
+    document.querySelectorAll('#membersTableContainer .pagination a').forEach(link => {
+        link.addEventListener('click', function(e) {
             e.preventDefault();
-            return false;
+            const url = new URL(this.href);
+            const page = url.searchParams.get('page') || 1;
+            filterMembers(parseInt(page));
         });
-    }
-});
+    });
+}
 
+// ========================================
 // QR Code Functions
+// ========================================
 function viewQrCode(memberId, memberNumber) {
     document.getElementById('qrMemberNumber').textContent = memberNumber;
     const qrContainer = document.getElementById('qrCodeContainer');
     qrContainer.innerHTML = '<div class="text-gray-500 py-8"><i class="fas fa-spinner fa-spin text-4xl"></i><p class="mt-2 text-sm">Inapakia QR code...</p></div>';
 
-    // Load QR code
-    const qrUrl = `/panel/members/${memberId}/qrcode`;
-    fetch(qrUrl)
+    fetch(`/panel/members/${memberId}/qrcode`)
         .then(response => response.text())
         .then(svg => {
             qrContainer.innerHTML = svg;
@@ -835,9 +583,7 @@ function viewQrCode(memberId, memberNumber) {
 function closeQrModal() {
     const modal = document.getElementById('qrCodeModal');
     modal.querySelector('div').classList.add('scale-95');
-    setTimeout(() => {
-        modal.classList.add('hidden');
-    }, 300);
+    setTimeout(() => modal.classList.add('hidden'), 300);
 }
 
 function printQrCode() {
@@ -850,38 +596,12 @@ function printQrCode() {
             <head>
                 <title>QR Code - ${memberNumber}</title>
                 <style>
-                    body {
-                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                        text-align: center;
-                        padding: 40px 20px;
-                        background: white;
-                    }
-                    h1 {
-                        color: #360958;
-                        font-size: 24px;
-                        margin-bottom: 10px;
-                    }
-                    h2 {
-                        color: #666;
-                        font-size: 16px;
-                        margin-bottom: 30px;
-                    }
-                    .qr-container {
-                        display: inline-block;
-                        border: 3px solid #360958;
-                        padding: 30px;
-                        margin: 30px 0;
-                        border-radius: 10px;
-                        background: white;
-                    }
-                    .footer {
-                        color: #666;
-                        font-size: 14px;
-                        margin-top: 20px;
-                    }
-                    @media print {
-                        @page { margin: 20mm; }
-                    }
+                    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 40px 20px; background: white; }
+                    h1 { color: #360958; font-size: 24px; margin-bottom: 10px; }
+                    h2 { color: #666; font-size: 16px; margin-bottom: 30px; }
+                    .qr-container { display: inline-block; border: 3px solid #360958; padding: 30px; margin: 30px 0; border-radius: 10px; background: white; }
+                    .footer { color: #666; font-size: 14px; margin-top: 20px; }
+                    @media print { @page { margin: 20mm; } }
                 </style>
             </head>
             <body>
@@ -890,26 +610,51 @@ function printQrCode() {
                 <h1 style="font-size: 28px; color: #360958; font-weight: bold; margin: 10px 0;">${memberNumber}</h1>
                 <div class="qr-container">${qrCode}</div>
                 <p class="footer">Scan QR code hii kupata taarifa za muumini</p>
-                <script>
-                    window.onload = function() {
-                        window.print();
-                        setTimeout(function() {
-                            window.close();
-                        }, 500);
-                    }
-                <\/script>
+                <script>window.onload = function() { window.print(); setTimeout(function() { window.close(); }, 500); }<\/script>
             </body>
         </html>
     `);
     printWindow.document.close();
 }
 
-// Close QR modal when clicking outside
+// ========================================
+// Event Listeners
+// ========================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Live search
+    document.getElementById('searchInput')?.addEventListener('input', () => filterMembers());
+
+    // Filter changes
+    document.getElementById('genderFilter')?.addEventListener('change', () => filterMembers());
+    document.getElementById('statusFilter')?.addEventListener('change', () => filterMembers());
+    document.getElementById('ageGroupFilter')?.addEventListener('change', () => filterMembers());
+    document.getElementById('specialGroupFilter')?.addEventListener('change', () => filterMembers());
+    document.getElementById('maritalStatusFilter')?.addEventListener('change', () => filterMembers());
+
+    // Prevent form submission
+    document.getElementById('filterForm')?.addEventListener('submit', e => e.preventDefault());
+
+    // Prevent Enter key submission in search
+    document.getElementById('searchInput')?.addEventListener('keypress', e => {
+        if (e.key === 'Enter') e.preventDefault();
+    });
+
+    // Attach pagination listeners
+    attachPaginationListeners();
+});
+
+// Close modals on backdrop click
+document.getElementById('confirmActionModal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeConfirmActionModal();
+});
+document.getElementById('memberAlertModal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeMemberAlertModal();
+});
 document.getElementById('qrCodeModal')?.addEventListener('click', function(e) {
     if (e.target === this) closeQrModal();
 });
 
-// Close all modals with Escape key
+// Close modals with Escape key
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
         closeConfirmActionModal();
@@ -918,23 +663,29 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-// Show flash messages as modals
+// Handle browser back/forward
+window.addEventListener('popstate', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    document.getElementById('searchInput').value = urlParams.get('search') || '';
+    document.getElementById('genderFilter').value = urlParams.get('gender') || '';
+    document.getElementById('statusFilter').value = urlParams.get('is_active') || '';
+    document.getElementById('ageGroupFilter').value = urlParams.get('age_group') || '';
+    document.getElementById('specialGroupFilter').value = urlParams.get('special_group') || '';
+    document.getElementById('maritalStatusFilter').value = urlParams.get('marital_status') || '';
+    filterMembers(parseInt(urlParams.get('page')) || 1);
+});
+
+// Show flash messages
 @if(session('success'))
-    document.addEventListener('DOMContentLoaded', function() {
-        showMemberAlert('success', 'Imefanikiwa!', '{{ session('success') }}');
-    });
+showMemberAlert('success', 'Imefanikiwa!', '{{ session('success') }}');
 @endif
 
 @if(session('error'))
-    document.addEventListener('DOMContentLoaded', function() {
-        showMemberAlert('error', 'Hitilafu!', '{{ session('error') }}');
-    });
+showMemberAlert('error', 'Hitilafu!', '{{ session('error') }}');
 @endif
 
 @if(session('warning'))
-    document.addEventListener('DOMContentLoaded', function() {
-        showMemberAlert('warning', 'Onyo!', '{{ session('warning') }}');
-    });
+showMemberAlert('warning', 'Onyo!', '{{ session('warning') }}');
 @endif
 </script>
 @endsection

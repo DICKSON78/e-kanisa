@@ -1223,6 +1223,7 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const sendMessageUrl = @json(\Illuminate\Support\Facades\Route::has('messages.send') ? route('messages.send') : url('/panel/messages/send'));
     // Elements
     const filterTabs = document.querySelectorAll('.filter-tab');
     const searchInput = document.getElementById('searchInput');
@@ -1504,11 +1505,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(messageForm);
         formData.set('content', content);
 
-        fetch('{{ route("messages.send") }}', {
+        fetch(sendMessageUrl, {
             method: 'POST',
             body: formData,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
             }
         })
         .then(response => response.json())

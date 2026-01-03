@@ -82,7 +82,7 @@
         <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <!-- Year Filter -->
             <div class="w-full lg:w-auto">
-                <form method="GET" action="{{ route('expenses.index') }}" class="flex items-center gap-4">
+                <form method="GET" action="{{ route('expenses.index') }}" data-auto-filter="true" data-ajax-target="#expensesGridContainer" class="flex items-center gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Chagua Mwaka</label>
                         <div class="flex items-center gap-2">
@@ -115,7 +115,7 @@
     </div>
 
     <!-- Monthly Grid View -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden" id="expensesGridContainer">
         <!-- Table Header -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 border-b border-gray-200">
             <div>
@@ -351,6 +351,8 @@
 @endsection
 
 @section('scripts')
+@include('partials.loading-modal')
+
 <script>
 function exportMatumizi() {
     const modal = document.getElementById('exportModal');

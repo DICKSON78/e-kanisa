@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-use App\Models\Income;
 use App\Models\Setting;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithTitle;
@@ -13,17 +12,15 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Carbon\Carbon;
 
-class MapatoExport implements WithEvents, WithTitle
+class SadakaExport implements WithEvents, WithTitle
 {
-    protected $startDate;
-    protected $endDate;
+    protected $sadakaData;
     protected $year;
     protected $month;
 
-    public function __construct($startDate = null, $endDate = null, $year = null, $month = null)
+    public function __construct($sadakaData, $year, $month = null)
     {
-        $this->startDate = $startDate;
-        $this->endDate = $endDate;
+        $this->sadakaData = $sadakaData;
         $this->year = $year;
         $this->month = $month;
     }
@@ -46,7 +43,7 @@ class MapatoExport implements WithEvents, WithTitle
                 ];
 
                 // ROW 1: Church Name
-                $sheet->mergeCells('A1:F1');
+                $sheet->mergeCells('A1:G1');
                 $sheet->setCellValue('A1', strtoupper($churchName));
                 $sheet->getStyle('A1')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 16, 'color' => ['rgb' => '16A34A']],
@@ -55,7 +52,7 @@ class MapatoExport implements WithEvents, WithTitle
                 $sheet->getRowDimension(1)->setRowHeight(30);
 
                 // ROW 2: Diocese and Parish
-                $sheet->mergeCells('A2:F2');
+                $sheet->mergeCells('A2:G2');
                 $sheet->setCellValue('A2', $diocese . ' - ' . $parish);
                 $sheet->getStyle('A2')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 12, 'color' => ['rgb' => '374151']],
@@ -64,16 +61,10 @@ class MapatoExport implements WithEvents, WithTitle
                 $sheet->getRowDimension(2)->setRowHeight(22);
 
                 // ROW 3: Report Title
-                $sheet->mergeCells('A3:F3');
-                $titleText = 'RIPOTI YA MAPATO';
-                if ($this->year) {
-                    $titleText .= ' - MWAKA ' . $this->year;
-                }
+                $sheet->mergeCells('A3:G3');
+                $titleText = 'RIPOTI YA SADAKA - MWAKA ' . $this->year;
                 if ($this->month) {
                     $titleText .= ' - ' . strtoupper($monthNames[(int)$this->month]);
-                }
-                if ($this->startDate && $this->endDate) {
-                    $titleText .= ' (' . Carbon::parse($this->startDate)->format('d/m/Y') . ' - ' . Carbon::parse($this->endDate)->format('d/m/Y') . ')';
                 }
                 $sheet->setCellValue('A3', $titleText);
                 $sheet->getStyle('A3')->applyFromArray([
@@ -84,7 +75,7 @@ class MapatoExport implements WithEvents, WithTitle
                 $sheet->getRowDimension(3)->setRowHeight(35);
 
                 // ROW 4: Date generated
-                $sheet->mergeCells('A4:F4');
+                $sheet->mergeCells('A4:G4');
                 $sheet->setCellValue('A4', 'Imetengenezwa: ' . date('d/m/Y H:i'));
                 $sheet->getStyle('A4')->applyFromArray([
                     'font' => ['italic' => true, 'size' => 10, 'color' => ['rgb' => '6B7280']],
@@ -99,15 +90,16 @@ class MapatoExport implements WithEvents, WithTitle
                 $headers = [
                     'A' => 'Na.',
                     'B' => 'TAREHE',
-                    'C' => 'AINA YA MAPATO',
-                    'D' => 'MWANACHAMA',
-                    'E' => 'KIASI (TSH)',
-                    'F' => 'NAMBA RISITI',
+                    'C' => 'KATEGORIA',
+                    'D' => 'MCHANGIAJI',
+                    'E' => 'MAELEZO',
+                    'F' => 'KIASI (TSH)',
+                    'G' => 'NAMBA RISITI',
                 ];
                 foreach ($headers as $col => $value) {
                     $sheet->setCellValue($col . '6', $value);
                 }
-                $sheet->getStyle('A6:F6')->applyFromArray([
+                $sheet->getStyle('A6:G6')->applyFromArray([
                     'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 11],
                     'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '360958']],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -115,57 +107,42 @@ class MapatoExport implements WithEvents, WithTitle
                 ]);
                 $sheet->getRowDimension(6)->setRowHeight(30);
 
-                // Get data
-                $query = Income::with(['category', 'member'])->orderBy('collection_date', 'asc');
-
-                if ($this->startDate) {
-                    $query->where('collection_date', '>=', $this->startDate);
-                }
-                if ($this->endDate) {
-                    $query->where('collection_date', '<=', $this->endDate);
-                }
-                if ($this->year) {
-                    $query->whereYear('collection_date', $this->year);
-                }
-                if ($this->month) {
-                    $query->whereMonth('collection_date', $this->month);
-                }
-
-                $incomes = $query->get();
+                // Data rows
                 $currentRow = 7;
                 $grandTotal = 0;
                 $rowNumber = 1;
 
-                foreach ($incomes as $income) {
+                foreach ($this->sadakaData as $sadaka) {
                     $sheet->setCellValue('A' . $currentRow, $rowNumber);
-                    $sheet->setCellValue('B' . $currentRow, Carbon::parse($income->collection_date)->format('d/m/Y'));
-                    $sheet->setCellValue('C' . $currentRow, $income->category ? $income->category->name : '-');
-                    $sheet->setCellValue('D' . $currentRow, $income->member ? $income->member->first_name . ' ' . $income->member->last_name : '-');
-                    $sheet->setCellValue('E' . $currentRow, floatval($income->amount));
-                    $sheet->setCellValue('F' . $currentRow, $income->receipt_number ?? '-');
+                    $sheet->setCellValue('B' . $currentRow, Carbon::parse($sadaka->collection_date)->format('d/m/Y'));
+                    $sheet->setCellValue('C' . $currentRow, $sadaka->category ? $sadaka->category->name : '-');
+                    $sheet->setCellValue('D' . $currentRow, $sadaka->member ? $sadaka->member->first_name . ' ' . $sadaka->member->last_name : '-');
+                    $sheet->setCellValue('E' . $currentRow, $sadaka->description ?? '-');
+                    $sheet->setCellValue('F' . $currentRow, floatval($sadaka->amount));
+                    $sheet->setCellValue('G' . $currentRow, $sadaka->receipt_number ?? '-');
 
-                    $grandTotal += floatval($income->amount);
+                    $grandTotal += floatval($sadaka->amount);
                     $rowNumber++;
                     $currentRow++;
                 }
 
                 // If no data, show placeholder
-                if ($incomes->isEmpty()) {
+                if ($this->sadakaData->isEmpty()) {
                     $sheet->setCellValue('A7', '1');
-                    $sheet->mergeCells('B7:E7');
-                    $sheet->setCellValue('B7', 'Hakuna mapato yaliyopatikana kwa kipindi hiki');
-                    $sheet->setCellValue('F7', '-');
+                    $sheet->mergeCells('B7:F7');
+                    $sheet->setCellValue('B7', 'Hakuna sadaka zilizopatikana kwa kipindi hiki');
+                    $sheet->setCellValue('G7', '-');
                     $currentRow = 8;
                 }
 
                 // Grand total row
                 $sheet->setCellValue('A' . $currentRow, '');
-                $sheet->mergeCells('B' . $currentRow . ':D' . $currentRow);
-                $sheet->setCellValue('B' . $currentRow, 'JUMLA KUU YA MAPATO');
-                $sheet->setCellValue('E' . $currentRow, $grandTotal);
-                $sheet->setCellValue('F' . $currentRow, '');
+                $sheet->mergeCells('B' . $currentRow . ':E' . $currentRow);
+                $sheet->setCellValue('B' . $currentRow, 'JUMLA KUU YA SADAKA');
+                $sheet->setCellValue('F' . $currentRow, $grandTotal);
+                $sheet->setCellValue('G' . $currentRow, '');
 
-                $sheet->getStyle('A' . $currentRow . ':F' . $currentRow)->applyFromArray([
+                $sheet->getStyle('A' . $currentRow . ':G' . $currentRow)->applyFromArray([
                     'font' => ['bold' => true, 'size' => 12, 'color' => ['rgb' => 'FFFFFF']],
                     'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '360958']],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_MEDIUM, 'color' => ['rgb' => '000000']]],
@@ -174,20 +151,21 @@ class MapatoExport implements WithEvents, WithTitle
                 $sheet->getRowDimension($currentRow)->setRowHeight(30);
 
                 // Apply formatting to data rows
-                $sheet->getStyle('A7:F' . ($currentRow - 1))->applyFromArray([
+                $sheet->getStyle('A7:G' . ($currentRow - 1))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'D1D5DB']]],
                 ]);
-                $sheet->getStyle('E7:E' . $currentRow)->getNumberFormat()->setFormatCode('#,##0');
-                $sheet->getStyle('E7:E' . $currentRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle('F7:F' . $currentRow)->getNumberFormat()->setFormatCode('#,##0');
+                $sheet->getStyle('F7:F' . $currentRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
                 $sheet->getStyle('A7:A' . $currentRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 // Column widths
                 $sheet->getColumnDimension('A')->setWidth(6);
                 $sheet->getColumnDimension('B')->setWidth(15);
-                $sheet->getColumnDimension('C')->setWidth(25);
-                $sheet->getColumnDimension('D')->setWidth(30);
-                $sheet->getColumnDimension('E')->setWidth(18);
-                $sheet->getColumnDimension('F')->setWidth(15);
+                $sheet->getColumnDimension('C')->setWidth(20);
+                $sheet->getColumnDimension('D')->setWidth(25);
+                $sheet->getColumnDimension('E')->setWidth(30);
+                $sheet->getColumnDimension('F')->setWidth(18);
+                $sheet->getColumnDimension('G')->setWidth(15);
 
                 $sheet->freezePane('A7');
 
@@ -207,6 +185,6 @@ class MapatoExport implements WithEvents, WithTitle
 
     public function title(): string
     {
-        return 'MAPATO';
+        return 'SADAKA';
     }
 }

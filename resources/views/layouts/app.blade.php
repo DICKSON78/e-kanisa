@@ -1240,8 +1240,13 @@
 
                 <!-- Messages - Leaders Only (Mchungaji, Mhasibu) -->
                 @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
+                @if(\Illuminate\Support\Facades\Route::has('messages.index'))
                 @php
-                    $sidebarUnreadMessages = \App\Models\Message::where('receiver_id', Auth::id())->where('is_read', false)->count();
+                    try {
+                        $sidebarUnreadMessages = \App\Models\Message::where('receiver_id', Auth::id())->where('is_read', false)->count();
+                    } catch (\Exception $e) {
+                        $sidebarUnreadMessages = 0;
+                    }
                 @endphp
                 <a href="{{ route('messages.index') }}" class="sidebar-link {{ request()->routeIs('messages.*') ? 'active' : '' }}">
                     <i class="fas fa-comments"></i>
@@ -1251,6 +1256,7 @@
                     @endif
                     <div class="sidebar-tooltip">Ujumbe</div>
                 </a>
+                @endif
                 @endif
 
                 <!-- SECTION FOR MCHUNGAJI AND MUHASIBU ONLY -->
@@ -1301,15 +1307,21 @@
                 <div class="header-right">
                     <!-- Messages Button - Leaders Only (Mchungaji, Mhasibu) -->
                     @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
+                    @if(\Illuminate\Support\Facades\Route::has('messages.index'))
                     <a href="{{ route('messages.index') }}" class="notification-btn" aria-label="Ujumbe" title="Ujumbe">
                         <i class="fas fa-comment-dots"></i>
                         @php
-                            $headerUnreadMessages = \App\Models\Message::where('receiver_id', Auth::id())->where('is_read', false)->count();
+                            try {
+                                $headerUnreadMessages = \App\Models\Message::where('receiver_id', Auth::id())->where('is_read', false)->count();
+                            } catch (\Exception $e) {
+                                $headerUnreadMessages = 0;
+                            }
                         @endphp
                         @if($headerUnreadMessages > 0)
                         <span class="notification-badge" style="background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 2px 6px rgba(34, 197, 94, 0.4);">{{ $headerUnreadMessages }}</span>
                         @endif
                     </a>
+                    @endif
                     @endif
 
                     <!-- Notification Dropdown -->
@@ -1320,34 +1332,40 @@
                                 // Check if user needs to change password
                                 $needsPasswordChange = Auth::user()->needsPasswordChange();
 
+                                $pendingRequests = 0;
+                                $pendingPastoral = 0;
+                                $pendingMembers = 0;
+                                $newEvents = 0;
+                                $memberPastoral = 0;
+                                $totalNotifications = ($needsPasswordChange ? 1 : 0);
+
                                 // Different notifications for members vs admin
-                                if (Auth::user()->isMwanachama()) {
-                                    // Member sees only their pastoral service updates and new events
-                                    $memberPastoral = 0;
-                                    if (Auth::user()->member) {
-                                        $memberPastoral = \App\Models\PastoralService::where('member_id', Auth::user()->member->id)
-                                            ->whereIn('status', ['Imeidhinishwa', 'Imekataliwa', 'Imekamilika'])
-                                            ->where('updated_at', '>=', now()->subDays(7))
+                                try {
+                                    if (Auth::user()->isMwanachama()) {
+                                        // Member sees only their pastoral service updates and new events
+                                        if (Auth::user()->member) {
+                                            $memberPastoral = \App\Models\PastoralService::where('member_id', Auth::user()->member->id)
+                                                ->whereIn('status', ['Imeidhinishwa', 'Imekataliwa', 'Imekamilika'])
+                                                ->where('updated_at', '>=', now()->subDays(7))
+                                                ->count();
+                                        }
+                                        $newEvents = \App\Models\Event::where('is_active', true)
+                                            ->where('created_at', '>=', now()->subDays(7))
+                                            ->where('event_date', '>=', now())
                                             ->count();
+                                        $pendingPastoral = $memberPastoral;
+                                        $totalNotifications = $memberPastoral + $newEvents + ($needsPasswordChange ? 1 : 0);
+                                    } else {
+                                        // Admin/Pastor sees all pending items
+                                        $pendingRequests = \App\Models\Request::where('status', 'Inasubiri')->count();
+                                        $pendingPastoral = \App\Models\PastoralService::where('status', 'Inasubiri')->count();
+                                        if (Auth::user()->isMchungaji() || Auth::user()->isMhasibu()) {
+                                            $pendingMembers = \App\Models\User::where('is_active', false)->count();
+                                        }
+                                        $totalNotifications = $pendingRequests + $pendingPastoral + $pendingMembers + ($needsPasswordChange ? 1 : 0);
                                     }
-                                    $newEvents = \App\Models\Event::where('is_active', true)
-                                        ->where('created_at', '>=', now()->subDays(7))
-                                        ->where('event_date', '>=', now())
-                                        ->count();
-                                    $pendingRequests = 0;
-                                    $pendingPastoral = $memberPastoral;
-                                    $pendingMembers = 0;
-                                    $totalNotifications = $memberPastoral + $newEvents + ($needsPasswordChange ? 1 : 0);
-                                } else {
-                                    // Admin/Pastor sees all pending items
-                                    $pendingRequests = \App\Models\Request::where('status', 'Inasubiri')->count();
-                                    $pendingPastoral = \App\Models\PastoralService::where('status', 'Inasubiri')->count();
-                                    $pendingMembers = 0;
-                                    $newEvents = 0;
-                                    if (Auth::user()->isMchungaji() || Auth::user()->isMhasibu()) {
-                                        $pendingMembers = \App\Models\User::where('is_active', false)->count();
-                                    }
-                                    $totalNotifications = $pendingRequests + $pendingPastoral + $pendingMembers + ($needsPasswordChange ? 1 : 0);
+                                } catch (\Exception $e) {
+                                    // Ignore DB errors; fallbacks already set
                                 }
                             @endphp
                             @if($totalNotifications > 0)

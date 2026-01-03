@@ -97,7 +97,7 @@ function formatRequestMoney($amount) {
                 <i class="fas fa-filter text-primary-500 mr-2"></i> Chuja Maombi
             </h3>
         </div>
-        <form method="GET" action="{{ route('requests.index') }}" class="space-y-4">
+        <form method="GET" action="{{ route('requests.index') }}" data-auto-filter="true" data-ajax-target="#requestsTableContainer" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Search Field -->
                 <div class="lg:col-span-2">
@@ -161,22 +161,18 @@ function formatRequestMoney($amount) {
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                <a href="{{ route('requests.index') }}" class="px-6 py-2.5 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-all duration-200 flex items-center gap-2">
-                    <i class="fas fa-redo"></i>
+            <!-- Clear Filter Link -->
+            <div class="flex justify-end pt-2">
+                <a href="{{ route('requests.index') }}" class="text-sm text-gray-500 hover:text-primary-600 transition-colors flex items-center gap-1">
+                    <i class="fas fa-redo text-xs"></i>
                     <span>Futa Chujio</span>
                 </a>
-                <button type="submit" class="px-6 py-2.5 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-all duration-200 flex items-center gap-2">
-                    <i class="fas fa-filter"></i>
-                    <span>Tumia Chujio</span>
-                </button>
             </div>
         </form>
     </div>
 
     <!-- Requests Table -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden" id="requestsTableContainer">
         <!-- Table Header -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 sm:p-6 border-b border-gray-200">
             <div>
@@ -366,6 +362,8 @@ function formatRequestMoney($amount) {
         </div>
     </div>
 </div>
+
+@include('partials.loading-modal')
 
 <script>
 // Delete confirmation modal functions

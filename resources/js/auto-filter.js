@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterForms = document.querySelectorAll('[data-auto-filter="true"]');
 
     filterForms.forEach(form => {
+        const ajaxTarget = form.getAttribute('data-ajax-target');
+        if (ajaxTarget) {
+            initAjaxAutoFilter(form, ajaxTarget);
+            return;
+        }
+
         const inputs = form.querySelectorAll('input, select');
         let debounceTimer;
 
@@ -37,8 +43,8 @@ document.addEventListener('DOMContentLoaded', function() {
  * This function handles filter changes without page reload
  */
 function initAjaxAutoFilter(formSelector, tableSelector, options = {}) {
-    const form = document.querySelector(formSelector);
-    const tableContainer = document.querySelector(tableSelector);
+    const form = typeof formSelector === 'string' ? document.querySelector(formSelector) : formSelector;
+    const tableContainer = typeof tableSelector === 'string' ? document.querySelector(tableSelector) : tableSelector;
 
     if (!form || !tableContainer) return;
 
@@ -71,7 +77,7 @@ function initAjaxAutoFilter(formSelector, tableSelector, options = {}) {
         fetch(url, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
+                'Accept': 'text/html'
             }
         })
         .then(response => response.text())
@@ -136,7 +142,7 @@ function initAjaxAutoFilter(formSelector, tableSelector, options = {}) {
             fetch(url, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
+                    'Accept': 'text/html'
                 }
             })
             .then(response => response.text())
@@ -163,4 +169,28 @@ function initAjaxAutoFilter(formSelector, tableSelector, options = {}) {
             });
         }
     });
+}
+
+if (typeof window !== 'undefined') {
+    window.initAjaxAutoFilter = initAjaxAutoFilter;
+    window.ajaxReloadContainer = function (selector) {
+        const container = document.querySelector(selector);
+        if (!container) return;
+
+        fetch(window.location.href, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html'
+            }
+        })
+        .then(r => r.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newContainer = doc.querySelector(selector);
+            if (newContainer) {
+                container.innerHTML = newContainer.innerHTML;
+            }
+        });
+    };
 }

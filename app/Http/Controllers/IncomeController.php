@@ -75,6 +75,11 @@ class IncomeController extends Controller
             ->orderBy('year', 'desc')
             ->pluck('year');
 
+        // Return only table partial for AJAX requests
+        if ($request->ajax()) {
+            return view('panel.income._table', compact('incomes'));
+        }
+
         return view('panel.income.index', compact(
             'incomes',
             'categories',
@@ -194,6 +199,13 @@ class IncomeController extends Controller
     {
         $income = Income::findOrFail($id);
         $income->delete();
+
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Mapato yamefutwa kikamilifu',
+            ]);
+        }
 
         return redirect()->route('income.index')
             ->with('success', 'Mapato yamefutwa kikamilifu');

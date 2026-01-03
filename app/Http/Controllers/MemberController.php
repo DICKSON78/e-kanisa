@@ -128,6 +128,11 @@ class MemberController extends Controller
             return $member->age_group;
         })->filter()->unique()->values();
 
+        // Handle AJAX request for table only
+        if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return view('panel.members._table', compact('members'));
+        }
+
         return view('panel.members.index', compact('members', 'stats', 'specialGroups', 'genders', 'maritalStatuses', 'ageGroups'));
     }
 
@@ -358,6 +363,13 @@ class MemberController extends Controller
     {
         $member = Member::findOrFail($id);
         $member->delete();
+
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Muumini amefutwa kikamilifu',
+            ]);
+        }
 
         return redirect()->route('members.index')
             ->with('success', 'Muumini amefutwa kikamilifu');
@@ -644,8 +656,17 @@ class MemberController extends Controller
             $member->user->update(['is_active' => true]);
         }
 
+        $message = 'Muumini ' . $member->full_name . ' ameanzishwa kikamilifu';
+
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+        }
+
         return redirect()->back()
-            ->with('success', 'Muumini ' . $member->full_name . ' ameanzishwa kikamilifu');
+            ->with('success', $message);
     }
 
     /**
@@ -661,8 +682,17 @@ class MemberController extends Controller
             $member->user->update(['is_active' => false]);
         }
 
+        $message = 'Muumini ' . $member->full_name . ' amesimamishwa';
+
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+            ]);
+        }
+
         return redirect()->back()
-            ->with('success', 'Muumini ' . $member->full_name . ' amesimamishwa');
+            ->with('success', $message);
     }
 
     /**

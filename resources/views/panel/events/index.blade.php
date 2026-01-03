@@ -98,7 +98,7 @@
                 <i class="fas fa-filter text-primary-500 mr-2"></i> Chuja Matukio
             </h3>
         </div>
-        <form method="GET" action="{{ route('events.index') }}" class="space-y-4">
+        <form method="GET" action="{{ route('events.index') }}" data-auto-filter="true" data-ajax-target="#eventsGridContainer" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Event Type -->
                 <div>
@@ -130,25 +130,19 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                <a href="{{ route('events.index') }}"
-                   class="px-6 py-2.5 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-all duration-200 flex items-center gap-2">
-                    <i class="fas fa-redo"></i>
+            <!-- Clear Filter Link -->
+            <div class="flex justify-end pt-2">
+                <a href="{{ route('events.index') }}" class="text-sm text-gray-500 hover:text-primary-600 transition-colors flex items-center gap-1">
+                    <i class="fas fa-redo text-xs"></i>
                     <span>Futa Chujio</span>
                 </a>
-                <button type="submit"
-                        class="px-6 py-2.5 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-all duration-200 flex items-center gap-2">
-                    <i class="fas fa-filter"></i>
-                    <span>Tumia Chujio</span>
-                </button>
             </div>
         </form>
     </div>
     @endif
 
     <!-- Events Grid (Visible to ALL users) -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden" id="eventsGridContainer">
         <!-- Table Header -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 border-b border-gray-200">
             <div>
@@ -269,23 +263,23 @@
                             @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
                             <div class="flex gap-2 pt-4 border-t border-gray-200">
                                 <a href="{{ route('events.show', $event->id) }}"
-                                   class="flex-1 text-center px-3 py-2.5 bg-blue-100 text-blue-700 font-medium rounded-lg hover:bg-blue-200 transition-all duration-200 flex items-center justify-center gap-2">
-                                    <i class="fas fa-eye"></i>
-                                    <span>Angalia</span>
+                                   class="h-8 w-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-all duration-200"
+                                   title="Angalia">
+                                    <i class="fas fa-eye text-sm"></i>
                                 </a>
                                 <a href="{{ route('events.edit', $event->id) }}"
-                                   class="flex-1 text-center px-3 py-2.5 bg-primary-100 text-primary-700 font-medium rounded-lg hover:bg-primary-200 transition-all duration-200 flex items-center justify-center gap-2">
-                                    <i class="fas fa-edit"></i>
-                                    <span>Hariri</span>
+                                   class="h-8 w-8 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center hover:bg-primary-200 transition-all duration-200"
+                                   title="Hariri">
+                                    <i class="fas fa-edit text-sm"></i>
                                 </a>
-                                <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="flex-1"
+                                <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="inline"
                                       onsubmit="return confirm('Je, una uhakika unataka kufuta tukio hili?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
-                                            class="w-full px-3 py-2.5 bg-red-100 text-red-700 font-medium rounded-lg hover:bg-red-200 transition-all duration-200 flex items-center justify-center gap-2">
-                                        <i class="fas fa-trash"></i>
-                                        <span>Futa</span>
+                                            class="h-8 w-8 bg-red-100 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-200 transition-all duration-200"
+                                            title="Futa">
+                                        <i class="fas fa-trash text-sm"></i>
                                     </button>
                                 </form>
                             </div>
@@ -320,6 +314,8 @@
         </div>
     </div>
 </div>
+
+@include('partials.loading-modal')
 
 @push('scripts')
 <script>

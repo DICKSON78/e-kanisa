@@ -551,4 +551,104 @@ class PastoralServiceController extends Controller
 
         return $pdf->download($filename);
     }
+
+    /**
+     * Export pastoral services to PDF with AJAX support
+     */
+    public function exportPDF(Request $request)
+    {
+        $user = Auth::user();
+
+        // Only admin/pastor can export
+        if ($user->isMwanachama()) {
+            if ($request->ajax() || $request->expectsJson()) {
+                return response()->json(['error' => 'Huna ruhusa ya ku-export'], 403);
+            }
+            abort(403, 'Huna ruhusa ya ku-export');
+        }
+
+        $period = $request->get('period', 'month');
+        $year = $request->get('year', date('Y'));
+        $month = $request->get('month', date('m'));
+
+        $swahiliMonths = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Machi', 4 => 'Aprili',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Julai', 8 => 'Agosti',
+            9 => 'Septemba', 10 => 'Oktoba', 11 => 'Novemba', 12 => 'Desemba'
+        ];
+
+        $query = PastoralService::with('member');
+
+        // Filter by period
+        switch ($period) {
+            case 'week':
+                $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                $periodLabel = 'Wiki ya ' . now()->format('d/m/Y');
+                break;
+            case 'month':
+                $query->whereMonth('created_at', $month)->whereYear('created_at', $year);
+                $periodLabel = $swahiliMonths[intval($month)] . ' ' . $year;
+                break;
+            case 'year':
+                $query->whereYear('created_at', $year);
+                $periodLabel = 'Mwaka ' . $year;
+                break;
+            default:
+                $query->whereMonth('created_at', $month)->whereYear('created_at', $year);
+                $periodLabel = $swahiliMonths[intval($month)] . ' ' . $year;
+                break;
+        }
+
+        $services = $query->orderBy('created_at', 'desc')->get();
+        $servicesByType = $services->groupBy('service_type');
+
+        // Generate yearly statistics
+        $yearlyServices = PastoralService::whereYear('created_at', $year)->get();
+        $yearlyServicesByType = $yearlyServices->groupBy('service_type');
+        $yearlyStats = [
+            'total' => $yearlyServices->count(),
+            'pending' => $yearlyServices->where('status', 'Inasubiri')->count(),
+            'approved' => $yearlyServices->where('status', 'Imeidhinishwa')->count(),
+            'completed' => $yearlyServices->where('status', 'Imekamilika')->count(),
+            'rejected' => $yearlyServices->where('status', 'Imekataliwa')->count(),
+        ];
+
+        // Get church settings
+        $churchName = Setting::get('church_name', 'KKKT MAKABE AGAPE');
+        $diocese = Setting::get('diocese', 'KKKT DAYOSI YA KINONDONI');
+        $parish = Setting::get('parish', 'JUMUIYA YA MAKABE');
+
+        $filename = 'huduma_za_kichungaji_' . $period . '_' . $year . '.pdf';
+
+        $pdf = \PDF::loadView('panel.pastoral-services.pdf-report', [
+            'services' => $services,
+            'servicesByType' => $servicesByType,
+            'periodLabel' => $periodLabel,
+            'yearlyStats' => $yearlyStats,
+            'yearlyServicesByType' => $yearlyServicesByType,
+            'currentYear' => $year,
+            'churchName' => $churchName,
+            'diocese' => $diocese,
+            'parish' => $parish,
+            'generatedAt' => now()->format('d/m/Y H:i'),
+            'generatedBy' => $user->name,
+        ]);
+
+        $pdf->setPaper('A4', 'landscape');
+
+        if ($request->ajax() || $request->expectsJson()) {
+            // Store PDF and return download URL for AJAX
+            $storedPath = 'exports/pastoral-services/' . $filename;
+            \Storage::disk('public')->put($storedPath, $pdf->output());
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Ripoti ya PDF imetengenezwa kikamilifu',
+                'download_url' => route('reports.download', ['filename' => $filename]),
+                'filename' => $filename
+            ]);
+        }
+
+        return $pdf->download($filename);
+    }
 }

@@ -101,7 +101,7 @@
                 <i class="fas fa-filter text-primary-500 mr-2"></i> Chuja Maombi
             </h3>
         </div>
-        <form method="GET" action="{{ route('pastoral-services.index') }}" data-auto-filter="true" class="space-y-4">
+        <form method="GET" action="{{ route('pastoral-services.index') }}" data-auto-filter="true" data-ajax-target="#pastoralServicesTableContainer" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Status -->
                 <div>
@@ -139,23 +139,19 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                <a href="{{ route('pastoral-services.index') }}" class="px-6 py-2.5 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-all duration-200 flex items-center gap-2">
-                    <i class="fas fa-redo"></i>
+            <!-- Clear Filter Link -->
+            <div class="flex justify-end pt-2">
+                <a href="{{ route('pastoral-services.index') }}" class="text-sm text-gray-500 hover:text-primary-600 transition-colors flex items-center gap-1">
+                    <i class="fas fa-redo text-xs"></i>
                     <span>Futa Chujio</span>
                 </a>
-                <button type="submit" class="px-6 py-2.5 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-all duration-200 flex items-center gap-2">
-                    <i class="fas fa-filter"></i>
-                    <span>Tumia Chujio</span>
-                </button>
             </div>
         </form>
     </div>
     @endif
 
     <!-- Services Table -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden" id="pastoralServicesTableContainer">
         <!-- Table Header -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 border-b border-gray-200">
             <div>
@@ -474,7 +470,7 @@
                 <button type="button" onclick="closeExportModal()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-xl hover:bg-gray-300 transition-all">
                     Ghairi
                 </button>
-                <button type="submit" class="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-red-700 rounded-xl hover:from-red-700 hover:to-red-800 transition-all flex items-center gap-2">
+                <button type="button" onclick="exportPastoralServicesPDF()" class="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-red-700 rounded-xl hover:from-red-700 hover:to-red-800 transition-all flex items-center gap-2">
                     <i class="fas fa-file-pdf"></i>
                     <span>Download PDF</span>
                 </button>
@@ -485,6 +481,8 @@
 @endsection
 
 @section('scripts')
+@include('partials.loading-modal')
+
 <script>
 // Delete modal functions
 function confirmDeleteService(serviceId, serviceType, memberName) {
@@ -540,6 +538,63 @@ function closeExportModal() {
     setTimeout(() => {
         modal.classList.add('hidden');
     }, 200);
+}
+
+// Export PDF function
+function exportPastoralServicesPDF() {
+    const form = document.getElementById('exportForm');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+    
+    const loadingModal = document.getElementById('loadingModal');
+    const progressBar = document.getElementById('progressBar');
+    const loadingMessage = document.getElementById('loadingMessage');
+
+    loadingMessage.textContent = 'Inatengeneza ripoti ya PDF...';
+    loadingModal.classList.remove('hidden');
+
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 90) progress = 90;
+        progressBar.style.width = progress + '%';
+    }, 200);
+
+    fetch('{{ route('pastoral-services.export.pdf') }}?' + params.toString(), {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        clearInterval(interval);
+        progressBar.style.width = '100%';
+
+        setTimeout(() => {
+            loadingModal.classList.add('hidden');
+            progressBar.style.width = '0%';
+            if (data.success) {
+                if (data.download_url && data.download_url !== '#') {
+                    const link = document.createElement('a');
+                    link.href = data.download_url;
+                    link.download = data.filename || 'huduma_za_kichungaji.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            } else {
+                alert('Hitilafu: ' + (data.message || 'Tumeshindwa kutengeneza ripoti'));
+            }
+        }, 500);
+    })
+    .catch(error => {
+        clearInterval(interval);
+        loadingModal.classList.add('hidden');
+        progressBar.style.width = '0%';
+        alert('Hitilafu ya mtandao! Tafadhali jaribu tena.');
+    });
 }
 
 // Close modal on backdrop click

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Exports\MapatoExport;
 use App\Exports\KiwanjaExport;
 use App\Exports\MatumiziExport;
+use App\Models\Setting;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,7 +17,23 @@ class ExportExcelController extends Controller
         // Get recent exports for display
         $recentExports = $this->getRecentExports();
 
-        return view('panel.reports', compact('recentExports'));
+        $settings = (object) [
+            'company_name' => null,
+            'address' => null,
+            'phone' => null,
+            'email' => null,
+        ];
+
+        try {
+            $settings->company_name = Setting::get('company_name');
+            $settings->address = Setting::get('address');
+            $settings->phone = Setting::get('phone');
+            $settings->email = Setting::get('email');
+        } catch (\Exception $e) {
+            // ignore
+        }
+
+        return view('panel.reports', compact('recentExports', 'settings'));
     }
 
     public function exportMapato(Request $request)
@@ -28,41 +45,20 @@ class ExportExcelController extends Controller
             $year = $request->input('year');
             $month = $request->input('month');
 
-            $filename = 'mapato_' . date('Y_m_d_His') . '.xlsx';
-            $filepath = 'exports/' . $filename;
+            // Build filename
+            $filename = 'mapato_';
+            if ($year) $filename .= $year . '_';
+            if ($month) $filename .= str_pad($month, 2, '0', STR_PAD_LEFT) . '_';
+            $filename .= date('Y_m_d_His') . '.xlsx';
 
             // Create export with filters
             $export = new MapatoExport($startDate, $endDate, $year, $month);
 
-            // Store the file
-            Excel::store($export, $filepath, 'public');
-
-            // Build description based on filters
-            $description = 'Ripoti ya Mapato ya Kanisa';
-            if ($year) $description .= ' - Mwaka ' . $year;
-            if ($month) $description .= ' - Mwezi ' . $month;
-            if ($startDate && $endDate) $description .= ' - ' . date('d/m/Y', strtotime($startDate)) . ' hadi ' . date('d/m/Y', strtotime($endDate));
-
-            // Save export record
-            $this->saveExportRecord([
-                'type' => 'mapato',
-                'filename' => $filename,
-                'filepath' => $filepath,
-                'description' => $description,
-                'size' => $this->formatSize(Storage::disk('public')->size($filepath))
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'download_url' => Storage::disk('public')->url($filepath),
-                'message' => 'Ripoti ya mapato imetengenezwa kikamilifu!'
-            ]);
+            // Return direct download
+            return Excel::download($export, $filename);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Hitilafu: ' . $e->getMessage()
-            ], 500);
+            return back()->with('error', 'Hitilafu: ' . $e->getMessage());
         }
     }
 
@@ -82,6 +78,70 @@ class ExportExcelController extends Controller
                 'success' => false,
                 'message' => 'Hitilafu: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function exportSadaka(Request $request)
+    {
+        try {
+            $year = $request->input('year', date('Y'));
+            $month = $request->input('month');
+
+            // Build filename
+            $filename = 'sadaka_' . $year;
+            if ($month) $filename .= '_' . str_pad($month, 2, '0', STR_PAD_LEFT);
+            $filename .= '_' . date('Y_m_d_His') . '.xlsx';
+
+            // Get sadaka data
+            $sadakaQuery = \App\Models\Income::with(['category', 'member'])
+                ->whereYear('collection_date', $year);
+
+            if ($month) {
+                $sadakaQuery->whereMonth('collection_date', $month);
+            }
+
+            $sadakaData = $sadakaQuery->get();
+
+            // Create Excel with church header
+            $export = new \App\Exports\SadakaExport($sadakaData, $year, $month);
+
+            // Return direct download
+            return Excel::download($export, $filename);
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Hitilafu: ' . $e->getMessage());
+        }
+    }
+
+    public function exportAhadi(Request $request)
+    {
+        try {
+            $year = $request->input('year', date('Y'));
+            $month = $request->input('month');
+
+            // Build filename
+            $filename = 'ahadi_' . $year;
+            if ($month) $filename .= '_' . str_pad($month, 2, '0', STR_PAD_LEFT);
+            $filename .= '_' . date('Y_m_d_His') . '.xlsx';
+
+            // Get ahadi data
+            $ahadiQuery = \App\Models\Pledge::with(['member', 'payments'])
+                ->whereYear('pledge_date', $year);
+
+            if ($month) {
+                $ahadiQuery->whereMonth('pledge_date', $month);
+            }
+
+            $ahadiData = $ahadiQuery->get();
+
+            // Create Excel with church header
+            $export = new \App\Exports\AhadiExport($ahadiData, $year, $month);
+
+            // Return direct download
+            return Excel::download($export, $filename);
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Hitilafu: ' . $e->getMessage());
         }
     }
 
@@ -178,6 +238,15 @@ class ExportExcelController extends Controller
     {
         try {
             $ids = $request->input('ids', []);
+
+            if (empty($ids)) {
+                $exportIds = $request->input('export_ids');
+                if (is_string($exportIds)) {
+                    $ids = array_values(array_filter(array_map('trim', explode(',', $exportIds))));
+                } elseif (is_array($exportIds)) {
+                    $ids = $exportIds;
+                }
+            }
             
             if (empty($ids) || !is_array($ids)) {
                 return response()->json([

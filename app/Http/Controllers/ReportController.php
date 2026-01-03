@@ -10,6 +10,10 @@ use App\Models\IncomeCategory;
 use App\Models\ExpenseCategory;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\FinancialReportExport;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -18,7 +22,150 @@ class ReportController extends Controller
      */
     private function getSettings()
     {
-        return Setting::first() ?? new Setting();
+        $settings = (object) [
+            'company_name' => null,
+            'address' => null,
+            'phone' => null,
+            'email' => null,
+        ];
+
+        try {
+            $settings->company_name = Setting::get('company_name');
+            $settings->address = Setting::get('address');
+            $settings->phone = Setting::get('phone');
+            $settings->email = Setting::get('email');
+        } catch (\Exception $e) {
+            // ignore
+        }
+
+        return $settings;
+    }
+
+    private function shouldReturnJson(Request $request): bool
+    {
+        return $request->expectsJson() || $request->isJson() || $request->ajax();
+    }
+
+    private function storePdf(array $data, string $title): array
+    {
+        $pdf = Pdf::loadView('panel.reports.pdf.financial-report', $data);
+        $pdf->setPaper('A4', 'portrait');
+
+        $filename = Str::slug($title, '_') . '_' . now()->format('Y-m-d_H-i-s') . '.pdf';
+        $filepath = 'exports/reports/' . $filename;
+
+        Storage::disk('public')->put($filepath, $pdf->output());
+
+        return [
+            'filename' => $filename,
+            'filepath' => $filepath,
+            'download_url' => route('reports.download', ['filename' => $filename]),
+        ];
+    }
+
+    private function storeExcel(array $incomeData, array $expenseData, string $title, string $periodText): array
+    {
+        $filename = Str::slug($title, '_') . '_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
+        $filepath = 'exports/reports/' . $filename;
+
+        Excel::store(new FinancialReportExport($incomeData, $expenseData, $title, $periodText), $filepath, 'public');
+
+        return [
+            'filename' => $filename,
+            'filepath' => $filepath,
+            'download_url' => route('reports.download', ['filename' => $filename]),
+        ];
+    }
+
+    private function storeCsv(array $incomeData, array $expenseData, string $title, string $periodText): array
+    {
+        $filename = Str::slug($title, '_') . '_' . now()->format('Y-m-d_H-i-s') . '.csv';
+        $filepath = 'exports/reports/' . $filename;
+
+        $stream = fopen('php://temp', 'w+');
+
+        fwrite($stream, chr(0xEF) . chr(0xBB) . chr(0xBF));
+        fputcsv($stream, [$title]);
+        fputcsv($stream, ['Kipindi', $periodText]);
+        fputcsv($stream, ['Imetengenezwa', now()->format('d/m/Y H:i')]);
+        fputcsv($stream, []);
+
+        $totalIncome = collect($incomeData)->sum('amount');
+        $totalExpense = collect($expenseData)->sum('amount');
+        fputcsv($stream, ['MUHTASARI']);
+        fputcsv($stream, ['Jumla ya Mapato', $totalIncome]);
+        fputcsv($stream, ['Jumla ya Matumizi', $totalExpense]);
+        fputcsv($stream, ['Salio', $totalIncome - $totalExpense]);
+        fputcsv($stream, []);
+
+        if (!empty($incomeData)) {
+            fputcsv($stream, ['MAPATO']);
+            fputcsv($stream, ['Tarehe', 'Kategoria', 'Maelezo', 'Mchangiaji', 'Kiasi (TZS)']);
+            foreach ($incomeData as $item) {
+                fputcsv($stream, [
+                    Carbon::parse($item['date'])->format('d/m/Y'),
+                    $item['category'] ?? '-',
+                    $item['description'] ?? '-',
+                    $item['contributor'] ?? '-',
+                    $item['amount'] ?? 0,
+                ]);
+            }
+            fputcsv($stream, ['', '', '', 'JUMLA YA MAPATO', $totalIncome]);
+            fputcsv($stream, []);
+        }
+
+        if (!empty($expenseData)) {
+            fputcsv($stream, ['MATUMIZI']);
+            fputcsv($stream, ['Tarehe', 'Kategoria', 'Maelezo', 'Kiasi (TZS)']);
+            foreach ($expenseData as $item) {
+                fputcsv($stream, [
+                    Carbon::parse($item['date'])->format('d/m/Y'),
+                    $item['category'] ?? '-',
+                    $item['description'] ?? '-',
+                    $item['amount'] ?? 0,
+                ]);
+            }
+            fputcsv($stream, ['', '', 'JUMLA YA MATUMIZI', $totalExpense]);
+        }
+
+        rewind($stream);
+        Storage::disk('public')->put($filepath, stream_get_contents($stream));
+        fclose($stream);
+
+        return [
+            'filename' => $filename,
+            'filepath' => $filepath,
+            'download_url' => route('reports.download', ['filename' => $filename]),
+        ];
+    }
+
+    public function download(Request $request, string $filename)
+    {
+        $safeFilename = basename($filename);
+        if ($safeFilename !== $filename) {
+            abort(404);
+        }
+
+        if (!preg_match('/^[A-Za-z0-9_.-]+$/', $safeFilename)) {
+            abort(404);
+        }
+
+        // Check multiple possible directories
+        $paths = [
+            'exports/reports/' . $safeFilename,
+            'exports/' . $safeFilename,
+            'exports/pastoral-services/' . $safeFilename,
+            'exports/sadaka/' . $safeFilename,
+            'exports/ahadi/' . $safeFilename,
+        ];
+
+        foreach ($paths as $path) {
+            if (Storage::disk('public')->exists($path)) {
+                return Storage::disk('public')->download($path, $safeFilename);
+            }
+        }
+
+        abort(404);
     }
 
     /**
@@ -252,6 +399,44 @@ class ReportController extends Controller
 
             $title = $this->getReportTitle($type, $period);
 
+            if ($this->shouldReturnJson($request)) {
+                $reportData = [
+                    'settings' => $settings,
+                    'title' => $title,
+                    'period_text' => $dateRange['text'],
+                    'income_data' => $incomeData,
+                    'expense_data' => $expenseData,
+                    'income_by_category' => $this->groupByCategory($incomeData),
+                    'expense_by_category' => $this->groupByCategory($expenseData),
+                    'total_income' => $totalIncome,
+                    'total_expense' => $totalExpense,
+                    'start_date' => $dateRange['start']->format('d/m/Y'),
+                    'end_date' => $dateRange['end']->format('d/m/Y'),
+                    'include_logo' => $request->input('include_logo', true),
+                    'include_header' => $request->input('include_header', true),
+                    'include_summary' => true,
+                    'include_totals' => true,
+                    'group_by_category' => true,
+                    'include_signature' => false,
+                    'include_watermark' => false,
+                ];
+
+                if ($format === 'pdf') {
+                    $stored = $this->storePdf($reportData, $title);
+                } elseif ($format === 'excel') {
+                    $stored = $this->storeExcel($incomeData, $expenseData, $title, $dateRange['text']);
+                } else {
+                    $stored = $this->storeCsv($incomeData, $expenseData, $title, $dateRange['text']);
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'download_url' => $stored['download_url'],
+                    'filename' => $stored['filename'],
+                    'message' => 'Ripoti imetengenezwa kikamilifu!',
+                ]);
+            }
+
             if ($format === 'pdf') {
                 return $this->generatePdf([
                     'settings' => $settings,
@@ -316,6 +501,44 @@ class ReportController extends Controller
 
             $title = $this->getReportTitle($type, $period);
 
+            if ($this->shouldReturnJson($request)) {
+                $reportData = [
+                    'settings' => $settings,
+                    'title' => $title,
+                    'period_text' => $dateRange['text'],
+                    'income_data' => $incomeData,
+                    'expense_data' => $expenseData,
+                    'income_by_category' => $this->groupByCategory($incomeData),
+                    'expense_by_category' => $this->groupByCategory($expenseData),
+                    'total_income' => $totalIncome,
+                    'total_expense' => $totalExpense,
+                    'start_date' => $dateRange['start']->format('d/m/Y'),
+                    'end_date' => $dateRange['end']->format('d/m/Y'),
+                    'include_logo' => $request->input('include_logo', true),
+                    'include_header' => $request->input('include_header', true),
+                    'include_summary' => $request->input('include_summary', true),
+                    'include_totals' => $request->input('include_totals', true),
+                    'group_by_category' => $request->input('group_by_category', true),
+                    'include_signature' => $request->input('include_signature', false),
+                    'include_watermark' => $request->input('include_watermark', false),
+                ];
+
+                if ($format === 'pdf') {
+                    $stored = $this->storePdf($reportData, $title);
+                } elseif ($format === 'excel') {
+                    $stored = $this->storeExcel($incomeData, $expenseData, $title, $dateRange['text']);
+                } else {
+                    $stored = $this->storeCsv($incomeData, $expenseData, $title, $dateRange['text']);
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'download_url' => $stored['download_url'],
+                    'filename' => $stored['filename'],
+                    'message' => 'Ripoti imetengenezwa kikamilifu!',
+                ]);
+            }
+
             if ($format === 'pdf') {
                 return $this->generatePdf([
                     'settings' => $settings,
@@ -368,9 +591,20 @@ class ReportController extends Controller
      */
     private function generateExcel($incomeData, $expenseData, $title, $dateRange)
     {
-        // For now, return a simple CSV as Excel
-        // In production, use Laravel Excel package
-        $filename = str_replace(' ', '_', $title) . '_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = Str::slug($title, '_') . '_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
+
+        return Excel::download(
+            new FinancialReportExport($incomeData, $expenseData, $title, $dateRange['text']),
+            $filename
+        );
+    }
+
+    /**
+     * Generate CSV report
+     */
+    private function generateCsv($incomeData, $expenseData, $title, $dateRange)
+    {
+        $filename = Str::slug($title, '_') . '_' . now()->format('Y-m-d_H-i-s') . '.csv';
 
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
@@ -383,71 +617,45 @@ class ReportController extends Controller
             // Add BOM for UTF-8
             fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
-            // Title
             fputcsv($file, [$title]);
-            fputcsv($file, ['Kipindi: ' . $dateRange['text']]);
-            fputcsv($file, ['Imetengenezwa: ' . date('d/m/Y H:i')]);
+            fputcsv($file, ['Kipindi', $dateRange['text']]);
+            fputcsv($file, ['Imetengenezwa', now()->format('d/m/Y H:i')]);
             fputcsv($file, []);
 
-            // Income section
             if (!empty($incomeData)) {
                 fputcsv($file, ['MAPATO']);
                 fputcsv($file, ['Tarehe', 'Kategoria', 'Maelezo', 'Mchangiaji', 'Kiasi (TZS)']);
-
                 foreach ($incomeData as $item) {
                     fputcsv($file, [
                         Carbon::parse($item['date'])->format('d/m/Y'),
-                        $item['category'],
-                        $item['description'],
-                        $item['contributor'],
-                        number_format($item['amount'], 2)
+                        $item['category'] ?? '-',
+                        $item['description'] ?? '-',
+                        $item['contributor'] ?? '-',
+                        $item['amount'] ?? 0,
                     ]);
                 }
-
-                fputcsv($file, ['', '', '', 'JUMLA YA MAPATO:', number_format(collect($incomeData)->sum('amount'), 2)]);
+                fputcsv($file, ['', '', '', 'JUMLA YA MAPATO', collect($incomeData)->sum('amount')]);
                 fputcsv($file, []);
             }
 
-            // Expense section
             if (!empty($expenseData)) {
                 fputcsv($file, ['MATUMIZI']);
                 fputcsv($file, ['Tarehe', 'Kategoria', 'Maelezo', 'Kiasi (TZS)']);
-
                 foreach ($expenseData as $item) {
                     fputcsv($file, [
                         Carbon::parse($item['date'])->format('d/m/Y'),
-                        $item['category'],
-                        $item['description'],
-                        number_format($item['amount'], 2)
+                        $item['category'] ?? '-',
+                        $item['description'] ?? '-',
+                        $item['amount'] ?? 0,
                     ]);
                 }
-
-                fputcsv($file, ['', '', 'JUMLA YA MATUMIZI:', number_format(collect($expenseData)->sum('amount'), 2)]);
-                fputcsv($file, []);
+                fputcsv($file, ['', '', 'JUMLA YA MATUMIZI', collect($expenseData)->sum('amount')]);
             }
-
-            // Summary
-            $totalIncome = collect($incomeData)->sum('amount');
-            $totalExpense = collect($expenseData)->sum('amount');
-            $balance = $totalIncome - $totalExpense;
-
-            fputcsv($file, ['MUHTASARI']);
-            fputcsv($file, ['Jumla ya Mapato:', number_format($totalIncome, 2)]);
-            fputcsv($file, ['Jumla ya Matumizi:', number_format($totalExpense, 2)]);
-            fputcsv($file, ['Salio:', number_format($balance, 2)]);
 
             fclose($file);
         };
 
         return response()->stream($callback, 200, $headers);
-    }
-
-    /**
-     * Generate CSV report
-     */
-    private function generateCsv($incomeData, $expenseData, $title, $dateRange)
-    {
-        return $this->generateExcel($incomeData, $expenseData, $title, $dateRange);
     }
 
     /**
