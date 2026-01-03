@@ -257,9 +257,9 @@ class AuthController extends Controller
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
-            'date_of_birth' => 'required|date',
+            'date_of_birth' => 'required|date|before:today',
             'gender' => 'required|in:Mme,Mke',
-            'id_number' => 'nullable|string|max:50',
+            'id_number' => 'nullable|string|size:20|regex:/^[0-9]+$/',
 
             // Contact Information
             'phone' => 'required|string|max:20|unique:members,phone',
@@ -291,11 +291,19 @@ class AuthController extends Controller
             'phone.unique' => 'Namba hii ya simu imeshasajiliwa',
             'email.unique' => 'Barua pepe hii imeshasajiliwa',
             'date_of_birth.required' => 'Tarehe ya kuzaliwa inahitajika',
+            'date_of_birth.before' => 'Tarehe ya kuzaliwa lazima iwe kabla ya leo',
             'gender.required' => 'Jinsia inahitajika',
             'marital_status.required' => 'Hali ya ndoa inahitajika',
             'jumuiya_id.required' => 'Tafadhali chagua jumuiya',
             'jumuiya_id.exists' => 'Jumuiya uliyochagua haipo',
+            'id_number.size' => 'Namba ya NIDA lazima iwe na tarakimu 20 haswa',
+            'id_number.regex' => 'Namba ya NIDA lazima iwe na tarakimu tu (0-9)',
         ]);
+
+        // Capitalize names properly (Title Case)
+        $firstName = ucwords(strtolower(trim($validated['first_name'])));
+        $middleName = $validated['middle_name'] ? ucwords(strtolower(trim($validated['middle_name']))) : null;
+        $lastName = ucwords(strtolower(trim($validated['last_name'])));
 
         // Generate member number automatically
         $year = date('Y');
@@ -322,11 +330,14 @@ class AuthController extends Controller
         $loginEmail = $memberNumber;
 
         // Auto-generate password from last name (lowercase)
-        $autoPassword = strtolower(trim($validated['last_name']));
+        $autoPassword = strtolower(trim($lastName));
+
+        // Build full name with proper capitalization
+        $fullName = $firstName . ($middleName ? ' ' . $middleName : '') . ' ' . $lastName;
 
         // Create user account (inactive until approved)
         $user = User::create([
-            'name' => trim($validated['first_name'] . ' ' . ($validated['middle_name'] ?? '') . ' ' . $validated['last_name']),
+            'name' => $fullName,
             'email' => $loginEmail, // Member number as login identifier
             'password' => Hash::make($autoPassword),
             'password_changed' => false, // Default password - user must change it
@@ -334,13 +345,13 @@ class AuthController extends Controller
             'is_active' => false, // Inactive until admin approves
         ]);
 
-        // Create member record with all fields
+        // Create member record with all fields (using capitalized names)
         $member = Member::create([
             'member_number' => $memberNumber,
             'envelope_number' => $envelopeNumber,
-            'first_name' => $validated['first_name'],
-            'middle_name' => $validated['middle_name'] ?? null,
-            'last_name' => $validated['last_name'],
+            'first_name' => $firstName,
+            'middle_name' => $middleName,
+            'last_name' => $lastName,
             'date_of_birth' => $validated['date_of_birth'],
             'gender' => $validated['gender'],
             'id_number' => $validated['id_number'] ?? null,
@@ -374,7 +385,7 @@ class AuthController extends Controller
 
         return redirect()->route('login')->with('success',
             'Usajili umefanikiwa! Namba yako ya muumini ni: ' . $memberNumber . '. ' .
-            'Nenosiri lako ni: ' . $autoPassword . ' (jina lako la ukoo kwa herufi ndogo). ' .
+            'Nenosiri lako ni: ' . $autoPassword . ' (jina "' . $lastName . '" kwa herufi ndogo). ' .
             $loginInfo . '. ' .
             'MUHIMU: Akaunti yako bado haijaidhinishwa. Tafadhali subiri msimamizi wa kanisa aidhinishe akaunti yako kabla ya kuweza kuingia kwenye mfumo.'
         );

@@ -41,19 +41,15 @@ class MessageController extends Controller
             ->values();
 
         // Get all users that can be messaged (for new conversation)
-        if (Auth::user()->isMwanachama()) {
-            // Members can only message leaders
-            $allUsers = User::whereHas('role', function ($q) {
+        // Messages page is for leaders only, so only show other leaders
+        $allUsers = User::where('id', '!=', Auth::id())
+            ->whereHas('role', function ($q) {
                 $q->whereIn('name', ['Mchungaji', 'Mhasibu']);
-            })->where('is_active', true)->with('role')->orderBy('name')->get();
-        } else {
-            // Admin/Muhasibu can message all active users
-            $allUsers = User::where('id', '!=', Auth::id())
-                ->where('is_active', true)
-                ->with('role')
-                ->orderBy('name')
-                ->get();
-        }
+            })
+            ->where('is_active', true)
+            ->with('role')
+            ->orderBy('name')
+            ->get();
 
         // Calculate unread count per contact
         $unreadPerContact = Message::where('receiver_id', $userId)
@@ -157,6 +153,18 @@ class MessageController extends Controller
             'content.max' => 'Ujumbe ni mrefu mno (max 2000 herufi)',
         ]);
 
+        // Verify receiver is a leader (Mchungaji or Mhasibu)
+        $receiver = User::with('role')->find($validated['receiver_id']);
+        if (!$receiver || !$receiver->role || !in_array($receiver->role->name, ['Mchungaji', 'Mhasibu'])) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unaweza kutuma ujumbe kwa viongozi tu',
+                ], 403);
+            }
+            return back()->with('error', 'Unaweza kutuma ujumbe kwa viongozi tu');
+        }
+
         $message = Message::create([
             'sender_id' => Auth::id(),
             'receiver_id' => $validated['receiver_id'],
@@ -220,19 +228,14 @@ class MessageController extends Controller
      */
     public function create()
     {
-        // Get all users that can be messaged
-        if (Auth::user()->isMwanachama()) {
-            // Members can only message leaders
-            $users = User::whereHas('role', function ($q) {
+        // Messages page is for leaders only, so only show other leaders
+        $users = User::where('id', '!=', Auth::id())
+            ->whereHas('role', function ($q) {
                 $q->whereIn('name', ['Mchungaji', 'Mhasibu']);
-            })->where('is_active', true)->get();
-        } else {
-            // Leaders can message anyone
-            $users = User::where('id', '!=', Auth::id())
-                ->where('is_active', true)
-                ->orderBy('name')
-                ->get();
-        }
+            })
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
 
         return view('panel.messages.create', compact('users'));
     }

@@ -209,9 +209,13 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-birthday-cake text-gray-400"></i>
                             </div>
-                            <input type="date" name="date_of_birth" value="{{ old('date_of_birth') }}" required
-                                   class="pl-10 input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none">
+                            <input type="date" name="date_of_birth" id="date_of_birth" value="{{ old('date_of_birth') }}" required
+                                   class="pl-10 input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
+                                   max="{{ date('Y-m-d') }}">
                         </div>
+                        <p class="text-xs text-gray-500 mt-1">
+                            <i class="fas fa-info-circle"></i> Umri: <span id="age-display" class="font-medium text-primary-600">-</span>
+                        </p>
                     </div>
 
                     <!-- Gender -->
@@ -248,10 +252,17 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-id-card text-gray-400"></i>
                             </div>
-                            <input type="text" name="id_number" value="{{ old('id_number') }}"
+                            <input type="text" name="id_number" id="id_number" value="{{ old('id_number') }}"
                                    class="pl-10 input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none"
-                                   placeholder="Namba ya NIDA">
+                                   placeholder="Namba ya NIDA (tarakimu 20)"
+                                   maxlength="20"
+                                   pattern="[0-9]{20}"
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
+                        <p class="text-xs text-gray-500 mt-1">
+                            <i class="fas fa-info-circle"></i> Namba ya NIDA lazima iwe na tarakimu 20 haswa
+                            <span id="nida-counter" class="ml-2 font-medium text-primary-600">(0/20)</span>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -894,6 +905,79 @@
 
         // Initialize
         showStep(1);
+
+        // NIDA counter
+        const nidaInput = document.getElementById('id_number');
+        const nidaCounter = document.getElementById('nida-counter');
+
+        if (nidaInput && nidaCounter) {
+            nidaInput.addEventListener('input', function() {
+                const length = this.value.length;
+                nidaCounter.textContent = `(${length}/20)`;
+
+                if (length === 20) {
+                    nidaCounter.classList.remove('text-primary-600', 'text-red-500');
+                    nidaCounter.classList.add('text-green-600');
+                } else if (length > 0) {
+                    nidaCounter.classList.remove('text-primary-600', 'text-green-600');
+                    nidaCounter.classList.add('text-red-500');
+                } else {
+                    nidaCounter.classList.remove('text-red-500', 'text-green-600');
+                    nidaCounter.classList.add('text-primary-600');
+                }
+            });
+
+            // Initialize counter on page load
+            if (nidaInput.value) {
+                nidaInput.dispatchEvent(new Event('input'));
+            }
+        }
+
+        // Age calculator
+        const dobInput = document.getElementById('date_of_birth');
+        const ageDisplay = document.getElementById('age-display');
+
+        if (dobInput && ageDisplay) {
+            dobInput.addEventListener('change', function() {
+                if (this.value) {
+                    const birthDate = new Date(this.value);
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+
+                    ageDisplay.textContent = `Miaka ${age}`;
+                } else {
+                    ageDisplay.textContent = '-';
+                }
+            });
+
+            // Initialize age on page load
+            if (dobInput.value) {
+                dobInput.dispatchEvent(new Event('change'));
+            }
+        }
+
+        // NIDA validation on step change
+        const originalValidateStep = validateStep;
+        validateStep = function(step) {
+            const isValid = originalValidateStep(step);
+
+            // Additional NIDA validation on step 1
+            if (step === 1 && isValid) {
+                const nidaField = document.getElementById('id_number');
+                if (nidaField && nidaField.value.length > 0 && nidaField.value.length !== 20) {
+                    nidaField.classList.add('border-red-500');
+                    showRegisterAlert('warning', 'Namba ya NIDA', 'Namba ya NIDA lazima iwe na tarakimu 20 haswa. Sasa una tarakimu ' + nidaField.value.length + '.');
+                    return false;
+                }
+            }
+
+            return isValid;
+        };
     </script>
 </body>
 </html>

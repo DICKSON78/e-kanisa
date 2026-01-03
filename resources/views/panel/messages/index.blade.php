@@ -835,7 +835,7 @@
             width: 40%;
             min-width: 350px;
         }
-        
+
         .messages-container {
             padding: 20px 10% 16px;
         }
@@ -888,11 +888,11 @@
         .filter-tab {
             min-width: 100px;
         }
-        
+
         .messages-container {
             padding: 16px 16px 12px;
         }
-        
+
         .message-wrapper {
             max-width: 85%;
         }
@@ -1126,10 +1126,10 @@
                 <h3>Hakuna Contacts</h3>
                 <p>Hakuna watumiaji wengine wa kuwasiliana nao</p>
             </div>
-            
+
             <!-- No conversations message (hidden by default) -->
             <div class="no-chats-message" id="noConversationsMessage" style="display: none;">
-                <i class="fas fa-comment-slash"></i>
+                <i class="fas fa-comment-slash" style="color: #22c55e;"></i>
                 <h3>Hakuna Mazungumzo</h3>
                 <p>Hakuna mazungumzo bado</p>
             </div>
@@ -1430,7 +1430,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!messages || messages.length === 0) {
             messagesContainer.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: var(--whatsapp-gray);">
+                <div style="text-align: center; padding: 40px; color: var(--whatsapp-green);">
                     <i class="fas fa-comment-dots" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
                     <p>Hakuna ujumbe. Anza mazungumzo!</p>
                 </div>
@@ -1710,7 +1710,7 @@ document.addEventListener('DOMContentLoaded', function() {
             noConversationsMessage.style.display = (!hasConversations && searchTerm === '') ? 'block' : 'none';
             if (!hasConversations && searchTerm === '') {
                 noConversationsMessage.innerHTML = `
-                    <i class="fas fa-comments"></i>
+                    <i class="fas fa-comments" style="color: #22c55e;"></i>
                     <h3>Hakuna Mazungumzo</h3>
                     <p>Bado hujaanza mazungumzo na mtu yeyote</p>
                 `;

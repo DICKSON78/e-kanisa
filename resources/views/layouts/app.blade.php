@@ -1238,7 +1238,8 @@
                     <div class="sidebar-tooltip">Matukio</div>
                 </a>
 
-                <!-- Messages - Visible to All -->
+                <!-- Messages - Leaders Only (Mchungaji, Mhasibu) -->
+                @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
                 @php
                     $sidebarUnreadMessages = \App\Models\Message::where('receiver_id', Auth::id())->where('is_read', false)->count();
                 @endphp
@@ -1250,6 +1251,7 @@
                     @endif
                     <div class="sidebar-tooltip">Ujumbe</div>
                 </a>
+                @endif
 
                 <!-- SECTION FOR MCHUNGAJI AND MUHASIBU ONLY -->
                 @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
@@ -1297,7 +1299,8 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <!-- Messages Button -->
+                    <!-- Messages Button - Leaders Only (Mchungaji, Mhasibu) -->
+                    @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
                     <a href="{{ route('messages.index') }}" class="notification-btn" aria-label="Ujumbe" title="Ujumbe">
                         <i class="fas fa-comment-dots"></i>
                         @php
@@ -1307,6 +1310,7 @@
                         <span class="notification-badge" style="background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 2px 6px rgba(34, 197, 94, 0.4);">{{ $headerUnreadMessages }}</span>
                         @endif
                     </a>
+                    @endif
 
                     <!-- Notification Dropdown -->
                     <div class="relative" id="notificationWrapper">
@@ -1794,8 +1798,9 @@
             if (!dropdownBody) return;
 
             let html = '';
+            let hasNotifications = data.total > 0 || data.needs_password_change;
 
-            if (data.total === 0) {
+            if (!hasNotifications) {
                 html = `
                     <div class="notification-empty">
                         <i class="fas fa-check-circle text-green-500 text-3xl mb-2"></i>
@@ -1803,6 +1808,22 @@
                     </div>
                 `;
             } else {
+                // Password change notification (always show first if needed)
+                if (data.needs_password_change) {
+                    html += `
+                        <a href="{{ route('settings.index') }}?tab=password" class="notification-item">
+                            <div class="notification-item-icon bg-orange-100">
+                                <i class="fas fa-key text-orange-600"></i>
+                            </div>
+                            <div class="notification-item-content">
+                                <p class="notification-item-title">Badilisha Nywila</p>
+                                <p class="notification-item-desc">Unatumia nywila ya msingi. Badilisha kwa usalama wako.</p>
+                            </div>
+                            <span class="notification-item-badge bg-orange-500">!</span>
+                        </a>
+                    `;
+                }
+
                 if (data.pending_requests > 0) {
                     html += `
                         <a href="{{ route('requests.index') }}" class="notification-item">
@@ -1844,6 +1865,22 @@
                                 <p class="notification-item-desc">${data.pending_members} wanachama wanasubiri kuidhinishwa</p>
                             </div>
                             <span class="notification-item-badge bg-green-500">${data.pending_members}</span>
+                        </a>
+                    `;
+                }
+
+                // New events notification (for members)
+                if (data.new_events > 0) {
+                    html += `
+                        <a href="{{ route('events.index') }}" class="notification-item">
+                            <div class="notification-item-icon bg-blue-100">
+                                <i class="fas fa-calendar-alt text-blue-600"></i>
+                            </div>
+                            <div class="notification-item-content">
+                                <p class="notification-item-title">Matukio Mapya</p>
+                                <p class="notification-item-desc">${data.new_events} matukio mapya yameongezwa</p>
+                            </div>
+                            <span class="notification-item-badge bg-blue-500">${data.new_events}</span>
                         </a>
                     `;
                 }

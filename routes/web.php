@@ -66,6 +66,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/notifications', function () {
             $user = auth()->user();
 
+            // Check if user needs to change password
+            $needsPasswordChange = $user->needsPasswordChange();
+
             // Members only see their own pastoral service updates and new events
             if ($user->isMwanachama()) {
                 $memberPastoral = 0;
@@ -85,12 +88,15 @@ Route::middleware(['auth'])->group(function () {
                     ->where('event_date', '>=', now())
                     ->count();
 
+                $total = $memberPastoral + $newEvents + ($needsPasswordChange ? 1 : 0);
+
                 return response()->json([
                     'pending_requests' => 0,
                     'pending_pastoral' => $memberPastoral,
                     'pending_members' => 0,
                     'new_events' => $newEvents,
-                    'total' => $memberPastoral + $newEvents
+                    'needs_password_change' => $needsPasswordChange,
+                    'total' => $total
                 ]);
             }
 
@@ -103,11 +109,14 @@ Route::middleware(['auth'])->group(function () {
                 $pendingMembers = \App\Models\User::where('is_active', false)->count();
             }
 
+            $total = $pendingRequests + $pendingPastoral + $pendingMembers + ($needsPasswordChange ? 1 : 0);
+
             return response()->json([
                 'pending_requests' => $pendingRequests,
                 'pending_pastoral' => $pendingPastoral,
                 'pending_members' => $pendingMembers,
-                'total' => $pendingRequests + $pendingPastoral + $pendingMembers
+                'needs_password_change' => $needsPasswordChange,
+                'total' => $total
             ]);
         })->name('notifications.count');
     });
@@ -359,8 +368,8 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/settings/system', [SettingController::class, 'updateSystem'])->name('settings.system.update');
     });
 
-    // Messages Management
-    Route::prefix('panel')->group(function () {
+    // Messages Management (Leaders Only - Mchungaji, Mhasibu)
+    Route::prefix('panel')->middleware(['role:Mchungaji,Mhasibu'])->group(function () {
         Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
         Route::get('/messages/create', [MessageController::class, 'create'])->name('messages.create');
         Route::post('/messages/send', [MessageController::class, 'send'])->name('messages.send');
