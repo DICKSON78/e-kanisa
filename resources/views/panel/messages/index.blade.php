@@ -1430,7 +1430,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!messages || messages.length === 0) {
             messagesContainer.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: var(--whatsapp-green);">
+                <div style="text-align: center; padding: 40px; color: var(--whatsapp-primary);">
                     <i class="fas fa-comment-dots" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
                     <p>Hakuna ujumbe. Anza mazungumzo!</p>
                 </div>
