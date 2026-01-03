@@ -6,9 +6,13 @@ use Illuminate\Http\Request;
 use App\Exports\MapatoExport;
 use App\Exports\KiwanjaExport;
 use App\Exports\MatumiziExport;
+use App\Exports\AhadiExport;
 use App\Models\Setting;
+use App\Models\Pledge;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class ExportExcelController extends Controller
 {
@@ -39,11 +43,23 @@ class ExportExcelController extends Controller
     public function exportMapato(Request $request)
     {
         try {
+            // Log the request
+            \Log::info('Export Mapato Request:', $request->all());
+            
             // Get filter parameters
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
             $year = $request->input('year');
             $month = $request->input('month');
+            $categoryId = $request->input('category_id');
+            $format = $request->input('format', 'excel'); // excel or pdf
+
+            \Log::info("Filters: year=$year, month=$month, categoryId=$categoryId");
+
+            if ($format === 'pdf') {
+                // For PDF export, use ReportController
+                return app('App\Http\Controllers\ReportController')->generate($request);
+            }
 
             // Build filename
             $filename = 'mapato_';
@@ -51,13 +67,18 @@ class ExportExcelController extends Controller
             if ($month) $filename .= str_pad($month, 2, '0', STR_PAD_LEFT) . '_';
             $filename .= date('Y_m_d_His') . '.xlsx';
 
+            \Log::info("Creating MapatoExport with: startDate=$startDate, endDate=$endDate, year=$year, month=$month");
+
             // Create export with filters
             $export = new MapatoExport($startDate, $endDate, $year, $month);
+
+            \Log::info("Downloading Excel file: $filename");
 
             // Return direct download
             return Excel::download($export, $filename);
 
         } catch (\Exception $e) {
+            \Log::error('Export Mapato Error: ' . $e->getMessage());
             return back()->with('error', 'Hitilafu: ' . $e->getMessage());
         }
     }
@@ -86,6 +107,13 @@ class ExportExcelController extends Controller
         try {
             $year = $request->input('year', date('Y'));
             $month = $request->input('month');
+            $format = $request->input('format', 'excel'); // excel or pdf
+
+            if ($format === 'pdf') {
+                // For PDF export, use ReportController
+                $request->merge(['type' => 'mapato', 'period' => $month ? 'custom' : 'yearly']);
+                return app('App\Http\Controllers\ReportController')->generate($request);
+            }
 
             // Build filename
             $filename = 'sadaka_' . $year;
@@ -118,14 +146,10 @@ class ExportExcelController extends Controller
         try {
             $year = $request->input('year', date('Y'));
             $month = $request->input('month');
-
-            // Build filename
-            $filename = 'ahadi_' . $year;
-            if ($month) $filename .= '_' . str_pad($month, 2, '0', STR_PAD_LEFT);
-            $filename .= '_' . date('Y_m_d_His') . '.xlsx';
+            $format = $request->input('format', 'excel'); // excel or pdf
 
             // Get ahadi data
-            $ahadiQuery = \App\Models\Pledge::with(['member', 'payments'])
+            $ahadiQuery = Pledge::with(['member', 'payments'])
                 ->whereYear('pledge_date', $year);
 
             if ($month) {
@@ -134,11 +158,70 @@ class ExportExcelController extends Controller
 
             $ahadiData = $ahadiQuery->get();
 
-            // Create Excel with church header
-            $export = new \App\Exports\AhadiExport($ahadiData, $year, $month);
+            // Build period label
+            $monthNames = [
+                1 => 'Januari', 2 => 'Februari', 3 => 'Machi', 4 => 'Aprili',
+                5 => 'Mei', 6 => 'Juni', 7 => 'Julai', 8 => 'Agosti',
+                9 => 'Septemba', 10 => 'Oktoba', 11 => 'Novemba', 12 => 'Desemba'
+            ];
+            
+            $periodLabel = 'MWAKA ' . $year;
+            if ($month) {
+                $periodLabel .= ' - ' . strtoupper($monthNames[(int)$month]);
+            }
 
-            // Return direct download
-            return Excel::download($export, $filename);
+            // Calculate totals
+            $totalPledged = 0;
+            $totalPaid = 0;
+            foreach ($ahadiData as $ahadi) {
+                $paidAmount = $ahadi->payments ? $ahadi->payments->sum('amount') : 0;
+                $totalPledged += floatval($ahadi->amount);
+                $totalPaid += $paidAmount;
+            }
+            $totalBalance = $totalPledged - $totalPaid;
+
+            // Get church settings
+            $churchName = Setting::get('church_name', 'KKKT MAKABE AGAPE');
+            $address = Setting::get('address', 'P.O. Box 123, Makabe');
+            $phone = Setting::get('phone', '+255 123 456 789');
+            $email = Setting::get('email', 'makabe@kkkt.go.tz');
+
+            if ($format === 'pdf') {
+                // Generate PDF
+                $filename = 'ahadi_' . $year;
+                if ($month) $filename .= '_' . str_pad($month, 2, '0', STR_PAD_LEFT);
+                $filename .= '_' . date('Y_m_d_His') . '.pdf';
+                $filepath = 'exports/' . $filename;
+
+                $pdf = Pdf::loadView('panel.reports.pdf.ahadi-report', [
+                    'ahadiData' => $ahadiData,
+                    'periodLabel' => $periodLabel,
+                    'totalPledged' => $totalPledged,
+                    'totalPaid' => $totalPaid,
+                    'totalBalance' => $totalBalance,
+                    'churchName' => $churchName,
+                    'address' => $address,
+                    'phone' => $phone,
+                    'email' => $email,
+                ]);
+
+                // Store PDF
+                Storage::disk('public')->put($filepath, $pdf->output());
+
+                // Return download
+                return Storage::disk('public')->download($filepath, $filename);
+            } else {
+                // Generate Excel
+                $filename = 'ahadi_' . $year;
+                if ($month) $filename .= '_' . str_pad($month, 2, '0', STR_PAD_LEFT);
+                $filename .= '_' . date('Y_m_d_His') . '.xlsx';
+
+                // Create Excel with church header
+                $export = new AhadiExport($ahadiData, $year, $month);
+
+                // Return direct download
+                return Excel::download($export, $filename);
+            }
 
         } catch (\Exception $e) {
             return back()->with('error', 'Hitilafu: ' . $e->getMessage());
@@ -154,6 +237,12 @@ class ExportExcelController extends Controller
             $endMonth = (int) $request->input('end_month', 12);
             $startYear = $request->input('start_year', $year);
             $endYear = $request->input('end_year', $year);
+            $format = $request->input('format', 'excel'); // excel or pdf
+
+            if ($format === 'pdf') {
+                // For PDF export, use ReportController
+                return app('App\Http\Controllers\ReportController')->generate($request);
+            }
 
             // Build filename based on date range
             $monthAbbr = [

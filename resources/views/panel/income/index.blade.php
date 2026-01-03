@@ -231,6 +231,63 @@
 
 @include('partials.loading-modal')
 
+<script>
+// Export function - must be global
+function exportMapato() {
+    try {
+        // Get current filter values
+        const yearSelect = document.querySelector('select[name="year"]');
+        const monthSelect = document.querySelector('select[name="month"]');
+        const categorySelect = document.querySelector('select[name="category_id"]');
+        
+        const year = yearSelect ? yearSelect.value : '';
+        const month = monthSelect ? monthSelect.value : '';
+        const categoryId = categorySelect ? categorySelect.value : '';
+
+        console.log('Filters:', { year, month, categoryId });
+
+        // Build query string
+        const params = new URLSearchParams();
+        if (year) params.append('year', year);
+        if (month) params.append('month', month);
+        if (categoryId) params.append('category_id', categoryId);
+
+        // Show loading
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Inatengeneza...';
+        button.disabled = true;
+
+        // Redirect to export endpoint
+        const exportUrl = '{{ route("export.mapato") }}?' + params.toString();
+        console.log('Exporting to:', exportUrl);
+        
+        // Create a temporary link and click it
+        const link = document.createElement('a');
+        link.href = exportUrl;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Restore button after delay
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Export error:', error);
+        alert('Hitilafu wakati wa kutengeneza export: ' + error.message);
+        
+        // Restore button
+        const button = event.target;
+        button.innerHTML = '<i class="fas fa-file-excel"></i> <span class="font-medium">Export Excel</span>';
+        button.disabled = false;
+    }
+}
+</script>
+
 @push('scripts')
 <script>
 // Delete modal functions
@@ -312,30 +369,6 @@ document.addEventListener('keydown', function(e) {
         }
     }
 });
-
-function exportMapato() {
-    // Get current filter values
-    const startDate = document.querySelector('input[name="start_date"]').value;
-    const endDate = document.querySelector('input[name="end_date"]').value;
-    const year = document.querySelector('select[name="year"]').value;
-    const month = document.querySelector('select[name="month"]').value;
-    const categoryId = document.querySelector('select[name="category_id"]').value;
-    const memberSearch = document.querySelector('input[name="member_search"]').value;
-    const receiptNumber = document.querySelector('input[name="receipt_number"]').value;
-
-    // Build query string
-    const params = new URLSearchParams();
-    if (startDate) params.append('start_date', startDate);
-    if (endDate) params.append('end_date', endDate);
-    if (year) params.append('year', year);
-    if (month) params.append('month', month);
-    if (categoryId) params.append('category_id', categoryId);
-    if (memberSearch) params.append('member_search', memberSearch);
-    if (receiptNumber) params.append('receipt_number', receiptNumber);
-
-    // Redirect to export endpoint
-    window.location.href = '{{ route("export.mapato") }}?' + params.toString();
-}
 </script>
 @endpush
 @endsection

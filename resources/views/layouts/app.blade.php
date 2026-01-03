@@ -106,7 +106,8 @@
             display: flex;
             flex-direction: column;
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
+            overflow-x: visible;
+            overflow-y: auto;
         }
 
         /* Scrollbar styling */
@@ -387,7 +388,7 @@
             margin-left: 0.875rem;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
             pointer-events: none;
-            z-index: 1001;
+            z-index: 99999;
         }
 
         .sidebar-tooltip::before {

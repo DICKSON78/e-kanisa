@@ -66,7 +66,7 @@ class ReportController extends Controller
     private function storeExcel(array $incomeData, array $expenseData, string $title, string $periodText): array
     {
         $filename = Str::slug($title, '_') . '_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
-        $filepath = 'exports/reports/' . $filename;
+        $filepath = 'exports/' . $filename;
 
         Excel::store(new FinancialReportExport($incomeData, $expenseData, $title, $periodText), $filepath, 'public');
 
@@ -221,7 +221,7 @@ class ReportController extends Controller
 
         return $incomes->map(function ($income) {
             return [
-                'date' => $income->collection_date,
+                'date' => $income->collection_date->format('Y-m-d'),
                 'category' => $income->category->name ?? 'Bila Kategoria',
                 'description' => $income->notes ?? $income->category->name ?? '-',
                 'contributor' => $income->member->full_name ?? '-',

@@ -10,7 +10,6 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Carbon\Carbon;
 
 class MapatoExport implements WithEvents, WithTitle
@@ -102,7 +101,7 @@ class MapatoExport implements WithEvents, WithTitle
                     'C' => 'AINA YA MAPATO',
                     'D' => 'MWANACHAMA',
                     'E' => 'KIASI (TSH)',
-                    'F' => 'NAMBA RISITI',
+                    'F' => 'MAELEZO',
                 ];
                 foreach ($headers as $col => $value) {
                     $sheet->setCellValue($col . '6', $value);
@@ -142,7 +141,12 @@ class MapatoExport implements WithEvents, WithTitle
                     $sheet->setCellValue('C' . $currentRow, $income->category ? $income->category->name : '-');
                     $sheet->setCellValue('D' . $currentRow, $income->member ? $income->member->first_name . ' ' . $income->member->last_name : '-');
                     $sheet->setCellValue('E' . $currentRow, floatval($income->amount));
-                    $sheet->setCellValue('F' . $currentRow, $income->receipt_number ?? '-');
+                    $sheet->setCellValue('F' . $currentRow, $income->description ?? '-');
+
+                    // Apply borders to data row
+                    $sheet->getStyle('A' . $currentRow . ':F' . $currentRow)->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'D1D5DB']]],
+                    ]);
 
                     $grandTotal += floatval($income->amount);
                     $rowNumber++;
@@ -155,6 +159,9 @@ class MapatoExport implements WithEvents, WithTitle
                     $sheet->mergeCells('B7:E7');
                     $sheet->setCellValue('B7', 'Hakuna mapato yaliyopatikana kwa kipindi hiki');
                     $sheet->setCellValue('F7', '-');
+                    $sheet->getStyle('A7:F7')->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'D1D5DB']]],
+                    ]);
                     $currentRow = 8;
                 }
 
@@ -173,10 +180,7 @@ class MapatoExport implements WithEvents, WithTitle
                 ]);
                 $sheet->getRowDimension($currentRow)->setRowHeight(30);
 
-                // Apply formatting to data rows
-                $sheet->getStyle('A7:F' . ($currentRow - 1))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'D1D5DB']]],
-                ]);
+                // Format amount column
                 $sheet->getStyle('E7:E' . $currentRow)->getNumberFormat()->setFormatCode('#,##0');
                 $sheet->getStyle('E7:E' . $currentRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
                 $sheet->getStyle('A7:A' . $currentRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
@@ -185,22 +189,12 @@ class MapatoExport implements WithEvents, WithTitle
                 $sheet->getColumnDimension('A')->setWidth(6);
                 $sheet->getColumnDimension('B')->setWidth(15);
                 $sheet->getColumnDimension('C')->setWidth(25);
-                $sheet->getColumnDimension('D')->setWidth(30);
+                $sheet->getColumnDimension('D')->setWidth(25);
                 $sheet->getColumnDimension('E')->setWidth(18);
-                $sheet->getColumnDimension('F')->setWidth(15);
+                $sheet->getColumnDimension('F')->setWidth(30);
 
+                // Freeze header row
                 $sheet->freezePane('A7');
-
-                // Logo
-                $logoPath = public_path('images/kkkt_logo.png');
-                if (file_exists($logoPath)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Logo');
-                    $drawing->setPath($logoPath);
-                    $drawing->setHeight(50);
-                    $drawing->setCoordinates('A1');
-                    $drawing->setWorksheet($sheet);
-                }
             },
         ];
     }

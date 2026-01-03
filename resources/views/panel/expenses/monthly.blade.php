@@ -467,6 +467,7 @@
     .tooltip-container {
         transition: opacity 200ms ease-out, transform 200ms ease-out;
         border-radius: 12px;
+        z-index: 99999 !important;
     }
 
     /* Custom scrollbar for tooltip */

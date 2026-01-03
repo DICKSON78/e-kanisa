@@ -9,7 +9,6 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Carbon\Carbon;
 
 class AhadiExport implements WithEvents, WithTitle
@@ -98,7 +97,7 @@ class AhadiExport implements WithEvents, WithTitle
                     'H' => 'HALI',
                 ];
                 foreach ($headers as $col => $value) {
-                    $sheet->setCellValue("{$col}6", $value);
+                    $sheet->setCellValue($col . '6', $value);
                 }
                 $sheet->getStyle('A6:H6')->applyFromArray([
                     'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 11],
@@ -119,22 +118,27 @@ class AhadiExport implements WithEvents, WithTitle
                     $balance = floatval($ahadi->amount) - $paidAmount;
                     $status = $balance <= 0 ? 'Imelipwa' : 'Bado';
 
-                    $sheet->setCellValue("A{$currentRow}", $rowNumber);
-                    $sheet->setCellValue("B{$currentRow}", Carbon::parse($ahadi->pledge_date)->format('d/m/Y'));
-                    $sheet->setCellValue("C{$currentRow}", $ahadi->member ? $ahadi->member->first_name . ' ' . $ahadi->member->last_name : '-');
-                    $sheet->setCellValue("D{$currentRow}", $ahadi->member ? $ahadi->member->phone : '-');
-                    $sheet->setCellValue("E{$currentRow}", floatval($ahadi->amount));
-                    $sheet->setCellValue("F{$currentRow}", $paidAmount);
-                    $sheet->setCellValue("G{$currentRow}", max(0, $balance));
-                    $sheet->setCellValue("H{$currentRow}", $status);
+                    $sheet->setCellValue('A' . $currentRow, $rowNumber);
+                    $sheet->setCellValue('B' . $currentRow, Carbon::parse($ahadi->pledge_date)->format('d/m/Y'));
+                    $sheet->setCellValue('C' . $currentRow, $ahadi->member ? $ahadi->member->first_name . ' ' . $ahadi->member->last_name : '-');
+                    $sheet->setCellValue('D' . $currentRow, $ahadi->member ? $ahadi->member->phone : '-');
+                    $sheet->setCellValue('E' . $currentRow, floatval($ahadi->amount));
+                    $sheet->setCellValue('F' . $currentRow, $paidAmount);
+                    $sheet->setCellValue('G' . $currentRow, max(0, $balance));
+                    $sheet->setCellValue('H' . $currentRow, $status);
 
-                    // Color code status
+                    // Apply borders to data row
+                    $sheet->getStyle('A' . $currentRow . ':H' . $currentRow)->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'D1D5DB']]],
+                    ]);
+
+                    // Color status cell
                     if ($status === 'Imelipwa') {
-                        $sheet->getStyle("H{$currentRow}")->applyFromArray([
+                        $sheet->getStyle('H' . $currentRow)->applyFromArray([
                             'font' => ['color' => ['rgb' => '16A34A'], 'bold' => true],
                         ]);
                     } else {
-                        $sheet->getStyle("H{$currentRow}")->applyFromArray([
+                        $sheet->getStyle('H' . $currentRow)->applyFromArray([
                             'font' => ['color' => ['rgb' => 'DC2626'], 'bold' => true],
                         ]);
                     }
@@ -151,19 +155,22 @@ class AhadiExport implements WithEvents, WithTitle
                     $sheet->mergeCells('B7:G7');
                     $sheet->setCellValue('B7', 'Hakuna ahadi zilizopatikana kwa kipindi hiki');
                     $sheet->setCellValue('H7', '-');
+                    $sheet->getStyle('A7:H7')->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'D1D5DB']]],
+                    ]);
                     $currentRow = 8;
                 }
 
                 // Grand total row
-                $sheet->setCellValue("A{$currentRow}", '');
-                $sheet->mergeCells("B{$currentRow}:D{$currentRow}");
-                $sheet->setCellValue("B{$currentRow}", 'JUMLA KUU');
-                $sheet->setCellValue("E{$currentRow}", $totalPledged);
-                $sheet->setCellValue("F{$currentRow}", $totalPaid);
-                $sheet->setCellValue("G{$currentRow}", max(0, $totalPledged - $totalPaid));
-                $sheet->setCellValue("H{$currentRow}", '');
+                $sheet->setCellValue('A' . $currentRow, '');
+                $sheet->mergeCells('B' . $currentRow . ':D' . $currentRow);
+                $sheet->setCellValue('B' . $currentRow, 'JUMLA KUU');
+                $sheet->setCellValue('E' . $currentRow, $totalPledged);
+                $sheet->setCellValue('F' . $currentRow, $totalPaid);
+                $sheet->setCellValue('G' . $currentRow, max(0, $totalPledged - $totalPaid));
+                $sheet->setCellValue('H' . $currentRow, '');
 
-                $sheet->getStyle("A{$currentRow}:H{$currentRow}")->applyFromArray([
+                $sheet->getStyle('A' . $currentRow . ':H' . $currentRow)->applyFromArray([
                     'font' => ['bold' => true, 'size' => 12, 'color' => ['rgb' => 'FFFFFF']],
                     'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '360958']],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_MEDIUM, 'color' => ['rgb' => '000000']]],
@@ -171,15 +178,11 @@ class AhadiExport implements WithEvents, WithTitle
                 ]);
                 $sheet->getRowDimension($currentRow)->setRowHeight(30);
 
-                // Apply formatting to data rows
-                $lastDataRow = $currentRow - 1;
-                $sheet->getStyle("A7:H{$lastDataRow}")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'D1D5DB']]],
-                ]);
-                $sheet->getStyle("E7:G{$currentRow}")->getNumberFormat()->setFormatCode('#,##0');
-                $sheet->getStyle("E7:G{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
-                $sheet->getStyle("A7:A{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle("H7:H{$currentRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                // Format number columns
+                $sheet->getStyle('E7:G' . $currentRow)->getNumberFormat()->setFormatCode('#,##0');
+                $sheet->getStyle('E7:G' . $currentRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+                $sheet->getStyle('A7:A' . $currentRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle('H7:H' . $currentRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
                 // Column widths
                 $sheet->getColumnDimension('A')->setWidth(6);
@@ -191,18 +194,8 @@ class AhadiExport implements WithEvents, WithTitle
                 $sheet->getColumnDimension('G')->setWidth(15);
                 $sheet->getColumnDimension('H')->setWidth(12);
 
+                // Freeze header row
                 $sheet->freezePane('A7');
-
-                // Logo
-                $logoPath = public_path('images/kkkt_logo.png');
-                if (file_exists($logoPath)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Logo');
-                    $drawing->setPath($logoPath);
-                    $drawing->setHeight(50);
-                    $drawing->setCoordinates('A1');
-                    $drawing->setWorksheet($sheet);
-                }
             },
         ];
     }
