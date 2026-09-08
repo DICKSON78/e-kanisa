@@ -38,7 +38,7 @@ return new class extends Migration
         // Approval Steps (individual level approvals with digital signatures)
         Schema::create('approval_steps', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('approval_id')->constrained('department_approvals')->onDelete('cascade');
+            $table->foreignId('approval_id')->nullable()->constrained('department_approvals')->onDelete('cascade');
             $table->integer('level'); // 1, 2, 3, etc.
             $table->string('role_required'); // Mhasibu, Mchungaji, etc.
             $table->foreignId('approver_user_id')->nullable()->constrained('users')->onDelete('set null');
