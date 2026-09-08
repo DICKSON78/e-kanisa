@@ -148,7 +148,7 @@
             <div class="flex justify-center items-center mb-4">
                 <img src="{{ asset('images/ekanisa-icon.svg') }}" alt="E-Kanisa Logo" class="w-28 h-28 object-contain rounded-full shadow-lg" style="border: 2px solid #26214a; box-shadow: 0 10px 25px rgba(38, 33, 74, 0.25);">
             </div>
-            <h1 class="text-2xl font-bold text-gray-800">Karibu Tena</h1>
+            <h1 class="text-2xl font-bold text-gray-800">E-Kanisa</h1>
             <p class="text-gray-600 mt-2">Ingia kwenye akaunti yako ya Kanisa</p>
         </div>
 
