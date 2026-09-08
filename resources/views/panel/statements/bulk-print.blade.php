@@ -356,12 +356,12 @@
     <!-- Header Section -->
     <div class="report-header">
         <div class="header-left">
-            @if(file_exists(public_path('images/roc_logo.jpeg')))
-                <img src="{{ asset('images/roc_logo.jpeg') }}" alt="Church Logo" class="church-logo">
+            @if(file_exists(public_path('images/ekanisa-icon.svg')))
+                <img src="{{ asset('images/ekanisa-icon.svg') }}" alt="Church Logo" class="church-logo">
             @endif
         </div>
         <div class="header-center">
-            <div class="church-name">ROC [REALITY OF CHRIST]</div>
+            <div class="church-name">E-Kanisa</div>
             <div class="church-address">S.L.P 123, Makabe, Arusha</div>
             <div class="church-contact">Simu: +255 123 456 789 | Barua pepe: info@roc.or.tz</div>
         </div>

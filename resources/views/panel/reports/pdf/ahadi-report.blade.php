@@ -225,12 +225,12 @@
     <!-- Header Section -->
     <div class="report-header">
         <div class="header-left">
-            @if(file_exists(public_path('images/roc_logo.jpeg')))
-                <img src="{{ asset('images/roc_logo.jpeg') }}" alt="Church Logo" class="church-logo">
+            @if(file_exists(public_path('images/ekanisa-icon.svg')))
+                <img src="{{ asset('images/ekanisa-icon.svg') }}" alt="Church Logo" class="church-logo">
             @endif
         </div>
         <div class="header-center">
-            <div class="church-name">{{ $churchName ?? 'ROC [REALITY OF CHRIST]' }}</div>
+            <div class="church-name">{{ $churchName ?? 'E-Kanisa' }}</div>
             <div class="church-address">{{ $address ?? 'P.O. Box 123, Makabe' }}</div>
             <div class="church-contact">{{ $phone ?? '+255 123 456 789' }} | {{ $email ?? 'info@roc.or.tz' }}</div>
         </div>

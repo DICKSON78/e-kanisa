@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $entry->entry_number . ' - Ingizo la Kitabu - Mfumo wa ROC')
+@section('title', $entry->entry_number . ' - Ingizo la Kitabu - Mfumo wa E-Kanisa')
 
 @section('content')
 <div class="space-y-6">

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Ripoti ya Fedha' }} - {{ $settings->company_name ?? 'ROC [Reality of Christ]' }}</title>
-    <link rel="icon" type="image/jpeg" href="{{ asset('images/roc_logo.jpeg') }}">
+    <title>{{ $title ?? 'Ripoti ya Fedha' }} - {{ $settings->company_name ?? 'E-Kanisa' }}</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/ekanisa-icon.svg') }}">
     <style>
         @page {
             margin: 10mm;
@@ -210,12 +210,12 @@
     <!-- Header Section -->
     <div class="report-header">
         <div class="header-left">
-            @if(file_exists(public_path('images/roc_logo.jpeg')))
-                <img src="{{ asset('images/roc_logo.jpeg') }}" alt="Church Logo" class="church-logo">
+            @if(file_exists(public_path('images/ekanisa-icon.svg')))
+                <img src="{{ asset('images/ekanisa-icon.svg') }}" alt="Church Logo" class="church-logo">
             @endif
         </div>
         <div class="header-center">
-            <div class="church-name">{{ $settings->company_name ?? 'ROC [REALITY OF CHRIST]' }}</div>
+            <div class="church-name">{{ $settings->company_name ?? 'E-Kanisa' }}</div>
             <div class="church-address">{{ $settings->address ?? 'P.O. Box 123, Makabe' }}</div>
             <div class="church-contact">{{ $settings->phone ?? '+255 123 456 789' }} | {{ $settings->email ?? 'info@roc.or.tz' }}</div>
         </div>
@@ -658,9 +658,9 @@
     <!-- Report Header with Logo -->
     <div class="report-header">
         <div class="logo-container">
-            <img src="{{ asset('images/roc_logo.jpeg') }}" alt="Logo" class="logo">
+            <img src="{{ asset('images/ekanisa-icon.svg') }}" alt="Logo" class="logo">
             <div class="church-info">
-                <div class="church-name">{{ $settings->company_name ?? 'ROC [Reality of Christ]' }}</div>
+                <div class="church-name">{{ $settings->company_name ?? 'E-Kanisa' }}</div>
                 <div class="church-address">{{ $settings->address ?? 'Dar es Salaam, Tanzania' }}</div>
                 <div class="church-contact">
                     Simu: {{ $settings->phone ?? '+255 XXX XXX XXX' }} |
@@ -812,8 +812,8 @@
 
     <!-- Footer -->
     <div class="report-footer">
-        <div>{{ $settings->company_name ?? 'ROC [Reality of Christ]' }}</div>
-        <div>Ripoti imetengenezwa na Mfumo wa ROC</div>
+        <div>{{ $settings->company_name ?? 'E-Kanisa' }}</div>
+        <div>Ripoti imetengenezwa na Mfumo wa E-Kanisa</div>
         <div>{{ now()->format('d/m/Y H:i') }}</div>
     </div>
 </body>

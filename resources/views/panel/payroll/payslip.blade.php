@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Stakabadhi ya Mshahara - Mfumo wa ROC')
+@section('title', 'Stakabadhi ya Mshahara - Mfumo wa E-Kanisa')
 
 @section('content')
 <div class="space-y-6">
@@ -24,12 +24,12 @@
 
     <!-- Payslip Content -->
     <div class="rx-card rounded-2xl overflow-hidden" id="payslip-content">
-        <!-- ROC Header -->
+        <!-- E-Kanisa Header -->
         <div class="p-6 text-center" style="background: linear-gradient(135deg, #360958 0%, #2a0745 50%, #1f0533 100%);">
             <div class="flex items-center justify-center gap-3 mb-2">
-                <img src="{{ asset('images/roc_logo.jpeg') }}" alt="ROC Logo" class="w-12 h-12 rounded-lg object-contain bg-white p-1">
+                <img src="{{ asset('images/ekanisa-icon.svg') }}" alt="E-Kanisa Logo" class="w-12 h-12 rounded-lg object-contain bg-white p-1">
                 <div class="text-left">
-                    <h2 class="text-xl font-bold text-white">ROC - Reality of Christ</h2>
+                    <h2 class="text-xl font-bold text-white">E-Kanisa</h2>
                     <p class="text-sm text-white/60">Stakabadhi ya Mshahara</p>
                 </div>
             </div>
@@ -214,7 +214,7 @@
 
             <!-- Footer -->
             <div class="pt-4 border-t border-gray-200 text-center">
-                <p class="text-xs text-gray-400">Stakabadhi hii imeundwa na Mfumo wa ROC - Reality of Christ</p>
+                <p class="text-xs text-gray-400">Stakabadhi hii imeundwa na Mfumo wa E-Kanisa - Reality of Christ</p>
                 <p class="text-xs text-gray-400 mt-1">Tarehe ya Uundaji: {{ $record->created_at ? $record->created_at->format('d/m/Y H:i') : now()->format('d/m/Y H:i') }}</p>
             </div>
         </div>

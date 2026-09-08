@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard - Mfumo wa ROC')
+@section('title', 'Dashboard - Mfumo wa E-Kanisa')
 
 @section('content')
 @php
@@ -25,7 +25,7 @@ function formatMoney($amount) {
         </div>
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p class="text-sm text-gray-500">MFUMO WA ROC — Overview ya kanisa, wanachama na shughuli</p>
+            <p class="text-sm text-gray-500">MFUMO WA E-KANISA — Overview ya kanisa, wanachama na shughuli</p>
         </div>
     </div>
     <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500">

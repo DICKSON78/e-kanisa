@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Sadaka na Ahadi - Mfumo wa ROC')
+@section('title', 'Sadaka na Ahadi - Mfumo wa E-Kanisa')
 @section('page-title', 'Sadaka na Ahadi')
 @section('page-subtitle', 'Rekodi na usimamizi wa sadaka na ahadi za kanisa')
 

@@ -7,8 +7,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Login - ROC [Reality of Christ]</title>
-    <link rel="icon" type="image/jpeg" href="{{ asset('images/roc_logo.jpeg') }}">
+    <title>Login - E-Kanisa</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/ekanisa-icon.svg') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -146,7 +146,7 @@
         <!-- Logo and Title -->
         <div class="text-center mb-8">
             <div class="flex justify-center items-center mb-4">
-                <img src="{{ asset('images/roc_logo.jpeg') }}" alt="ROC Logo" class="w-28 h-28 object-contain rounded-full shadow-lg" style="border: 2px solid #26214a; box-shadow: 0 10px 25px rgba(38, 33, 74, 0.25);">
+                <img src="{{ asset('images/ekanisa-icon.svg') }}" alt="E-Kanisa Logo" class="w-28 h-28 object-contain rounded-full shadow-lg" style="border: 2px solid #26214a; box-shadow: 0 10px 25px rgba(38, 33, 74, 0.25);">
             </div>
             <h1 class="text-2xl font-bold text-gray-800">Karibu Tena</h1>
             <p class="text-gray-600 mt-2">Ingia kwenye akaunti yako ya Kanisa</p>
@@ -180,7 +180,7 @@
                     </div>
                     <input id="email" name="email" type="text" required value="{{ old('email') }}"
                            class="pl-10 input-focus w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none transition bg-white text-gray-800"
-                           placeholder="ROC-2025-0001 au barua@pepe.com">
+                           placeholder="EK-2025-0001 au barua@pepe.com">
                 </div>
                 @error('email')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -240,7 +240,7 @@
             </button>
             <div class="text-center mb-6">
                 <div class="flex justify-center items-center mb-4">
-                    <img src="{{ asset('images/roc_logo.jpeg') }}" alt="ROC Logo" class="w-16 h-16 object-contain rounded-full shadow-md" style="border: 1.5px solid #26214a; box-shadow: 0 4px 12px rgba(38, 33, 74, 0.2);">
+                    <img src="{{ asset('images/ekanisa-icon.svg') }}" alt="E-Kanisa Logo" class="w-16 h-16 object-contain rounded-full shadow-md" style="border: 1.5px solid #26214a; box-shadow: 0 4px 12px rgba(38, 33, 74, 0.2);">
                 </div>
                 <h2 class="text-2xl font-bold text-gray-800">Weka Upya Nenosiri</h2>
                 <p class="text-gray-600 mt-2">Weka barua pepe yako kupokea kiungo cha kuweka upya nenosiri</p>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Maombi ya Idhini - Mfumo wa ROC')
+@section('title', 'Maombi ya Idhini - Mfumo wa E-Kanisa')
 @section('page-title', 'Maombi ya Idhini')
 @section('page-subtitle', 'Simamia maombi ya idhini ya idara')
 

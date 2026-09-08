@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>{{ $title ?? 'Ripoti ya Fedha' }} - {{ $settings->company_name ?? 'ROC [Reality of Christ]' }}</title>
+    <title>{{ $title ?? 'Ripoti ya Fedha' }} - {{ $settings->company_name ?? 'E-Kanisa' }}</title>
     <style>
         @page {
             margin: 10mm;
@@ -336,7 +336,7 @@
 </head>
 <body>
     @if($include_watermark ?? false)
-    <div class="watermark">{{ $settings->company_name ?? 'ROC' }}</div>
+    <div class="watermark">{{ $settings->company_name ?? 'E-Kanisa' }}</div>
     @endif
 
     <!-- Report Header with Logo -->
@@ -344,12 +344,12 @@
     <div class="report-header">
         <div class="header-left">
             @if($include_logo ?? true)
-            <img src="{{ public_path('images/roc_logo.jpeg') }}" alt="Logo" class="logo">
+            <img src="{{ public_path('images/ekanisa-icon.svg') }}" alt="Logo" class="logo">
             @endif
         </div>
         <div class="header-center">
-            <div class="church-name">{{ $settings->company_name ?? 'ROC [REALITY OF CHRIST]' }}</div>
-            <div class="diocese">ROC DAYOSI YA KINONDONI</div>
+            <div class="church-name">{{ $settings->company_name ?? 'E-Kanisa' }}</div>
+            <div class="diocese">E-KANISA</div>
             <div class="parish">JUMUIYA YA MAKABE</div>
             <div class="report-meta">
                 <div>Sanduku la Post: P.O. Box 76485, Dar es Salaam</div>
@@ -505,8 +505,8 @@
 
     <!-- Footer -->
     <div class="report-footer">
-        <div class="footer-left">{{ $settings->company_name ?? 'ROC [Reality of Christ]' }}</div>
-        <div class="footer-center">Ripoti imetengenezwa na Mfumo wa ROC</div>
+        <div class="footer-left">{{ $settings->company_name ?? 'E-Kanisa' }}</div>
+        <div class="footer-center">Ripoti imetengenezwa na Mfumo wa E-Kanisa</div>
         <div class="footer-right">Ukurasa wa <span class="page-number"></span></div>
     </div>
 </body>

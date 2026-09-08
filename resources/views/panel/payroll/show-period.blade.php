@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $period->name . ' - Mfumo wa ROC')
+@section('title', $period->name . ' - Mfumo wa E-Kanisa')
 
 @section('content')
 <div class="space-y-6">

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Taarifa za Muumini - Mfumo wa ROC')
+@section('title', 'Taarifa za Muumini - Mfumo wa E-Kanisa')
 
 @section('content')
 <div class="space-y-6">
@@ -409,7 +409,7 @@ function printQrCode() {
     const memberNumber = '{{ $member->member_number }}';
     const qrCode = document.getElementById('qrCodeContainer').innerHTML;
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<html><head><title>QR - ${memberNumber}</title><style>body{font-family:sans-serif;text-align:center;padding:40px;background:white}h1{color:#360958;font-size:24px}.qr{display:inline-block;border:3px solid #360958;padding:30px;margin:30px 0;border-radius:10px}@media print{@page{margin:20mm}}</style></head><body><h1>ROC [Reality of Christ]</h1><h2 style="color:#666;font-size:16px">QR Code ya Muumini</h2><p style="font-size:28px;color:#360958;font-weight:bold">${memberNumber}</p><div class="qr">${qrCode}</div><p style="color:#666;font-size:14px">Scan QR code hii kupata taarifa</p><script>window.onload=function(){window.print();setTimeout(function(){window.close()},500)}<\/script></body></html>`);
+    printWindow.document.write(`<html><head><title>QR - ${memberNumber}</title><style>body{font-family:sans-serif;text-align:center;padding:40px;background:white}h1{color:#360958;font-size:24px}.qr{display:inline-block;border:3px solid #360958;padding:30px;margin:30px 0;border-radius:10px}@media print{@page{margin:20mm}}</style></head><body><h1>E-Kanisa</h1><h2 style="color:#666;font-size:16px">QR Code ya Muumini</h2><p style="font-size:28px;color:#360958;font-weight:bold">${memberNumber}</p><div class="qr">${qrCode}</div><p style="color:#666;font-size:14px">Scan QR code hii kupata taarifa</p><script>window.onload=function(){window.print();setTimeout(function(){window.close()},500)}<\/script></body></html>`);
     printWindow.document.close();
 }
 

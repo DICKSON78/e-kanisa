@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Picha na Video - Mfumo wa ROC')
+@section('title', 'Picha na Video - Mfumo wa E-Kanisa')
 @section('page-title', 'Picha na Video')
 @section('page-subtitle', 'Usimamizi wa picha na video za kanisa')
 

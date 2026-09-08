@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Hariri Ufuatiliaji - Mfumo wa ROC')
+@section('title', 'Hariri Ufuatiliaji - Mfumo wa E-Kanisa')
 @section('page-title', 'Hariri Ufuatiliaji')
 @section('page-subtitle', 'Badilisha taarifa za ufuatiliaji')
 

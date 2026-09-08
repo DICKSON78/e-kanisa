@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Miundo ya Mishahara - Mfumo wa ROC')
+@section('title', 'Miundo ya Mishahara - Mfumo wa E-Kanisa')
 @section('page-title', 'Miundo ya Mishahara')
 @section('page-subtitle', 'Simamia viwango vya mishahara vya wafanyakazi')
 

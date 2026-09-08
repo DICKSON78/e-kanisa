@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Mizani ya Majaribio - Mfumo wa ROC')
+@section('title', 'Mizani ya Majaribio - Mfumo wa E-Kanisa')
 
 @section('content')
 <div class="space-y-6">

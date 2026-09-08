@@ -7,8 +7,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Jisajili - ROC [Reality of Christ]</title>
-    <link rel="icon" type="image/jpeg" href="{{ asset('images/roc_logo.jpeg') }}">
+    <title>Jisajili - E-Kanisa</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/ekanisa-icon.svg') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -50,9 +50,9 @@
         <!-- Logo and Title -->
         <div class="text-center mb-6">
             <div class="flex justify-center items-center mb-4">
-                <img src="{{ asset('images/roc_logo.jpeg') }}" alt="ROC [Reality of Christ] Logo" class="w-20 h-20 object-contain">
+                <img src="{{ asset('images/ekanisa-icon.svg') }}" alt="E-Kanisa Logo" class="w-20 h-20 object-contain">
             </div>
-            <span class="text-2xl font-bold text-primary-600 block">ROC [REALITY OF CHRIST]</span>
+            <span class="text-2xl font-bold text-primary-600 block">E-Kanisa</span>
             <h1 class="text-xl font-bold text-gray-800 mt-2">Jisajili kama Muumini</h1>
             <p class="text-gray-600 text-sm mt-1">Jaza fomu hii ili kujisajili kwenye mfumo wa Kanisa</p>
         </div>

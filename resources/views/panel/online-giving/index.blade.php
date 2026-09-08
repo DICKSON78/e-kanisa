@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Malipo ya Mtandaoni - Mfumo wa ROC')
+@section('title', 'Malipo ya Mtandaoni - Mfumo wa E-Kanisa')
 @section('page-title', 'Malipo ya Mtandaoni')
 @section('page-subtitle', 'Rekodi na usimamizi wa malipo yaliyofanywa kupitia mitandao')
 

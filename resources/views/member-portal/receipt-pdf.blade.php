@@ -410,12 +410,12 @@
 <body>
     <div class="cheque-container">
         <!-- Watermark -->
-        <div class="watermark">ROC [REALITY OF CHRIST]</div>
+        <div class="watermark">E-Kanisa</div>
 
         <!-- Header -->
         <div class="cheque-header">
             <div class="header-logo">
-                <img src="{{ public_path('images/roc_logo.jpeg') }}" alt="ROC Logo">
+                <img src="{{ public_path('images/ekanisa-icon.svg') }}" alt="E-Kanisa Logo">
             </div>
             <div class="header-center">
                 <div class="church-name">KANISA LA KIINJILI LA KILUTHERI TANZANIA</div>
@@ -528,7 +528,7 @@
                 <div class="signature-line">Saini/Muhuri</div>
             </div>
             <div class="footer-right">
-                <div class="footer-text">ROC Usharika wa Reality of Christ</div>
+                <div class="footer-text">E-Kanisa</div>
                 <div class="footer-text">Dar es Salaam, Tanzania</div>
             </div>
         </div>

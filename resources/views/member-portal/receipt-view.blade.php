@@ -37,7 +37,7 @@
                 <div class="flex-1 text-white">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <p class="text-primary-100 text-sm mb-1">KANISA LA ROC [REALITY OF CHRIST]</p>
+                            <p class="text-primary-100 text-sm mb-1">KANISA LA E-Kanisa</p>
                             <h2 class="text-3xl font-bold font-mono">{{ $payment->receipt_number }}</h2>
                             <div class="flex items-center gap-4 mt-2">
                                 <div class="flex items-center gap-2">
@@ -322,7 +322,7 @@
                 <div class="space-y-4">
                     <div class="flex items-center p-3 bg-gray-50 rounded-lg">
                         <i class="fas fa-church text-primary-500 mr-2"></i>
-                        <span class="text-sm text-gray-900 font-medium">KANISA LA ROC [REALITY OF CHRIST]</span>
+                        <span class="text-sm text-gray-900 font-medium">KANISA LA E-Kanisa</span>
                     </div>
 
                     <div class="flex items-center p-3 bg-gray-50 rounded-lg">

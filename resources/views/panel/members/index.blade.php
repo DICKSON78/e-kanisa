@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Waumini - Mfumo wa ROC')
+@section('title', 'Waumini - Mfumo wa E-Kanisa')
 @section('page-title', 'Waumini')
 @section('page-subtitle', 'Usimamizi wa taarifa za waumini wa kanisa')
 
@@ -610,7 +610,7 @@ function printQrCode() {
                 </style>
             </head>
             <body>
-                <h1>ROC [Reality of Christ]</h1>
+                <h1>E-Kanisa</h1>
                 <h2>QR Code ya Muumini</h2>
                 <h1 style="font-size: 28px; color: #360958; font-weight: bold; margin: 10px 0;">${memberNumber}</h1>
                 <div class="qr-container">${qrCode}</div>

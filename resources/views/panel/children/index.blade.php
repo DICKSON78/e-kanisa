@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Sunday School - Mfumo wa ROC')
+@section('title', 'Sunday School - Mfumo wa E-Kanisa')
 @section('page-title', 'Sunday School')
 @section('page-subtitle', 'Usimamizi wa madarasa ya watoto')
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Ongeza Uhamisho - Mfumo wa ROC')
+@section('title', 'Ongeza Uhamisho - Mfumo wa E-Kanisa')
 @section('page-title', 'Ongeza Uhamisho wa Uanachama')
 @section('page-subtitle', 'Jaza taarifa za uhamisho wa muumini')
 

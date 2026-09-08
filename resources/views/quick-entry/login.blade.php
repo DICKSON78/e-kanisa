@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick Entry - ROC [Reality of Christ]</title>
-    <link rel="icon" type="image/jpeg" href="{{ asset('images/roc_logo.jpeg') }}">
+    <title>Quick Entry - E-Kanisa</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/ekanisa-icon.svg') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -47,7 +47,7 @@
         <!-- Logo/Header -->
         <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full mb-4 shadow-lg p-2">
-                <img src="{{ asset('images/roc_logo.jpeg') }}" alt="ROC [Reality of Christ] Logo" class="w-full h-full object-contain">
+                <img src="{{ asset('images/ekanisa-icon.svg') }}" alt="E-Kanisa Logo" class="w-full h-full object-contain">
             </div>
             <h1 class="text-3xl font-bold text-white mb-2">Quick Entry</h1>
             <p class="text-primary-100">Mfumo wa Kuingiza Michango Haraka</p>

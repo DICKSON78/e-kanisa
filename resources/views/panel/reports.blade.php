@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Ripoti - Mfumo wa ROC')
+@section('title', 'Ripoti - Mfumo wa E-Kanisa')
 @section('page-title', 'Ripoti za Fedha')
 @section('page-subtitle', 'Tengeneza na pakua ripoti za fedha za kitaalamu')
 
@@ -15,7 +15,7 @@
             </div>
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Ripoti za Fedha</h1>
-                <p class="text-sm text-gray-500">Tengeneza na pakua ripoti za fedha za {{ $settings->company_name ?? 'ROC [Reality of Christ]' }}</p>
+                <p class="text-sm text-gray-500">Tengeneza na pakua ripoti za fedha za {{ $settings->company_name ?? 'E-Kanisa' }}</p>
             </div>
         </div>
     </div>

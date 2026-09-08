@@ -8,8 +8,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>@yield('title', 'Mfumo wa ROC')</title>
-    <link rel="icon" type="image/jpeg" href="{{ asset('images/roc_logo.jpeg') }}">
+    <title>@yield('title', 'Mfumo wa E-Kanisa')</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/ekanisa-icon.svg') }}">
 
     <!-- CRITICAL: Prevent FOUC - Hide page until CSS loads -->
     <style id="critical-css">
@@ -828,7 +828,7 @@
         }
 
         /* ============================================
-           PHARMEX-STYLE DESIGN SYSTEM (ROC Adapted)
+           PHARMEX-STYLE DESIGN SYSTEM (E-Kanisa Adapted)
            ============================================ */
 
         /* --- Cards --- */
@@ -1091,11 +1091,11 @@
             <div class="sidebar-logo">
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
                     <div class="logo-icon">
-                        <img src="{{ asset('images/roc_logo.jpeg') }}" alt="ROC Logo" class="w-full h-full object-contain">
+                        <img src="{{ asset('images/ekanisa-icon.svg') }}" alt="E-Kanisa Logo" class="w-full h-full object-contain">
                     </div>
                     <div class="flex flex-col justify-center">
-                        <span class="logo-text">ROC System</span>
-                        <p class="logo-subtitle">Reality of Christ</p>
+                        <span class="logo-text">E-Kanisa</span>
+                        <p class="logo-subtitle">Mfumo wa Kanisa</p>
                     </div>
                 </a>
                 <button class="toggle-btn md:hidden text-white/60 hover:text-white" id="closeSidebar" aria-label="Close Sidebar">
@@ -1688,7 +1688,7 @@
 
                 var notification = document.createElement('div');
                 notification.className = 'notification ' + type;
-                notification.innerHTML = '<div class="notification-header"><div class="notification-sender"><i class="fas ' + iconClass + '"></i> Mfumo wa ROC</div><div class="notification-time">' + timeString + '</div></div><div class="notification-body">' + message + '</div><div class="notification-actions"><span class="notification-category">' + category + '</span><button class="notification-close"><i class="fas fa-times"></i></button></div>';
+                notification.innerHTML = '<div class="notification-header"><div class="notification-sender"><i class="fas ' + iconClass + '"></i> Mfumo wa E-Kanisa</div><div class="notification-time">' + timeString + '</div></div><div class="notification-body">' + message + '</div><div class="notification-actions"><span class="notification-category">' + category + '</span><button class="notification-close"><i class="fas fa-times"></i></button></div>';
                 notificationContainer.appendChild(notification);
                 notifications.push(notification);
 

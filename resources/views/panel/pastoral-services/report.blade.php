@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Ripoti ya Huduma za Kichungaji - Mfumo wa ROC')
+@section('title', 'Ripoti ya Huduma za Kichungaji - Mfumo wa E-Kanisa')
 @section('page-title', 'Ripoti ya Huduma za Kichungaji')
 @section('page-subtitle', 'Takwimu na muhtasari wa huduma kwa mwaka {{ $year }}')
 

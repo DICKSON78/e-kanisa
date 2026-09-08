@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Aina za Mapato - Mfumo wa ROC')
+@section('title', 'Aina za Mapato - Mfumo wa E-Kanisa')
 @section('page-title', 'Aina za Mapato')
 @section('page-subtitle', 'Usimamizi wa aina za mapato')
 

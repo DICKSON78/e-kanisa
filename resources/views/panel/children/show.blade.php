@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $class->name . ' - Mfumo wa ROC')
+@section('title', $class->name . ' - Mfumo wa E-Kanisa')
 @section('page-title', $class->name)
 @section('page-subtitle', 'Taarifa za darasa la Sunday School')
 

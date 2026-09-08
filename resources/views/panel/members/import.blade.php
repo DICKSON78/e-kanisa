@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Ingiza Waumini Kwa Wingi - Mfumo wa ROC')
+@section('title', 'Ingiza Waumini Kwa Wingi - Mfumo wa E-Kanisa')
 @section('page-title', 'Ingiza Waumini Kwa Wingi')
 @section('page-subtitle', 'Pakia faili la Excel au CSV kuongeza waumini wengi kwa pamoja')
 
