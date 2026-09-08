@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'QR Scanner - Mfumo wa Kanisa')
+@section('title', 'QR Scanner - Mfumo wa ROC')
 @section('page-title', 'QR Code Scanner')
 @section('page-subtitle', 'Scan QR code ya muumini kupata taarifa zake')
 

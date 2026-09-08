@@ -3,31 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Request as RequestModel;
+use App\Models\ApprovalStep;
+use App\Models\ApprovalThreshold;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class RequestController extends Controller
 {
-    /**
-     * Display a listing of requests with status filters
-     */
     public function index(Request $request)
     {
-        $query = RequestModel::with(['requester', 'approver']);
+        $query = RequestModel::with(['requester', 'approver', 'steps.approver']);
 
-        // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-
-        // Filter by department
         if ($request->filled('department')) {
             $query->where('department', $request->department);
         }
-
-        // Filter by date range
         if ($request->filled('start_date')) {
             $query->where('requested_date', '>=', $request->start_date);
         }
@@ -35,10 +30,8 @@ class RequestController extends Controller
             $query->where('requested_date', '<=', $request->end_date);
         }
 
-        // Get requests ordered by date descending
         $requests = $query->orderBy('requested_date', 'desc')->paginate(7);
 
-        // Get statistics
         $stats = [
             'total' => RequestModel::count(),
             'pending' => RequestModel::pending()->count(),
@@ -46,14 +39,12 @@ class RequestController extends Controller
             'rejected' => RequestModel::rejected()->count(),
         ];
 
-        // Get count by status (for compatibility if used elsewhere)
         $statusCounts = [
             'Inasubiri' => $stats['pending'],
             'Imeidhinishwa' => $stats['approved'],
             'Imekataliwa' => $stats['rejected'],
         ];
 
-        // Get unique departments
         $departments = RequestModel::select('department')
             ->distinct()
             ->whereNotNull('department')
@@ -68,39 +59,22 @@ class RequestController extends Controller
         ));
     }
 
-    /**
-     * Show the form for creating a new request
-     */
     public function create()
     {
-        // Common departments
         $departments = [
-            'Uongozi',
-            'Uimbaji',
-            'Usafi',
-            'Afya',
-            'Teknolojia',
-            'Mapokezi',
-            'Vijana',
-            'Wanawake',
-            'Watoto'
+            'Uongozi', 'Uimbaji', 'Usafi', 'Afya', 'Teknolojia',
+            'Mapokezi', 'Vijana', 'Wanawake', 'Watoto'
         ];
 
-        // Generate next request number for preview
         $year = date('Y');
         $lastRequest = RequestModel::whereYear('created_at', $year)
-            ->orderBy('id', 'desc')
-            ->first();
-
+            ->orderBy('id', 'desc')->first();
         $sequence = $lastRequest ? intval(substr($lastRequest->request_number, -4)) + 1 : 1;
         $nextRequestNumber = 'REQ' . $year . str_pad($sequence, 4, '0', STR_PAD_LEFT);
 
         return view('panel.requests.create', compact('departments', 'nextRequestNumber'));
     }
 
-    /**
-     * Store a newly created request in storage
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -124,57 +98,58 @@ class RequestController extends Controller
             'requested_date.date' => 'Tarehe si sahihi',
         ]);
 
-        // Generate request number
         $year = date('Y');
         $lastRequest = RequestModel::whereYear('created_at', $year)
-            ->orderBy('id', 'desc')
-            ->first();
-
+            ->orderBy('id', 'desc')->first();
         $sequence = $lastRequest ? intval(substr($lastRequest->request_number, -4)) + 1 : 1;
         $validated['request_number'] = 'REQ' . $year . str_pad($sequence, 4, '0', STR_PAD_LEFT);
 
         $validated['status'] = 'Inasubiri';
         $validated['requested_by'] = Auth::id();
 
-        RequestModel::create($validated);
+        // Determine approval chain from threshold
+        $threshold = ApprovalThreshold::findForAmount($validated['amount_requested']);
+        $roles = $threshold ? $threshold->required_roles : ['Mhasibu', 'Mchungaji'];
+        $validated['max_level'] = count($roles);
+        $validated['current_level'] = 1;
+
+        DB::transaction(function () use ($validated, $roles) {
+            $requestModel = RequestModel::create($validated);
+
+            // Create approval steps
+            foreach ($roles as $index => $role) {
+                ApprovalStep::create([
+                    'request_id' => $requestModel->id,
+                    'level' => $index + 1,
+                    'role_required' => $role,
+                ]);
+            }
+        });
 
         return redirect()->route('requests.index')
             ->with('success', 'Ombi limewasilishwa kikamilifu');
     }
 
-    /**
-     * Display the specified request
-     */
     public function show($id)
     {
-        $request = RequestModel::with(['requester', 'approver'])->findOrFail($id);
+        $request = RequestModel::with(['requester', 'approver', 'steps.approver'])->findOrFail($id);
+        $approvalStages = $request->getApprovalStages();
 
-        return view('panel.requests.show', compact('request'));
+        return view('panel.requests.show', compact('request', 'approvalStages'));
     }
 
-    /**
-     * Show the form for editing the specified request
-     */
     public function edit($id)
     {
         $requestModel = RequestModel::findOrFail($id);
 
-        // Only allow editing if status is pending
         if ($requestModel->status !== 'Inasubiri') {
             return redirect()->route('requests.show', $id)
                 ->with('error', 'Ombi ambalo tayari limeidhinishwa au kukataliwa haliwezi kubadilishwa');
         }
 
         $departments = [
-            'Uongozi',
-            'Uimbaji',
-            'Usafi',
-            'Afya',
-            'Teknolojia',
-            'Mapokezi',
-            'Vijana',
-            'Wanawake',
-            'Watoto'
+            'Uongozi', 'Uimbaji', 'Usafi', 'Afya', 'Teknolojia',
+            'Mapokezi', 'Vijana', 'Wanawake', 'Watoto'
         ];
 
         return view('panel.requests.edit', [
@@ -183,14 +158,10 @@ class RequestController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified request in storage
-     */
     public function update(Request $request, $id)
     {
         $requestModel = RequestModel::findOrFail($id);
 
-        // Only allow updating if status is pending
         if ($requestModel->status !== 'Inasubiri') {
             return redirect()->route('requests.show', $id)
                 ->with('error', 'Ombi ambalo tayari limeidhinishwa au kukataliwa haliwezi kubadilishwa');
@@ -223,9 +194,6 @@ class RequestController extends Controller
             ->with('success', 'Ombi limebadilishwa kikamilifu');
     }
 
-    /**
-     * Remove the specified request from storage (soft delete)
-     */
     public function destroy($id)
     {
         $request = RequestModel::findOrFail($id);
@@ -236,13 +204,12 @@ class RequestController extends Controller
     }
 
     /**
-     * Approve a request
+     * Approve a request at the current level with digital signature
      */
     public function approve(Request $request, $id)
     {
         $requestModel = RequestModel::findOrFail($id);
 
-        // Only allow approval if status is pending
         if ($requestModel->status !== 'Inasubiri') {
             return redirect()->route('requests.show', $id)
                 ->with('error', 'Ombi hili tayari limeshughulikiwa');
@@ -251,34 +218,91 @@ class RequestController extends Controller
         $validated = $request->validate([
             'amount_approved' => 'required|numeric|min:0|max:999999999999.99',
             'approval_notes' => 'nullable|string|max:1000',
+            'digital_signature' => 'required|string',
+            'signature_data' => 'required|string',
         ], [
             'amount_approved.required' => 'Tafadhali ingiza kiasi kilichoidhinishwa',
             'amount_approved.numeric' => 'Kiasi lazima kiwe nambari',
             'amount_approved.min' => 'Kiasi lazima kiwe chanya',
             'amount_approved.max' => 'Kiasi ni kubwa mno',
             'approval_notes.max' => 'Maelezo ni marefu mno',
+            'digital_signature.required' => 'Tafadhali sahihi kidigitali',
+            'signature_data.required' => 'Tafadhali sahihi kidigitali',
         ]);
 
-        $requestModel->update([
-            'status' => 'Imeidhinishwa',
-            'amount_approved' => $validated['amount_approved'],
-            'approval_notes' => $validated['approval_notes'] ?? null,
-            'approved_by' => Auth::id(),
-            'approved_date' => Carbon::now(),
-        ]);
+        $nextStep = $requestModel->nextPendingStep();
+        if (!$nextStep) {
+            return redirect()->route('requests.show', $id)
+                ->with('error', 'Hatua ya sasa ya idhinishaji haipatikani');
+        }
+
+        // Save digital signature as image file
+        $signaturePath = null;
+        if (!empty($validated['signature_data'])) {
+            $signatureData = $validated['signature_data'];
+            if (str_starts_with($signatureData, 'data:image/png;base64,')) {
+                $signatureData = substr($signatureData, 22);
+            } elseif (str_starts_with($signatureData, 'data:image/jpeg;base64,')) {
+                $signatureData = substr($signatureData, 23);
+            }
+
+            $signatureBinary = base64_decode($signatureData);
+            if ($signatureBinary !== false) {
+                $filename = 'signatures/request_' . $id . '_level_' . $nextStep->level . '_' . time() . '.png';
+                Storage::disk('public')->put($filename, $signatureBinary);
+                $signaturePath = $filename;
+            }
+        }
+
+        DB::transaction(function () use ($requestModel, $nextStep, $validated, $signaturePath) {
+            $timestamp = now()->toDateTimeString();
+
+            // Update the current approval step
+            $nextStep->update([
+                'decision' => 'approved',
+                'comments' => $validated['approval_notes'] ?? null,
+                'approver_user_id' => Auth::id(),
+                'digital_signature_hash' => ApprovalStep::generateSignatureHash(
+                    Auth::id(), $requestModel->id, $nextStep->level, $timestamp
+                ),
+                'signature_path' => $signaturePath,
+                'ip_address' => request()->ip(),
+                'acted_at' => $timestamp,
+            ]);
+
+            // Check if fully approved
+            $pendingSteps = $requestModel->steps()->whereNull('acted_at')->count();
+
+            if ($pendingSteps === 0) {
+                // All steps completed
+                $requestModel->update([
+                    'status' => 'Imeidhinishwa',
+                    'amount_approved' => $validated['amount_approved'],
+                    'approval_notes' => $validated['approval_notes'] ?? null,
+                    'approved_by' => Auth::id(),
+                    'approved_date' => Carbon::now(),
+                    'current_level' => $requestModel->max_level,
+                ]);
+            } else {
+                // Move to next level
+                $requestModel->update([
+                    'current_level' => $nextStep->level + 1,
+                    'amount_approved' => $validated['amount_approved'],
+                ]);
+            }
+        });
 
         return redirect()->route('requests.show', $id)
-            ->with('success', 'Ombi limeidhinishwa kikamilifu');
+            ->with('success', 'Idhinishaji limekamilika kwa hatua ya ' . $this->getLevelName($nextStep->level));
     }
 
     /**
-     * Reject a request
+     * Reject a request at the current level
      */
     public function reject(Request $request, $id)
     {
         $requestModel = RequestModel::findOrFail($id);
 
-        // Only allow rejection if status is pending
         if ($requestModel->status !== 'Inasubiri') {
             return redirect()->route('requests.show', $id)
                 ->with('error', 'Ombi hili tayari limeshughulikiwa');
@@ -291,6 +315,16 @@ class RequestController extends Controller
             'approval_notes.max' => 'Maelezo ni marefu mno',
         ]);
 
+        $nextStep = $requestModel->nextPendingStep();
+        if ($nextStep) {
+            $nextStep->update([
+                'decision' => 'rejected',
+                'comments' => $validated['approval_notes'],
+                'approver_user_id' => Auth::id(),
+                'acted_at' => now(),
+            ]);
+        }
+
         $requestModel->update([
             'status' => 'Imekataliwa',
             'approval_notes' => $validated['approval_notes'],
@@ -300,5 +334,33 @@ class RequestController extends Controller
 
         return redirect()->route('requests.show', $id)
             ->with('success', 'Ombi limekataliwa');
+    }
+
+    public function pending($id)
+    {
+        $requestModel = RequestModel::findOrFail($id);
+
+        $requestModel->update([
+            'status' => 'Inasubiri',
+            'approved_by' => null,
+            'approved_date' => null,
+            'approval_notes' => null,
+        ]);
+
+        return redirect()->route('requests.show', $id)
+            ->with('success', 'Ombi limewekwa kwenye hali ya kusubiri');
+    }
+
+    /**
+     * Get level name for display
+     */
+    private function getLevelName($level)
+    {
+        $names = [
+            1 => 'Mhasibu',
+            2 => 'Mchungaji',
+            3 => 'Mwenyekiti',
+        ];
+        return $names[$level] ?? "Hatua ya {$level}";
     }
 }

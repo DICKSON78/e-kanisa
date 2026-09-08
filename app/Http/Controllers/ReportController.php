@@ -14,9 +14,30 @@ use App\Exports\FinancialReportExport;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Export;
 
 class ReportController extends Controller
 {
+    /**
+     * Save an Export DB record after generating a file
+     */
+    private function saveExportRecord(array $stored, string $type, string $format, string $title, string $period = '', string $description = ''): void
+    {
+        $fullPath = Storage::disk('public')->path($stored['filepath']);
+        $fileSize = file_exists($fullPath) ? filesize($fullPath) : 0;
+
+        Export::create([
+            'user_id' => auth()->id(),
+            'type' => $type,
+            'format' => $format,
+            'filename' => $stored['filename'],
+            'filepath' => $stored['filepath'],
+            'description' => $description ?: $title,
+            'period' => $period,
+            'file_size' => $fileSize,
+        ]);
+    }
+
     /**
      * Get settings for reports
      */
@@ -429,6 +450,8 @@ class ReportController extends Controller
                     $stored = $this->storeCsv($incomeData, $expenseData, $title, $dateRange['text']);
                 }
 
+                $this->saveExportRecord($stored, $type, $format, $title, $period, 'Ripoti ya ' . $title);
+
                 return response()->json([
                     'success' => true,
                     'download_url' => $stored['download_url'],
@@ -456,10 +479,9 @@ class ReportController extends Controller
                     'include_totals' => true,
                     'group_by_category' => true,
                     'include_signature' => false,
-                    'include_watermark' => false
+                    'include_watermark' => false,
                 ], $title);
             } else {
-                // Excel export
                 return $this->generateExcel($incomeData, $expenseData, $title, $dateRange);
             }
         } catch (\Exception $e) {
@@ -530,6 +552,8 @@ class ReportController extends Controller
                 } else {
                     $stored = $this->storeCsv($incomeData, $expenseData, $title, $dateRange['text']);
                 }
+
+                $this->saveExportRecord($stored, $type, $format, $title, $period, 'Ripoti ya ' . $title);
 
                 return response()->json([
                     'success' => true,

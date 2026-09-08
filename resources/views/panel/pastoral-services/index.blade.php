@@ -1,321 +1,301 @@
 @extends('layouts.app')
 
-@section('title', 'Huduma za Kichungaji - Mfumo wa Kanisa')
-@section('page-title', 'Huduma za Kichungaji')
-@section('page-subtitle', 'Usimamizi wa maombi ya huduma za kichungaji')
+@section('title', 'Huduma za Kichungaji - Mfumo wa ROC')
 
 @section('content')
 <div class="space-y-6">
-    <!-- Header Section -->
-    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Huduma za Kichungaji</h1>
-            <p class="text-gray-600 mt-2">Usimamizi kamili wa maombi ya huduma za kichungaji</p>
+    <!-- Header -->
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-2">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                <i class="fas fa-hands-praying" style="color: #efc120"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Huduma za Kichungaji</h1>
+                <p class="text-sm text-gray-500">Usimamizi kamili wa maombi ya huduma za kichungaji</p>
+            </div>
         </div>
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-wrap gap-2">
             @if(!Auth::user()->isMwanachama())
-            <a href="{{ route('pastoral-services.report') }}" class="text-white px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800">
+            <a href="{{ route('pastoral-services.report') }}" class="rx-btn rx-btn-secondary flex items-center gap-2">
                 <i class="fas fa-chart-bar"></i>
-                <span class="font-medium">Ripoti</span>
+                <span class="hidden sm:inline">Ripoti</span>
             </a>
-            <button onclick="openExportModal()" class="text-white px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
+            <button onclick="openModal('exportModal')" class="rx-btn rx-btn-secondary flex items-center gap-2" style="color: #ef4444; border-color: rgba(239,68,68,0.2);">
                 <i class="fas fa-file-pdf"></i>
-                <span class="font-medium">Export PDF</span>
+                <span class="hidden sm:inline">Export PDF</span>
             </button>
             @endif
-            <a href="{{ route('pastoral-services.create') }}" class="text-white px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800">
+            <a href="{{ route('pastoral-services.create') }}" class="rx-btn rx-btn-primary flex items-center gap-2">
                 <i class="fas fa-plus"></i>
-                <span class="font-medium">Omba Huduma</span>
+                <span>Omba Huduma</span>
             </a>
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div class="rx-card rounded-2xl p-4 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Jumla ya Maombi</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ $stats['total'] ?? 0 }}</p>
+                    <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Jumla</p>
+                    <p class="text-xl font-bold text-gray-900">{{ $stats['total'] ?? 0 }}</p>
                 </div>
-                <div class="h-12 w-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-list text-xl text-blue-600"></i>
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(54,9,88,0.08)">
+                    <i class="fas fa-list" style="color: #360958"></i>
                 </div>
             </div>
         </div>
-
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
+        <div class="rx-card rounded-2xl p-4 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Zinasubiri</p>
-                    <p class="text-2xl font-bold text-yellow-600">{{ $stats['pending'] ?? 0 }}</p>
+                    <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Zinasubiri</p>
+                    <p class="text-xl font-bold" style="color: #ca8a04">{{ $stats['pending'] ?? 0 }}</p>
                 </div>
-                <div class="h-12 w-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-clock text-xl text-yellow-600"></i>
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(202,138,4,0.1)">
+                    <i class="fas fa-clock" style="color: #ca8a04"></i>
                 </div>
             </div>
         </div>
-
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
+        <div class="rx-card rounded-2xl p-4 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Zimeidhinishwa</p>
-                    <p class="text-2xl font-bold text-green-600">{{ $stats['approved'] ?? 0 }}</p>
+                    <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Zimeidhinishwa</p>
+                    <p class="text-xl font-bold" style="color: #16a34a">{{ $stats['approved'] ?? 0 }}</p>
                 </div>
-                <div class="h-12 w-12 bg-green-100 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-check-circle text-xl text-green-600"></i>
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(22,163,74,0.1)">
+                    <i class="fas fa-check-circle" style="color: #16a34a"></i>
                 </div>
             </div>
         </div>
-
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
+        <div class="rx-card rounded-2xl p-4 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Zimekamilika</p>
-                    <p class="text-2xl font-bold text-purple-600">{{ $stats['completed'] ?? 0 }}</p>
+                    <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Zimekamilika</p>
+                    <p class="text-xl font-bold" style="color: #7c3aed">{{ $stats['completed'] ?? 0 }}</p>
                 </div>
-                <div class="h-12 w-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-check-double text-xl text-purple-600"></i>
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(124,58,237,0.1)">
+                    <i class="fas fa-check-double" style="color: #7c3aed"></i>
                 </div>
             </div>
         </div>
-
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
+        <div class="rx-card rounded-2xl p-4 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Zimekataliwa</p>
-                    <p class="text-2xl font-bold text-red-600">{{ $stats['rejected'] ?? 0 }}</p>
+                    <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Zimekataliwa</p>
+                    <p class="text-xl font-bold" style="color: #ef4444">{{ $stats['rejected'] ?? 0 }}</p>
                 </div>
-                <div class="h-12 w-12 bg-red-100 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-times-circle text-xl text-red-600"></i>
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(239,68,68,0.1)">
+                    <i class="fas fa-times-circle" style="color: #ef4444"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Filter Form (hidden for members) -->
+    <!-- Filter -->
     @if(!Auth::user()->isMwanachama())
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-        <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                <i class="fas fa-filter text-primary-500 mr-2"></i> Chuja Maombi
-            </h3>
+    <div class="rx-card rounded-2xl overflow-hidden">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                    <i class="fas fa-filter" style="color: #efc120"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-gray-900">Chuja Maombi</h3>
+                    <p class="text-xs text-gray-500">Chuja kwa hali, aina na tarehe</p>
+                </div>
+            </div>
+            <form method="GET" action="{{ route('pastoral-services.index') }}" data-auto-filter="true" data-ajax-target="#pastoralTableContainer">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Hali</label>
+                        <select name="status" class="rx-select">
+                            <option value="">Zote</option>
+                            <option value="Inasubiri" {{ request('status') == 'Inasubiri' ? 'selected' : '' }}>Zinasubiri</option>
+                            <option value="Imeidhinishwa" {{ request('status') == 'Imeidhinishwa' ? 'selected' : '' }}>Zimeidhinishwa</option>
+                            <option value="Imekamilika" {{ request('status') == 'Imekamilika' ? 'selected' : '' }}>Zimekamilika</option>
+                            <option value="Imekataliwa" {{ request('status') == 'Imekataliwa' ? 'selected' : '' }}>Zimekataliwa</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Aina ya Huduma</label>
+                        <select name="service_type" class="rx-select">
+                            <option value="">Zote</option>
+                            @foreach($serviceTypes as $type)
+                                <option value="{{ $type }}" {{ request('service_type') == $type ? 'selected' : '' }}>{{ $type }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Tarehe Kuanzia</label>
+                        <input type="date" name="start_date" value="{{ request('start_date') }}" class="rx-input rx-input-no-icon">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Tarehe Mwisho</label>
+                        <input type="date" name="end_date" value="{{ request('end_date') }}" class="rx-input rx-input-no-icon">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 mt-4">
+                    <button type="submit" class="rx-btn rx-btn-primary flex items-center gap-2">
+                        <i class="fas fa-search"></i>
+                        <span>Tafuta</span>
+                    </button>
+                    <a href="{{ route('pastoral-services.index') }}" class="rx-btn rx-btn-secondary flex items-center gap-2">
+                        <i class="fas fa-redo"></i>
+                        <span>Futa</span>
+                    </a>
+                </div>
+            </form>
         </div>
-        <form method="GET" action="{{ route('pastoral-services.index') }}" data-auto-filter="true" data-ajax-target="#pastoralServicesTableContainer" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Status -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Hali</label>
-                    <select name="status" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                        <option value="">Zote</option>
-                        <option value="Inasubiri" {{ request('status') == 'Inasubiri' ? 'selected' : '' }}>Zinasubiri</option>
-                        <option value="Imeidhinishwa" {{ request('status') == 'Imeidhinishwa' ? 'selected' : '' }}>Zimeidhinishwa</option>
-                        <option value="Imekamilika" {{ request('status') == 'Imekamilika' ? 'selected' : '' }}>Zimekamilika</option>
-                        <option value="Imekataliwa" {{ request('status') == 'Imekataliwa' ? 'selected' : '' }}>Zimekataliwa</option>
-                    </select>
-                </div>
-
-                <!-- Service Type -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Aina ya Huduma</label>
-                    <select name="service_type" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                        <option value="">Zote</option>
-                        @foreach($serviceTypes as $type)
-                            <option value="{{ $type }}" {{ request('service_type') == $type ? 'selected' : '' }}>{{ $type }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Start Date -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tarehe Kuanzia</label>
-                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                </div>
-
-                <!-- End Date -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tarehe Mwisho</label>
-                    <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                </div>
-            </div>
-
-            <!-- Clear Filter Link -->
-            <div class="flex justify-end pt-2">
-                <a href="{{ route('pastoral-services.index') }}" class="text-sm text-gray-500 hover:text-primary-600 transition-colors flex items-center gap-1">
-                    <i class="fas fa-redo text-xs"></i>
-                    <span>Futa Chujio</span>
-                </a>
-            </div>
-        </form>
     </div>
     @endif
 
-    <!-- Services Table -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden" id="pastoralServicesTableContainer">
+    <!-- Table -->
+    <div class="rx-card rounded-2xl overflow-hidden" id="pastoralTableContainer">
         <!-- Table Header -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 border-b border-gray-200">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                    <i class="fas fa-list text-primary-500 mr-2"></i> Orodha ya Maombi ya Huduma
-                    <span class="ml-3 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                        {{ $services->total() }} maombi
-                    </span>
-                </h3>
-            </div>
-            <div class="mt-3 sm:mt-0">
-                <div class="flex items-center gap-2 text-sm text-gray-600">
-                    <i class="fas fa-info-circle text-primary-500"></i>
-                    <span>Angalia au hariri ombi kwa kubofya vitendo</span>
-                </div>
-            </div>
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <i class="fas fa-list" style="color: #efc120"></i>
+                Orodha ya Maombi ya Huduma
+                <span class="text-xs text-gray-500 bg-gray-100 px-2.5 py-0.5 rounded-full font-medium">
+                    {{ $services->total() }} total
+                </span>
+            </h3>
+            <p class="text-sm text-gray-500">
+                Kuonyesha {{ $services->firstItem() }} - {{ $services->lastItem() }} ya {{ $services->total() }}
+            </p>
         </div>
 
         <!-- Table -->
         <div class="overflow-x-auto">
-            <table class="w-full">
+            <table class="rx-table">
                 <thead>
-                    <tr class="bg-primary-600 text-white text-sm">
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-hashtag mr-2"></i>
-                                Namba ya Huduma
+                    <tr>
+                        <th>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-hashtag text-xs" style="color: #efc120"></i>
+                                <span>Namba</span>
                             </div>
                         </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-user mr-2"></i>
-                                Muumini
+                        <th>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-user text-xs" style="color: #efc120"></i>
+                                <span>Muumini</span>
                             </div>
                         </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-hands-helping mr-2"></i>
-                                Aina ya Huduma
+                        <th>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-hands-praying text-xs" style="color: #efc120"></i>
+                                <span>Aina ya Huduma</span>
                             </div>
                         </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-calendar-day mr-2"></i>
-                                Tarehe Inayopendelewa
+                        <th>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-calendar-day text-xs" style="color: #efc120"></i>
+                                <span>Tarehe Inayopendelewa</span>
                             </div>
                         </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-circle mr-2"></i>
-                                Hali
+                        <th>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-circle text-xs" style="color: #efc120"></i>
+                                <span>Hali</span>
                             </div>
                         </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-calendar-alt mr-2"></i>
-                                Tarehe ya Kuomba
+                        <th>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-calendar-alt text-xs" style="color: #efc120"></i>
+                                <span>Tarehe ya Kuomba</span>
                             </div>
                         </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider sticky right-0 bg-primary-600">
-                            <div class="flex items-center">
-                                <i class="fas fa-cogs mr-2"></i>
-                                Vitendo
+                        <th class="text-right">
+                            <div class="flex items-center justify-end gap-1.5">
+                                <i class="fas fa-cogs text-xs" style="color: #efc120"></i>
+                                <span>Vitendo</span>
                             </div>
                         </th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody>
                     @forelse($services as $service)
-                    <tr class="bg-white hover:bg-gray-50 transition-all duration-200">
+                    <tr class="transition-colors">
                         <!-- Service Number -->
-                        <td class="py-4 px-6">
-                            <div class="font-mono text-sm font-medium text-gray-900 bg-gray-100 px-2 py-1 rounded inline-block">
-                                {{ $service->service_number }}
-                            </div>
+                        <td>
+                            <span class="text-sm font-mono font-medium text-gray-900 bg-gray-50 px-2 py-1 rounded-md">{{ $service->service_number }}</span>
                         </td>
 
-                        <!-- Member Name -->
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-900">
-                                {{ $service->member->first_name }} {{ $service->member->last_name }}
-                            </div>
-                            <div class="text-xs text-gray-500">
-                                {{ $service->member->member_number }}
+                        <!-- Member -->
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-full" style="background: rgba(239,193,32,0.1)">
+                                    <i class="fas fa-user text-xs" style="color: #efc120"></i>
+                                </div>
+                                <div>
+                                    <span class="text-sm font-medium text-gray-900">{{ $service->member->first_name }} {{ $service->member->last_name }}</span>
+                                    <p class="text-[11px] text-gray-500">{{ $service->member->member_number }}</p>
+                                </div>
                             </div>
                         </td>
 
                         <!-- Service Type -->
-                        <td class="py-4 px-6">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                <i class="fas fa-hands-helping mr-1"></i>
-                                {{ $service->service_type }}
+                        <td>
+                            <span class="rx-badge rx-badge-blue">
+                                <i class="fas fa-hands-praying mr-1"></i>{{ $service->service_type }}
                             </span>
                         </td>
 
                         <!-- Preferred Date -->
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-600">
+                        <td>
+                            <div class="flex items-center gap-2 text-sm text-gray-600">
+                                <i class="fas fa-calendar-day text-gray-400 text-xs"></i>
                                 @if($service->preferred_date)
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-calendar-day text-gray-400"></i>
                                     {{ \Carbon\Carbon::parse($service->preferred_date)->format('d/m/Y') }}
-                                </div>
                                 @else
-                                <span class="text-gray-400">-</span>
+                                    <span class="text-gray-400">-</span>
                                 @endif
                             </div>
                         </td>
 
                         <!-- Status -->
-                        <td class="py-4 px-6">
+                        <td>
                             @if($service->status == 'Inasubiri')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    Inasubiri
+                                <span class="rx-badge rx-badge-yellow">
+                                    <i class="fas fa-clock mr-1"></i>Inasubiri
                                 </span>
                             @elseif($service->status == 'Imeidhinishwa')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    <i class="fas fa-check-circle mr-1"></i>
-                                    Imeidhinishwa
+                                <span class="rx-badge rx-badge-green">
+                                    <i class="fas fa-check-circle mr-1"></i>Imeidhinishwa
                                 </span>
                             @elseif($service->status == 'Imekamilika')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                    <i class="fas fa-check-double mr-1"></i>
-                                    Imekamilika
+                                <span class="rx-badge" style="background: #f3e8ff; color: #7c3aed;">
+                                    <i class="fas fa-check-double mr-1"></i>Imekamilika
                                 </span>
                             @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                    <i class="fas fa-times-circle mr-1"></i>
-                                    Imekataliwa
+                                <span class="rx-badge rx-badge-red">
+                                    <i class="fas fa-times-circle mr-1"></i>Imekataliwa
                                 </span>
                             @endif
                         </td>
 
                         <!-- Application Date -->
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-600">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-calendar-alt text-gray-400"></i>
-                                    {{ \Carbon\Carbon::parse($service->created_at)->format('d/m/Y') }}
-                                </div>
+                        <td>
+                            <div class="flex items-center gap-2 text-sm text-gray-600">
+                                <i class="fas fa-calendar-alt text-gray-400 text-xs"></i>
+                                {{ \Carbon\Carbon::parse($service->created_at)->format('d/m/Y') }}
                             </div>
                         </td>
 
                         <!-- Actions -->
-                        <td class="py-4 px-6 text-sm sticky right-0 bg-white">
-                            <div class="flex items-center space-x-2">
-                                <a href="{{ route('pastoral-services.show', $service->id) }}"
-                                   class="h-8 w-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center hover:bg-green-200 transition-all duration-200"
-                                   title="Angalia Maelezo">
-                                    <i class="fas fa-eye text-sm"></i>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <a href="{{ route('pastoral-services.show', $service->id) }}" class="rx-icon-btn rx-icon-btn-blue" title="Angalia Maelezo">
+                                    <i class="fas fa-eye text-xs"></i>
                                 </a>
-
                                 @if($service->status == 'Inasubiri')
-                                <a href="{{ route('pastoral-services.edit', $service->id) }}"
-                                   class="h-8 w-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-200 transition-all duration-200"
-                                   title="Hariri">
-                                    <i class="fas fa-pencil-alt text-sm"></i>
+                                <a href="{{ route('pastoral-services.edit', $service->id) }}" class="rx-icon-btn rx-icon-btn-gold" title="Hariri">
+                                    <i class="fas fa-pencil-alt text-xs"></i>
                                 </a>
-                                <button type="button"
-                                        onclick="confirmDeleteService({{ $service->id }}, '{{ $service->service_type }}', '{{ $service->member ? $service->member->first_name . ' ' . $service->member->last_name : 'N/A' }}')"
-                                        class="h-8 w-8 bg-red-100 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-200 transition-all duration-200"
-                                        title="Futa">
-                                    <i class="fas fa-trash text-sm"></i>
+                                <button type="button" onclick="confirmDelete({{ $service->id }}, '{{ $service->service_type }}', '{{ $service->member->first_name }} {{ $service->member->last_name }}')" class="rx-icon-btn rx-icon-btn-red" title="Futa">
+                                    <i class="fas fa-trash text-xs"></i>
                                 </button>
                                 @endif
                             </div>
@@ -323,15 +303,17 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="py-12 px-6 text-center">
-                            <div class="mx-auto w-16 h-16 mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                                <i class="fas fa-hands-helping text-gray-400 text-2xl"></i>
+                        <td colspan="7">
+                            <div class="rx-empty">
+                                <div class="rx-empty-icon">
+                                    <i class="fas fa-hands-praying text-gray-300 text-2xl"></i>
+                                </div>
+                                <p class="text-sm font-medium text-gray-900 mb-1">Hakuna Maombi Yaliyopatikana</p>
+                                <p class="text-xs text-gray-400 mb-4">Hakuna maombi ya huduma yanayolingana na vichujio vyako.</p>
+                                <a href="{{ route('pastoral-services.create') }}" class="rx-btn rx-btn-primary">
+                                    <i class="fas fa-plus"></i> Omba Huduma Mpya
+                                </a>
                             </div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">Hakuna Maombi Yaliyopatikana</h3>
-                            <p class="text-gray-500 mb-6">Hakuna maombi ya huduma yanayolingana na vichujio vyako.</p>
-                            <a href="{{ route('pastoral-services.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200">
-                                <i class="fas fa-plus mr-2"></i> Omba Huduma Mpya
-                            </a>
                         </td>
                     </tr>
                     @endforelse
@@ -341,53 +323,46 @@
 
         <!-- Pagination -->
         @if($services->hasPages())
-        <div class="px-6 py-4 border-t border-gray-200">
+        <div class="px-6 py-4 border-t border-gray-100">
             {{ $services->links() }}
         </div>
         @endif
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
-<div id="deleteServiceModal" class="modal-overlay hidden">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95" id="deleteServiceModalContent">
+<!-- Delete Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-[9999]">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
         <div class="sticky top-0 bg-white px-6 py-5 rounded-t-2xl border-b border-gray-200 z-10">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <div class="h-12 w-12 bg-red-100 rounded-xl flex items-center justify-center mr-3">
-                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center mr-3" style="background: rgba(239,68,68,0.1)">
+                        <i class="fas fa-exclamation-triangle text-xl" style="color: #ef4444"></i>
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-gray-900">Thibitisha Kufuta</h3>
                         <p class="text-sm text-gray-600">Hatua hii haiwezi kurudishwa</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeDeleteServiceModal()" class="text-gray-400 hover:text-gray-600 rounded-lg p-1.5 hover:bg-gray-100 transition-all duration-200">
+                <button type="button" onclick="closeModal('deleteModal')" class="text-gray-400 hover:text-gray-600 rounded-lg p-1.5 hover:bg-gray-100 transition-all">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
         </div>
-
         <div class="p-6">
             <p class="text-gray-700 mb-2">Je, una uhakika unataka kufuta ombi hili la huduma?</p>
-            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+            <div class="bg-gray-50 rounded-xl p-3 mb-4">
                 <p class="text-sm text-gray-600">Huduma: <span class="font-semibold text-gray-900" id="deleteServiceType"></span></p>
                 <p class="text-sm text-gray-600">Muumini: <span class="font-semibold text-gray-900" id="deleteServiceMember"></span></p>
             </div>
-            <p class="text-sm text-red-600">
-                <i class="fas fa-warning mr-1"></i>
-                Taarifa zote za ombi hili zitafutwa kabisa.
-            </p>
+            <p class="text-sm" style="color: #ef4444"><i class="fas fa-warning mr-1"></i> Taarifa zote za ombi hili zitafutwa kabisa.</p>
         </div>
-
-        <div class="sticky bottom-0 bg-gray-50 px-6 py-5 rounded-b-2xl border-t border-gray-200 flex justify-end space-x-3">
-            <button type="button" onclick="closeDeleteServiceModal()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-xl hover:bg-gray-300 transition-all duration-200">
-                Ghairi
-            </button>
-            <form id="deleteServiceForm" method="POST" class="inline">
+        <div class="sticky bottom-0 bg-gray-50 px-6 py-4 rounded-b-2xl border-t border-gray-200 flex justify-end gap-3">
+            <button type="button" onclick="closeModal('deleteModal')" class="rx-btn rx-btn-secondary">Ghairi</button>
+            <form id="deleteForm" method="POST" class="inline">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-xl hover:bg-red-700 transition-all duration-200 flex items-center gap-2">
+                <button type="submit" class="rx-btn rx-btn-danger flex items-center gap-2">
                     <i class="fas fa-trash"></i>
                     <span>Futa Ombi</span>
                 </button>
@@ -397,66 +372,56 @@
 </div>
 
 <!-- Export PDF Modal -->
-<div id="exportModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[9999]">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95" id="exportModalContent">
-        <div class="p-6 border-b border-gray-200">
+<div id="exportModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-[9999]">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
+        <div class="sticky top-0 bg-white px-6 py-5 rounded-t-2xl border-b border-gray-200 z-10">
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
-                    <div class="h-16 w-16 bg-red-100 rounded-full flex items-center justify-center mr-4">
-                        <i class="fas fa-file-pdf text-red-600 text-2xl"></i>
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center mr-3" style="background: rgba(239,68,68,0.1)">
+                        <i class="fas fa-file-pdf text-xl" style="color: #ef4444"></i>
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-gray-900">Export Ripoti (PDF)</h3>
                         <p class="text-sm text-gray-500">Chagua kipindi cha ripoti</p>
                     </div>
                 </div>
-                <button onclick="closeExportModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <button onclick="closeModal('exportModal')" class="text-gray-400 hover:text-gray-600 rounded-lg p-1.5 hover:bg-gray-100 transition-all">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
         </div>
-
         <form id="exportForm" action="{{ route('pastoral-services.export') }}" method="GET">
             <input type="hidden" name="format" value="pdf">
             <div class="p-6 space-y-5">
-                <!-- Period Selection -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-3">Kipindi cha Ripoti</label>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Kipindi cha Ripoti</label>
                     <div class="grid grid-cols-3 gap-3">
                         <label class="relative cursor-pointer">
                             <input type="radio" name="period" value="week" class="peer sr-only">
                             <div class="flex flex-col items-center p-4 rounded-xl border-2 border-gray-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all hover:border-gray-300">
-                                <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center mb-2">
-                                    <i class="fas fa-calendar-week text-blue-600"></i>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">Wiki Hii</span>
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-2" style="background: rgba(54,9,88,0.08)"><i class="fas fa-calendar-week" style="color: #360958"></i></div>
+                                <span class="text-xs font-medium text-gray-700">Wiki Hii</span>
                             </div>
                         </label>
                         <label class="relative cursor-pointer">
                             <input type="radio" name="period" value="month" class="peer sr-only" checked>
                             <div class="flex flex-col items-center p-4 rounded-xl border-2 border-gray-200 peer-checked:border-green-500 peer-checked:bg-green-50 transition-all hover:border-gray-300">
-                                <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center mb-2">
-                                    <i class="fas fa-calendar-alt text-green-600"></i>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">Mwezi Huu</span>
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-2" style="background: rgba(22,163,74,0.1)"><i class="fas fa-calendar-alt" style="color: #16a34a"></i></div>
+                                <span class="text-xs font-medium text-gray-700">Mwezi Huu</span>
                             </div>
                         </label>
                         <label class="relative cursor-pointer">
                             <input type="radio" name="period" value="year" class="peer sr-only">
                             <div class="flex flex-col items-center p-4 rounded-xl border-2 border-gray-200 peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all hover:border-gray-300">
-                                <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center mb-2">
-                                    <i class="fas fa-calendar text-purple-600"></i>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">Mwaka Huu</span>
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-2" style="background: rgba(124,58,237,0.1)"><i class="fas fa-calendar" style="color: #7c3aed"></i></div>
+                                <span class="text-xs font-medium text-gray-700">Mwaka Huu</span>
                             </div>
                         </label>
                     </div>
                 </div>
-
-                <!-- Status Filter -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Hali (Hiari)</label>
-                    <select name="status" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Hali (Hiari)</label>
+                    <select name="status" class="rx-select">
                         <option value="">Hali Zote</option>
                         <option value="Inasubiri">Zinasubiri</option>
                         <option value="Imeidhinishwa">Zimeidhinishwa</option>
@@ -465,12 +430,9 @@
                     </select>
                 </div>
             </div>
-
-            <div class="px-6 py-4 bg-gray-50 rounded-b-2xl border-t border-gray-200 flex justify-end gap-3">
-                <button type="button" onclick="closeExportModal()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-xl hover:bg-gray-300 transition-all">
-                    Ghairi
-                </button>
-                <button type="button" onclick="exportPastoralServicesPDF()" class="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-red-700 rounded-xl hover:from-red-700 hover:to-red-800 transition-all flex items-center gap-2">
+            <div class="sticky bottom-0 bg-gray-50 px-6 py-4 rounded-b-2xl border-t border-gray-200 flex justify-end gap-3">
+                <button type="button" onclick="closeModal('exportModal')" class="rx-btn rx-btn-secondary">Ghairi</button>
+                <button type="button" onclick="exportPDF()" class="rx-btn rx-btn-danger flex items-center gap-2">
                     <i class="fas fa-file-pdf"></i>
                     <span>Download PDF</span>
                 </button>
@@ -482,79 +444,51 @@
 
 @section('scripts')
 @include('partials.loading-modal')
-
 <script>
-// Delete modal functions
-function confirmDeleteService(serviceId, serviceType, memberName) {
-    document.getElementById('deleteServiceType').textContent = serviceType;
-    document.getElementById('deleteServiceMember').textContent = memberName;
-    document.getElementById('deleteServiceForm').action = '/panel/pastoral-services/' + serviceId;
-
-    const modal = document.getElementById('deleteServiceModal');
-    const content = document.getElementById('deleteServiceModalContent');
-
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
-    }, 10);
+function confirmDelete(id, type, name) {
+    document.getElementById('deleteServiceType').textContent = type;
+    document.getElementById('deleteServiceMember').textContent = name;
+    document.getElementById('deleteForm').action = '/panel/pastoral-services/' + id;
+    openModal('deleteModal');
 }
 
-function closeDeleteServiceModal() {
-    const modal = document.getElementById('deleteServiceModal');
-    const content = document.getElementById('deleteServiceModalContent');
-
-    content.classList.remove('scale-100');
-    content.classList.add('scale-95');
-
-    setTimeout(() => {
-        modal.classList.add('hidden');
-    }, 200);
+function openModal(id) {
+    var modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        setTimeout(function() { modal.querySelector('div').classList.remove('scale-95'); }, 10);
+    }
 }
 
-// Close delete modal on backdrop click
-document.getElementById('deleteServiceModal')?.addEventListener('click', function(e) {
-    if (e.target === this) closeDeleteServiceModal();
+function closeModal(id) {
+    var modal = document.getElementById(id);
+    if (modal) {
+        modal.querySelector('div').classList.add('scale-95');
+        setTimeout(function() { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; }, 200);
+    }
+}
+
+document.querySelectorAll('[id$="Modal"]').forEach(function(m) {
+    m.addEventListener('click', function(e) { if (e.target === this) closeModal(this.id); });
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') document.querySelectorAll('[id$="Modal"]:not(.hidden)').forEach(function(m) { closeModal(m.id); });
 });
 
-function openExportModal() {
-    const modal = document.getElementById('exportModal');
-    const content = document.getElementById('exportModalContent');
-
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
-    }, 10);
-}
-
-function closeExportModal() {
-    const modal = document.getElementById('exportModal');
-    const content = document.getElementById('exportModalContent');
-
-    content.classList.remove('scale-100');
-    content.classList.add('scale-95');
-
-    setTimeout(() => {
-        modal.classList.add('hidden');
-    }, 200);
-}
-
-// Export PDF function
-function exportPastoralServicesPDF() {
-    const form = document.getElementById('exportForm');
-    const formData = new FormData(form);
-    const params = new URLSearchParams(formData);
-    
-    const loadingModal = document.getElementById('loadingModal');
-    const progressBar = document.getElementById('progressBar');
-    const loadingMessage = document.getElementById('loadingMessage');
+function exportPDF() {
+    var form = document.getElementById('exportForm');
+    var formData = new FormData(form);
+    var params = new URLSearchParams(formData);
+    var loadingModal = document.getElementById('loadingModal');
+    var progressBar = document.getElementById('progressBar');
+    var loadingMessage = document.getElementById('loadingMessage');
 
     loadingMessage.textContent = 'Inatengeneza ripoti ya PDF...';
     loadingModal.classList.remove('hidden');
 
-    let progress = 0;
-    const interval = setInterval(() => {
+    var progress = 0;
+    var interval = setInterval(function() {
         progress += Math.random() * 15;
         if (progress > 90) progress = 90;
         progressBar.style.width = progress + '%';
@@ -562,52 +496,54 @@ function exportPastoralServicesPDF() {
 
     fetch('{{ route('pastoral-services.export.pdf') }}?' + params.toString(), {
         method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json'
-        }
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
     })
-    .then(async (res) => {
-        const data = await res.json().catch(() => ({}));
+    .then(function(res) { return res.json().catch(function() { return {}; }); })
+    .then(function(data) {
         clearInterval(interval);
         progressBar.style.width = '100%';
-
-        setTimeout(() => {
+        setTimeout(function() {
             loadingModal.classList.add('hidden');
             progressBar.style.width = '0%';
-            if (data.success) {
-                if (data.download_url && data.download_url !== '#') {
-                    const link = document.createElement('a');
-                    link.href = data.download_url;
-                    link.download = data.filename || 'huduma_za_kichungaji.pdf';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }
+            if (data.success && data.download_url && data.download_url !== '#') {
+                var link = document.createElement('a');
+                link.href = data.download_url;
+                link.download = data.filename || 'huduma_za_kichungaji.pdf';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             } else {
-                alert('Hitilafu: ' + (data.message || 'Tumeshindwa kutengeneza ripoti'));
+                showFlashNotification('Hitilafu: ' + (data.message || 'Tumeshindwa kutengeneza ripoti'), 'error');
             }
         }, 500);
     })
-    .catch(error => {
+    .catch(function() {
         clearInterval(interval);
         loadingModal.classList.add('hidden');
         progressBar.style.width = '0%';
-        alert('Hitilafu ya mtandao! Tafadhali jaribu tena.');
+        showFlashNotification('Hitilafu ya mtandao! Tafadhali jaribu tena.', 'error');
     });
 }
 
-// Close modal on backdrop click
-document.getElementById('exportModal')?.addEventListener('click', function(e) {
-    if (e.target === this) closeExportModal();
-});
+function showFlashNotification(message, type) {
+    var notification = document.createElement('div');
+    var colors = type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800';
+    var icon = type === 'success' ? 'fa-check-circle' : 'fa-times-circle';
+    notification.className = 'fixed top-4 right-4 z-[10001] px-5 py-3 rounded-xl border shadow-lg flex items-center gap-2 ' + colors;
+    notification.innerHTML = '<i class="fas ' + icon + '"></i> <span class="text-sm font-medium">' + message + '</span>';
+    document.body.appendChild(notification);
+    setTimeout(function() {
+        notification.style.transition = 'opacity 0.3s';
+        notification.style.opacity = '0';
+        setTimeout(function() { notification.remove(); }, 300);
+    }, 4000);
+}
 
-// Close modal on Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeExportModal();
-        closeDeleteServiceModal();
-    }
-});
+@if(session('success'))
+showFlashNotification('{{ session('success') }}', 'success');
+@endif
+@if(session('error'))
+showFlashNotification('{{ session('error') }}', 'error');
+@endif
 </script>
 @endsection

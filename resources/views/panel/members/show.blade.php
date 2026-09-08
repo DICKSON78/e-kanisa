@@ -1,399 +1,349 @@
 @extends('layouts.app')
 
-@section('title', 'Taarifa za Muumini - Mfumo wa Kanisa')
-@section('page-title', 'Taarifa za Muumini')
-@section('page-subtitle', 'Angalia taarifa kamili za muumini')
+@section('title', 'Taarifa za Muumini - Mfumo wa ROC')
 
 @section('content')
 <div class="space-y-6">
-    <!-- Header Section -->
-    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Taarifa za Muumini</h1>
-            <p class="text-gray-600 mt-2">Angalia taarifa kamili za muumini wa kanisa</p>
+    <!-- Page Header -->
+    <div class="flex items-center gap-3 mb-2 pt-2 pb-2">
+        <a href="{{ route('members.index') }}" class="inline-flex items-center justify-center p-2 text-gray-400 rounded-lg hover:bg-gray-100 hover:text-gray-600 transition-all duration-200">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+            <i class="fas fa-user" style="color: #efc120"></i>
         </div>
-        <div class="flex flex-wrap gap-3">
-            <a href="{{ route('members.edit', $member->id) }}" class="text-white px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700">
-                <i class="fas fa-edit"></i>
-                <span class="font-medium">Hariri</span>
-            </a>
-            <a href="{{ route('members.index') }}" class="text-white px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700">
-                <i class="fas fa-arrow-left"></i>
-                <span class="font-medium">Rudi Orodhani</span>
+        <div class="flex-1 min-w-0">
+            <h1 class="text-2xl font-bold text-gray-900 truncate">Taarifa za Muumini</h1>
+            <p class="text-sm text-gray-500">Angalia taarifa kamili za muumini</p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+            <a href="{{ route('members.edit', $member->id) }}" class="rx-btn rx-btn-primary">
+                <i class="fas fa-edit"></i> Hariri
             </a>
         </div>
     </div>
 
-    <!-- Member Profile Header -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="bg-gradient-to-r from-primary-600 to-primary-800 p-8">
+    <!-- Profile Card -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="p-6 md:p-8" style="background: linear-gradient(135deg, #360958 0%, #2a0745 50%, #1f0533 100%);">
             <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
-                <!-- Profile Icon -->
-                <div class="h-24 w-24 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center">
-                    <i class="fas fa-user text-white text-5xl"></i>
+                <!-- Avatar -->
+                <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl flex items-center justify-center text-2xl md:text-3xl font-bold flex-shrink-0" style="background: linear-gradient(135deg, #efc120, #d4a81c); color: #360958;">
+                    {{ strtoupper(substr($member->first_name, 0, 1) . substr($member->last_name, 0, 1)) }}
                 </div>
-
-                <!-- Member Info -->
-                <div class="flex-1 text-white">
+                <!-- Info -->
+                <div class="flex-1 text-white min-w-0">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <h2 class="text-3xl font-bold">{{ $member->first_name }} {{ $member->middle_name }} {{ $member->last_name }}</h2>
-                            <div class="flex items-center gap-4 mt-2">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-hashtag text-white opacity-80"></i>
-                                    <span class="text-lg opacity-90">{{ $member->member_number }}</span>
-                                </div>
+                            <h2 class="text-2xl md:text-3xl font-bold truncate">{{ $member->first_name }} {{ $member->middle_name }} {{ $member->last_name }}</h2>
+                            <div class="flex items-center gap-3 mt-2 flex-wrap">
+                                <span class="inline-flex items-center gap-1.5 text-sm text-white/80">
+                                    <i class="fas fa-hashtag text-xs"></i> {{ $member->member_number }}
+                                </span>
                                 @if($member->is_active)
-                                    <span class="inline-flex items-center px-3 py-1 bg-green-500 text-white rounded-full text-sm font-semibold">
-                                        <i class="fas fa-check-circle mr-1.5"></i>Muumini Hai
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold" style="background: rgba(34,197,94,0.2); color: #4ade80;">
+                                        <i class="fas fa-check-circle"></i> Hai
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center px-3 py-1 bg-red-500 text-white rounded-full text-sm font-semibold">
-                                        <i class="fas fa-times-circle mr-1.5"></i>Si Hai
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold" style="background: rgba(239,68,68,0.2); color: #f87171;">
+                                        <i class="fas fa-times-circle"></i> Haihitajiki
                                     </span>
                                 @endif
                             </div>
                         </div>
-
-                        <!-- Quick Actions -->
-                        <div class="flex gap-3">
-                            <button onclick="viewQrCode('{{ $member->id }}', '{{ $member->member_number }}')"
-                                    class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2">
-                                <i class="fas fa-qrcode"></i>
-                                <span>QR Code</span>
-                            </button>
-                        </div>
+                        <button onclick="viewQrCode('{{ $member->id }}', '{{ $member->member_number }}')"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200" style="background: rgba(255,255,255,0.15); color: white; backdrop-filter: blur(4px);">
+                            <i class="fas fa-qrcode"></i> QR Code
+                        </button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Info Bar -->
+        <div class="px-6 md:px-8 py-4 border-b border-gray-100 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-phone text-blue-500 text-sm"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Simu</p>
+                    <p class="text-sm font-medium text-gray-900">{{ $member->phone }}</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-venus-mars text-purple-500 text-sm"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Jinsia</p>
+                    <p class="text-sm font-medium text-gray-900">{{ $member->gender == 'Mme' ? 'Mwanaume' : 'Mwanamke' }}</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-calendar text-emerald-500 text-sm"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Uanachama</p>
+                    <p class="text-sm font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->membership_date)->format('d M Y') }}</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-heart text-amber-500 text-sm"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Hali ya Ndoa</p>
+                    <p class="text-sm font-medium text-gray-900">{{ $member->marital_status }}</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Left Column: Member Information -->
+        <!-- Left Column -->
         <div class="lg:col-span-2 space-y-6">
-            <!-- Personal Information Card -->
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center mb-6">
-                    <div class="h-10 w-10 bg-primary-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-user text-primary-600"></i>
+            <!-- Personal Information -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                        <i class="fas fa-user text-xs" style="color: #efc120"></i>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">Taarifa za Kibinafsi</h3>
-                        <p class="text-sm text-gray-600">Taarifa za msingi za muumini</p>
-                    </div>
+                    <h3 class="text-base font-semibold text-gray-900">Taarifa za Kibinafsi</h3>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Birth Date -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Tarehe ya Kuzaliwa</p>
-                        <div class="flex items-center">
-                            <i class="fas fa-birthday-cake text-primary-500 mr-2"></i>
-                            <p class="text-base font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->date_of_birth)->format('d/m/Y') }}</p>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-birthday-cake w-4 text-center text-gray-400"></i> Tarehe ya Kuzaliwa</span>
+                            <span class="text-sm font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->date_of_birth)->format('d/m/Y') }}</span>
                         </div>
-                    </div>
-
-                    <!-- Age -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Umri</p>
-                        <div class="flex items-center">
-                            <i class="fas fa-calendar-alt text-primary-500 mr-2"></i>
-                            <p class="text-base font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->date_of_birth)->age }} miaka</p>
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-calendar-alt w-4 text-center text-gray-400"></i> Umri</span>
+                            <span class="text-sm font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->date_of_birth)->age }} miaka</span>
                         </div>
-                    </div>
-
-                    <!-- Gender -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Jinsia</p>
-                        <div class="flex items-center">
-                            @if($member->gender == 'Mme')
-                                <i class="fas fa-male text-blue-500 mr-2"></i>
-                            @else
-                                <i class="fas fa-female text-pink-500 mr-2"></i>
-                            @endif
-                            <p class="text-base font-medium text-gray-900">{{ $member->gender == 'Mme' ? 'Mwanaume' : 'Mwanamke' }}</p>
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2">
+                                <i class="fas fa-{{ $member->gender == 'Mme' ? 'male' : 'female' }} w-4 text-center text-gray-400"></i> Jinsia
+                            </span>
+                            <span class="text-sm font-medium text-gray-900">{{ $member->gender == 'Mme' ? 'Mwanaume' : 'Mwanamke' }}</span>
                         </div>
-                    </div>
-
-                    <!-- Marital Status -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Hali ya Ndoa</p>
-                        <div class="flex items-center">
-                            <i class="fas fa-heart text-primary-500 mr-2"></i>
-                            <p class="text-base font-medium text-gray-900">{{ $member->marital_status }}</p>
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-heart w-4 text-center text-gray-400"></i> Hali ya Ndoa</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $member->marital_status }}</span>
                         </div>
-                    </div>
-
-                    <!-- ID Number -->
-                    @if($member->id_number)
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Namba ya Kitambulisho</p>
-                        <div class="flex items-center">
-                            <i class="fas fa-id-card text-primary-500 mr-2"></i>
-                            <p class="text-base font-medium text-gray-900">{{ $member->id_number }}</p>
+                        @if($member->id_number)
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-id-card w-4 text-center text-gray-400"></i> Namba ya Kitambulisho</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $member->id_number }}</span>
                         </div>
-                    </div>
-                    @endif
-
-                    <!-- Occupation -->
-                    @if($member->occupation)
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Kazi</p>
-                        <div class="flex items-center">
-                            <i class="fas fa-briefcase text-primary-500 mr-2"></i>
-                            <p class="text-base font-medium text-gray-900">{{ $member->occupation }}</p>
+                        @endif
+                        @if($member->occupation)
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-briefcase w-4 text-center text-gray-400"></i> Kazi</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $member->occupation }}</span>
                         </div>
+                        @endif
                     </div>
-                    @endif
                 </div>
             </div>
 
-            <!-- Contact Information Card -->
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center mb-6">
-                    <div class="h-10 w-10 bg-primary-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-phone-alt text-primary-600"></i>
+            <!-- Contact Information -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                        <i class="fas fa-phone-alt text-xs" style="color: #efc120"></i>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">Taarifa za Mawasiliano</h3>
-                        <p class="text-sm text-gray-600">Mawasiliano na anwani ya muumini</p>
-                    </div>
+                    <h3 class="text-base font-semibold text-gray-900">Taarifa za Mawasiliano</h3>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Phone -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Namba ya Simu</p>
-                        <div class="flex items-center">
-                            <i class="fas fa-mobile-alt text-green-500 mr-2"></i>
-                            <p class="text-base font-medium text-gray-900">{{ $member->phone }}</p>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-mobile-alt w-4 text-center text-gray-400"></i> Simu</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $member->phone }}</span>
                         </div>
-                    </div>
-
-                    <!-- Email -->
-                    @if($member->email)
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Barua pepe</p>
-                        <div class="flex items-center">
-                            <i class="fas fa-envelope text-blue-500 mr-2"></i>
-                            <p class="text-base font-medium text-gray-900">{{ $member->email }}</p>
+                        @if($member->email)
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-envelope w-4 text-center text-gray-400"></i> Barua Pepe</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $member->email }}</span>
                         </div>
-                    </div>
-                    @endif
-
-                    <!-- Address -->
-                    @if($member->address)
-                    <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Anwani</p>
-                        <div class="flex items-start">
-                            <i class="fas fa-map-marker-alt text-red-500 mr-2 mt-1"></i>
-                            <p class="text-base font-medium text-gray-900">{{ $member->address }}</p>
+                        @endif
+                        @if($member->address)
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-map-marker-alt w-4 text-center text-gray-400"></i> Anwani</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $member->address }}</span>
                         </div>
-                    </div>
-                    @endif
-
-                    <!-- City/Region -->
-                    @if($member->city || $member->region)
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Jiji/Mkoa</p>
-                        <div class="flex items-center">
-                            <i class="fas fa-city text-primary-500 mr-2"></i>
-                            <p class="text-base font-medium text-gray-900">{{ $member->city }}{{ $member->city && $member->region ? ', ' : '' }}{{ $member->region }}</p>
+                        @endif
+                        @if($member->city || $member->region)
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-city w-4 text-center text-gray-400"></i> Jiji/Mkoa</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $member->city }}{{ $member->city && $member->region ? ', ' : '' }}{{ $member->region }}</span>
                         </div>
+                        @endif
                     </div>
-                    @endif
                 </div>
             </div>
 
-            <!-- Christian Information Card -->
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center mb-6">
-                    <div class="h-10 w-10 bg-primary-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-church text-primary-600"></i>
+            <!-- Church Information -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                        <i class="fas fa-church text-xs" style="color: #efc120"></i>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">Taarifa za Kikristo</h3>
-                        <p class="text-sm text-gray-600">Taarifa za uanachama na ibada</p>
-                    </div>
+                    <h3 class="text-base font-semibold text-gray-900">Taarifa za Kikristo</h3>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Membership Date -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Tarehe ya Ujumbe</p>
-                        <div class="flex items-center">
-                            <i class="fas fa-calendar-check text-primary-500 mr-2"></i>
-                            <p class="text-base font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->membership_date)->format('d/m/Y') }}</p>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-calendar-check w-4 text-center text-gray-400"></i> Tarehe ya Ujumbe</span>
+                            <span class="text-sm font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->membership_date)->format('d/m/Y') }}</span>
                         </div>
-                    </div>
-
-                    <!-- Baptism Date -->
-                    @if($member->baptism_date)
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Tarehe ya Ubatizo</p>
-                        <div class="flex items-center">
-                            <i class="fas fa-water text-primary-500 mr-2"></i>
-                            <p class="text-base font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->baptism_date)->format('d/m/Y') }}</p>
+                        @if($member->baptism_date)
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-water w-4 text-center text-gray-400"></i> Tarehe ya Ubatizo</span>
+                            <span class="text-sm font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->baptism_date)->format('d/m/Y') }}</span>
                         </div>
-                    </div>
-                    @endif
-
-                    <!-- Confirmation Date -->
-                    @if($member->confirmation_date)
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <p class="text-sm text-gray-600 mb-1">Tarehe ya Uthibitisho</p>
-                        <div class="flex items-center">
-                            <i class="fas fa-hands-praying text-primary-500 mr-2"></i>
-                            <p class="text-base font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->confirmation_date)->format('d/m/Y') }}</p>
+                        @endif
+                        @if($member->confirmation_date)
+                        <div class="flex items-center justify-between py-3 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-hands-praying w-4 text-center text-gray-400"></i> Uthibitisho</span>
+                            <span class="text-sm font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->confirmation_date)->format('d/m/Y') }}</span>
                         </div>
+                        @endif
                     </div>
-                    @endif
                 </div>
             </div>
 
-            <!-- Additional Notes -->
             @if($member->notes)
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center mb-6">
-                    <div class="h-10 w-10 bg-primary-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-sticky-note text-primary-600"></i>
+            <!-- Notes -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                        <i class="fas fa-sticky-note text-xs" style="color: #efc120"></i>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">Maelezo Mengine</h3>
-                        <p class="text-sm text-gray-600">Taarifa zingine muhimu</p>
-                    </div>
+                    <h3 class="text-base font-semibold text-gray-900">Maelezo Mengine</h3>
                 </div>
-
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <div class="flex items-start">
-                        <i class="fas fa-edit text-primary-500 mr-2 mt-1"></i>
-                        <p class="text-gray-700">{{ $member->notes }}</p>
-                    </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-700 leading-relaxed">{{ $member->notes }}</p>
                 </div>
             </div>
             @endif
         </div>
 
-        <!-- Right Column: Contribution & Quick Stats -->
+        <!-- Right Column -->
         <div class="space-y-6">
-            <!-- Contribution Summary Card -->
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center mb-6">
-                    <div class="h-10 w-10 bg-primary-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-hand-holding-usd text-primary-600"></i>
+            <!-- Contribution Summary -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                        <i class="fas fa-hand-holding-usd text-xs" style="color: #efc120"></i>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">Muhtasari wa Michango</h3>
-                        <p class="text-sm text-gray-600">Jumla ya michango ya muumini</p>
-                    </div>
+                    <h3 class="text-base font-semibold text-gray-900">Michango</h3>
                 </div>
-
-                @if(isset($contributionSummary) && count($contributionSummary) > 0)
-                    <div class="space-y-4">
-                        @foreach($contributionSummary as $summary)
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fas fa-coins text-yellow-500 mr-2"></i>
-                                <span class="text-sm text-gray-700">{{ $summary->category_name }}</span>
+                <div class="p-6">
+                    @if(isset($contributionSummary) && count($contributionSummary) > 0)
+                        <div class="space-y-3">
+                            @foreach($contributionSummary as $summary)
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-500">{{ $summary->category_name }}</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ number_format($summary->total, 0) }} TZS</span>
                             </div>
-                            <span class="text-base font-bold text-gray-900">{{ number_format($summary->total, 0) }} TZS</span>
-                        </div>
-                        @endforeach
-
-                        <!-- Total Contributions -->
-                        <div class="bg-primary-50 border-2 border-primary-200 p-4 rounded-lg mt-4">
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center">
-                                    <i class="fas fa-calculator text-primary-600 mr-2"></i>
-                                    <span class="font-medium text-gray-900">Jumla ya Michango</span>
-                                </div>
-                                <span class="text-xl font-bold text-primary-600">{{ number_format($totalContributions ?? 0, 0) }} TZS</span>
+                            @endforeach
+                            <div class="flex items-center justify-between pt-3 mt-2" style="border-top: 2px solid #efc120">
+                                <span class="text-sm font-semibold text-gray-700">Jumla</span>
+                                <span class="text-lg font-bold" style="color: #360958">{{ number_format($totalContributions ?? 0, 0) }} TZS</span>
                             </div>
-                        </div>
-
-                        <!-- View All Contributions Button -->
-                        <div class="pt-4 border-t border-gray-200">
-                            <a href="{{ route('members.contributions', $member->id) }}"
-                               class="block w-full text-center text-white px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700">
-                                <i class="fas fa-list"></i>
-                                <span>Angalia Michango Yote</span>
+                            <a href="{{ route('members.contributions', $member->id) }}" class="rx-btn rx-btn-primary w-full justify-center mt-3">
+                                <i class="fas fa-list"></i> Angalia Yote
                             </a>
                         </div>
-                    </div>
-                @else
-                    <div class="text-center py-8">
-                        <div class="mx-auto w-16 h-16 mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                            <i class="fas fa-inbox text-gray-400 text-2xl"></i>
+                    @else
+                        <div class="text-center py-6">
+                            <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style="background: rgba(239,193,32,0.1)">
+                                <i class="fas fa-inbox text-lg" style="color: #efc120"></i>
+                            </div>
+                            <p class="text-sm font-medium text-gray-900 mb-1">Hakuna michango</p>
+                            <p class="text-xs text-gray-400 mb-4">Muumini hana michango bado</p>
+                            <button onclick="openSadakaModal('{{ $member->id }}')" class="rx-btn rx-btn-primary">
+                                <i class="fas fa-plus"></i> Ongeza Sadaka
+                            </button>
                         </div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">Hakuna michango</h3>
-                        <p class="text-gray-500 mb-4">Muumini hana michango bado</p>
-                        <button onclick="openSadakaModal('{{ $member->id }}')"
-                                class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200">
-                            <i class="fas fa-plus mr-2"></i> Ongeza Sadaka
-                        </button>
-                    </div>
-                @endif
+                    @endif
+                </div>
             </div>
 
-            <!-- Quick Stats Card -->
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div class="flex items-center mb-6">
-                    <div class="h-10 w-10 bg-primary-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-chart-line text-primary-600"></i>
+            <!-- Quick Stats -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                        <i class="fas fa-chart-pie text-xs" style="color: #efc120"></i>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">Takwimu za Haraka</h3>
-                        <p class="text-sm text-gray-600">Muhtasari wa taarifa za muumini</p>
+                    <h3 class="text-base font-semibold text-gray-900">Takwimu</h3>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-1">
+                        <div class="flex items-center justify-between py-2.5 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-clock w-4 text-center text-gray-400"></i> Ujumbe</span>
+                            <span class="text-sm font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->membership_date)->diffForHumans() }}</span>
+                        </div>
+                        <div class="flex items-center justify-between py-2.5 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-receipt w-4 text-center text-gray-400"></i> Michango</span>
+                            <span class="text-sm font-medium text-gray-900">{{ $contributionCount ?? 0 }}</span>
+                        </div>
+                        <div class="flex items-center justify-between py-2.5 border-b border-gray-50">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-users w-4 text-center text-gray-400"></i> Kundi</span>
+                            <span class="text-sm font-medium text-gray-900">
+                                @php
+                                    $age = \Carbon\Carbon::parse($member->date_of_birth)->age;
+                                    echo $age < 18 ? 'Watoto' : ($age < 35 ? 'Vijana' : ($age < 60 ? 'Wazima' : 'Wazee'));
+                                @endphp
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between py-2.5">
+                            <span class="text-sm text-gray-500 flex items-center gap-2"><i class="fas fa-calendar w-4 text-center text-gray-400"></i> Tangu</span>
+                            <span class="text-sm font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->membership_date)->format('Y') }}</span>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="space-y-4">
-                    <!-- Membership Duration -->
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-clock text-blue-500 mr-2"></i>
-                            <span class="text-sm text-gray-700">Muda wa Ujumbe</span>
-                        </div>
-                        <span class="text-base font-medium text-gray-900">
-                            {{ \Carbon\Carbon::parse($member->membership_date)->diffForHumans() }}
-                        </span>
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                        <i class="fas fa-bolt text-xs" style="color: #efc120"></i>
                     </div>
-
-                    <!-- Contribution Count -->
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-receipt text-green-500 mr-2"></i>
-                            <span class="text-sm text-gray-700">Idadi ya Michango</span>
+                    <h3 class="text-base font-semibold text-gray-900">Vitendo</h3>
+                </div>
+                <div class="p-4 space-y-2">
+                    <a href="{{ route('members.edit', $member->id) }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-edit text-blue-500 text-sm"></i>
                         </div>
-                        <span class="text-base font-medium text-gray-900">{{ $contributionCount ?? 0 }}</span>
-                    </div>
-
-                    <!-- Age Group -->
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-users text-purple-500 mr-2"></i>
-                            <span class="text-sm text-gray-700">Kundi la Umri</span>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">Hariri Taarifa</p>
+                            <p class="text-xs text-gray-400">Sasisha taarifa za muumini</p>
                         </div>
-                        <span class="text-base font-medium text-gray-900">
-                            @php
-                                $age = \Carbon\Carbon::parse($member->date_of_birth)->age;
-                                if ($age < 18) echo 'Watoto';
-                                elseif ($age < 35) echo 'Vijana';
-                                elseif ($age < 60) echo 'Wazima';
-                                else echo 'Wazee';
-                            @endphp
-                        </span>
-                    </div>
-
-                    <!-- Member Since -->
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fas fa-calendar text-red-500 mr-2"></i>
-                            <span class="text-sm text-gray-700">Muumini Tangu</span>
+                    </a>
+                    <button onclick="viewQrCode('{{ $member->id }}', '{{ $member->member_number }}')" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group text-left">
+                        <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-qrcode text-purple-500 text-sm"></i>
                         </div>
-                        <span class="text-base font-medium text-gray-900">{{ \Carbon\Carbon::parse($member->membership_date)->format('Y') }}</span>
-                    </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">QR Code</p>
+                            <p class="text-xs text-gray-400">Onyesha msimbo wa QR</p>
+                        </div>
+                    </button>
+                    <button onclick="printMemberCard()" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group text-left">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-print text-emerald-500 text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">Print Kadi</p>
+                            <p class="text-xs text-gray-400">Chapisha kadi ya muumini</p>
+                        </div>
+                    </button>
                 </div>
             </div>
         </div>
@@ -402,170 +352,72 @@
 
 <!-- QR Code Modal -->
 <div id="qrCodeModal" class="modal-overlay hidden">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
-        <div class="sticky top-0 bg-white px-6 py-5 rounded-t-xl border-b border-gray-200 z-10">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <div class="h-10 w-10 bg-primary-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-qrcode text-primary-600"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">QR Code ya Muumini</h3>
-                        <p class="text-sm text-gray-600">{{ $member->first_name }} {{ $member->last_name }}</p>
-                    </div>
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
+        <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                    <i class="fas fa-qrcode" style="color: #efc120"></i>
                 </div>
-                <button type="button" onclick="closeQrModal()" class="text-gray-400 hover:text-gray-600 rounded-lg p-1.5 hover:bg-gray-100 transition-all duration-200">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900">QR Code</h3>
+                    <p class="text-sm text-gray-500">{{ $member->first_name }} {{ $member->last_name }}</p>
+                </div>
             </div>
+            <button onclick="closeQrModal()" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-
         <div class="p-6 text-center">
-            <div class="mb-4">
-                <p class="text-gray-700 mb-1">Namba ya Muumini:</p>
-                <p class="text-2xl font-bold text-primary-600">{{ $member->member_number }}</p>
-            </div>
-
-            <div id="qrCodeContainer" class="flex justify-center items-center bg-white p-6 rounded-xl border-2 border-gray-200 mb-4">
-                <!-- QR Code will be loaded here -->
-            </div>
-
-            <p class="text-sm text-gray-500">
-                <i class="fas fa-info-circle mr-1"></i> Scan QR code kupata taarifa za muumini
-            </p>
+            <p class="text-sm text-gray-500 mb-1">Namba ya Muumini</p>
+            <p class="text-xl font-bold mb-4" style="color: #360958">{{ $member->member_number }}</p>
+            <div id="qrCodeContainer" class="flex justify-center items-center bg-white p-6 rounded-xl border-2 border-gray-200 mb-4"></div>
+            <p class="text-xs text-gray-400"><i class="fas fa-info-circle mr-1"></i> Scan QR code kupata taarifa</p>
         </div>
-
-        <div class="sticky bottom-0 bg-gray-50 px-6 py-5 rounded-b-xl border-t border-gray-200 flex justify-end space-x-3">
-            <button onclick="printQrCode()" class="px-5 py-2.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all duration-200 flex items-center gap-2">
-                <i class="fas fa-print"></i>
-                <span>Print</span>
+        <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
+            <button onclick="printQrCode()" class="rx-btn rx-btn-primary">
+                <i class="fas fa-print"></i> Print
             </button>
-            <button onclick="closeQrModal()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all duration-200">
-                Funga
-            </button>
+            <button onclick="closeQrModal()" class="rx-btn rx-btn-secondary">Funga</button>
         </div>
     </div>
 </div>
 
 <script>
-// QR Code Functions
 function viewQrCode(memberId, memberNumber) {
-    document.getElementById('qrMemberNumber').textContent = memberNumber;
+    document.getElementById('qrMemberNumber') && (document.getElementById('qrMemberNumber').textContent = memberNumber);
     const qrContainer = document.getElementById('qrCodeContainer');
-    qrContainer.innerHTML = '<div class="text-gray-500 py-8"><i class="fas fa-spinner fa-spin text-4xl"></i><p class="mt-2 text-sm">Inapakia QR code...</p></div>';
-
-    // Load QR code
-    const qrUrl = `/panel/members/${memberId}/qrcode`;
-    fetch(qrUrl)
+    qrContainer.innerHTML = '<div class="text-gray-500 py-8"><i class="fas fa-spinner fa-spin text-3xl"></i><p class="mt-2 text-sm">Inapakia...</p></div>';
+    fetch(`/panel/members/${memberId}/qrcode`)
         .then(response => response.text())
         .then(svg => {
             qrContainer.innerHTML = svg;
             document.getElementById('qrCodeModal').classList.remove('hidden');
-            setTimeout(() => {
-                document.querySelector('#qrCodeModal > div').classList.remove('scale-95');
-            }, 10);
+            setTimeout(() => document.querySelector('#qrCodeModal > div').classList.remove('scale-95'), 10);
         })
         .catch(error => {
-            console.error('Error loading QR code:', error);
-            qrContainer.innerHTML = '<p class="text-red-500 py-4"><i class="fas fa-exclamation-triangle mr-2"></i>Kuna hitilafu katika kupakua QR code</p>';
+            qrContainer.innerHTML = '<p class="text-red-500 py-4"><i class="fas fa-exclamation-triangle mr-2"></i>Kuna hitilafu</p>';
         });
 }
 
 function closeQrModal() {
     const modal = document.getElementById('qrCodeModal');
     modal.querySelector('div').classList.add('scale-95');
-    setTimeout(() => {
-        modal.classList.add('hidden');
-    }, 300);
+    setTimeout(() => modal.classList.add('hidden'), 300);
 }
 
 function printQrCode() {
-    const memberNumber = document.getElementById('qrMemberNumber').textContent;
+    const memberNumber = '{{ $member->member_number }}';
     const qrCode = document.getElementById('qrCodeContainer').innerHTML;
-
     const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <html>
-            <head>
-                <title>QR Code - ${memberNumber}</title>
-                <style>
-                    body {
-                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                        text-align: center;
-                        padding: 40px 20px;
-                        background: white;
-                    }
-                    h1 {
-                        color: #360958;
-                        font-size: 24px;
-                        margin-bottom: 10px;
-                    }
-                    h2 {
-                        color: #666;
-                        font-size: 16px;
-                        margin-bottom: 30px;
-                    }
-                    .qr-container {
-                        display: inline-block;
-                        border: 3px solid #360958;
-                        padding: 30px;
-                        margin: 30px 0;
-                        border-radius: 10px;
-                        background: white;
-                    }
-                    .footer {
-                        color: #666;
-                        font-size: 14px;
-                        margin-top: 20px;
-                    }
-                    @media print {
-                        @page { margin: 20mm; }
-                    }
-                </style>
-            </head>
-            <body>
-                <h1>KKKT Makabe Agape</h1>
-                <h2>QR Code ya Muumini</h2>
-                <h1 style="font-size: 28px; color: #360958; font-weight: bold; margin: 10px 0;">${memberNumber}</h1>
-                <div class="qr-container">${qrCode}</div>
-                <p class="footer">Scan QR code hii kupata taarifa za muumini</p>
-                <script>
-                    window.onload = function() {
-                        window.print();
-                        setTimeout(function() {
-                            window.close();
-                        }, 500);
-                    }
-                <\/script>
-            </body>
-        </html>
-    `);
+    printWindow.document.write(`<html><head><title>QR - ${memberNumber}</title><style>body{font-family:sans-serif;text-align:center;padding:40px;background:white}h1{color:#360958;font-size:24px}.qr{display:inline-block;border:3px solid #360958;padding:30px;margin:30px 0;border-radius:10px}@media print{@page{margin:20mm}}</style></head><body><h1>ROC [Reality of Christ]</h1><h2 style="color:#666;font-size:16px">QR Code ya Muumini</h2><p style="font-size:28px;color:#360958;font-weight:bold">${memberNumber}</p><div class="qr">${qrCode}</div><p style="color:#666;font-size:14px">Scan QR code hii kupata taarifa</p><script>window.onload=function(){window.print();setTimeout(function(){window.close()},500)}<\/script></body></html>`);
     printWindow.document.close();
 }
 
-// Close QR modal when clicking outside
-document.addEventListener('click', function(event) {
-    const modal = document.getElementById('qrCodeModal');
-    if (event.target === modal) {
-        closeQrModal();
-    }
-});
-
-// Close QR modal with Escape key
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        const modal = document.getElementById('qrCodeModal');
-        if (!modal.classList.contains('hidden')) {
-            closeQrModal();
-        }
-    }
-});
-
-// Open sadaka modal function (to be implemented in main system)
-function openSadakaModal(memberId) {
-    // This function should open the sadaka modal with member pre-selected
-    console.log('Opening sadaka modal for member:', memberId);
-    alert('Utendaji huu utaanzishwa baadaye. Tafadhali tumia ukurasa wa sadaka kuongeza sadaka ya muumini.');
+function printMemberCard() {
+    window.print();
 }
+
+document.addEventListener('click', e => { if (e.target.id === 'qrCodeModal') closeQrModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeQrModal(); });
 </script>
 @endsection

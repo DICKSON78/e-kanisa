@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $jumuiya->name . ' - Mfumo wa Kanisa')
+@section('title', $jumuiya->name . ' - Mfumo wa ROC')
 @section('page-title', $jumuiya->name)
 @section('page-subtitle', 'Taarifa za jumuiya')
 

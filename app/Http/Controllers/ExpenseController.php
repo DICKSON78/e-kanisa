@@ -24,7 +24,7 @@ class ExpenseController extends Controller
     /**
      * Show monthly grid view for specific year
      */
-    public function monthlyView($year)
+    public function monthlyView($year, Request $request = null)
     {
         // Get all active expense categories
         $categories = ExpenseCategory::active()->ordered()->get();
@@ -84,6 +84,13 @@ class ExpenseController extends Controller
 
         if ($years->isEmpty()) {
             $years = collect([date('Y')]);
+        }
+
+        // Handle AJAX request for table only
+        if ($request && ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest')) {
+            return view('panel.expenses._table', compact(
+                'gridData', 'months', 'monthlyTotals', 'grandTotal', 'year', 'years', 'categories'
+            ));
         }
 
         return view('panel.expenses.index', compact(

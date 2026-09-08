@@ -8,44 +8,36 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>@yield('title', 'Mfumo wa Kanisa')</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/kkkt_logo.png') }}">
+    <title>@yield('title', 'Mfumo wa ROC')</title>
+    <link rel="icon" type="image/jpeg" href="{{ asset('images/roc_logo.jpeg') }}">
 
     <!-- CRITICAL: Prevent FOUC - Hide page until CSS loads -->
     <style id="critical-css">
-        /* Hide everything until CSS is ready */
         html { visibility: hidden; opacity: 0; }
         html.css-ready { visibility: visible; opacity: 1; transition: opacity 0.15s ease; }
 
-        /* Critical layout - ensure sidebar and content don't overlap */
         .sidebar {
             position: fixed !important;
             left: 0 !important;
             top: 0 !important;
-            width: 280px !important;
+            width: 272px !important;
             height: 100vh !important;
             z-index: 1000 !important;
             background: linear-gradient(180deg, #360958 0%, #2a0745 50%, #1f0533 100%) !important;
             display: flex !important;
             flex-direction: column !important;
+            transform: translateX(0) !important;
         }
         .main-content {
-            margin-left: 280px !important;
-            width: calc(100% - 280px) !important;
-            min-height: 100vh !important;
-            background: #f8fafc !important;
+            margin-left: 272px;
+            width: calc(100% - 272px);
+            min-height: 100vh;
+            background: #F5F7F5;
         }
-        /* Collapsed sidebar state */
-        body.sidebar-collapsed-state .sidebar { width: 70px !important; }
-        body.sidebar-collapsed-state .main-content { margin-left: 70px !important; width: calc(100% - 70px) !important; }
 
         @media (max-width: 1024px) {
-            .sidebar { width: 70px !important; }
-            .main-content { margin-left: 70px !important; width: calc(100% - 70px) !important; }
-        }
-        @media (max-width: 480px) {
-            .sidebar { width: 60px !important; }
-            .main-content { margin-left: 60px !important; width: calc(100% - 60px) !important; }
+            .sidebar { transform: translateX(-100%) !important; }
+            .main-content { margin-left: 0 !important; width: 100% !important; }
         }
     </style>
 
@@ -75,6 +67,10 @@
                 }
             }
         }
+                    }
+                }
+            }
+        }
     </script>
     <style>
         :root {
@@ -88,165 +84,28 @@
             font-family: 'Poppins', sans-serif;
         }
         body {
-            background-color: #f8fafc;
+            background-color: #F5F7F5;
             overflow-x: hidden;
         }
 
-        /* ============================================
-           SIDEBAR STYLES - IMPROVED
-           ============================================ */
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
+            width: 272px;
             height: 100vh;
             background: linear-gradient(180deg, #360958 0%, #2a0745 50%, #1f0533 100%);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
             display: flex;
             flex-direction: column;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-            overflow-x: visible;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
-        /* Scrollbar styling */
-        .sidebar::-webkit-scrollbar {
-            width: 5px;
-        }
-        .sidebar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-        }
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Desktop - Expanded sidebar by default */
-        @media (min-width: 1025px) {
-            .sidebar {
-                width: 280px;
-                padding: 1.5rem;
-            }
-            .sidebar.collapsed {
-                width: 70px;
-                padding: 1rem 0.5rem;
-            }
-            .main-content {
-                margin-left: 280px;
-                transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                width: calc(100% - 280px);
-            }
-            .main-content.sidebar-collapsed {
-                margin-left: 70px;
-                width: calc(100% - 70px);
-            }
-
-            /* Hide text elements when collapsed */
-            .sidebar.collapsed .sidebar-text,
-            .sidebar.collapsed .logo-text,
-            .sidebar.collapsed .user-details {
-                display: none;
-            }
-
-            .sidebar.collapsed .request-badge {
-                display: none;
-            }
-
-            /* Center items when collapsed */
-            .sidebar.collapsed .sidebar-logo {
-                justify-content: center;
-                padding: 1rem 0;
-            }
-
-            .sidebar.collapsed .sidebar-link {
-                justify-content: center;
-                padding: 0.875rem;
-                width: 48px;
-                margin: 0.5rem auto;
-            }
-
-            .sidebar.collapsed .sidebar-user {
-                padding: 1rem 0;
-                justify-content: center;
-            }
-
-            .sidebar.collapsed .user-container {
-                justify-content: center;
-            }
-        }
-
-        /* Tablet/Mobile - Collapsed by default */
         @media (max-width: 1024px) {
-            .sidebar {
-                width: 70px;
-                padding: 1rem 0.5rem;
-            }
-            .main-content {
-                margin-left: 70px;
-                width: calc(100% - 70px);
-            }
-
-            /* When expanded on mobile */
-            .sidebar.mobile-expanded {
-                width: 280px;
-                padding: 1.5rem;
-                box-shadow: 2px 0 25px rgba(0, 0, 0, 0.3);
-            }
-
-            /* Hide text elements when collapsed */
-            .sidebar:not(.mobile-expanded) .sidebar-text,
-            .sidebar:not(.mobile-expanded) .logo-text,
-            .sidebar:not(.mobile-expanded) .user-details {
-                display: none;
-            }
-
-            .sidebar:not(.mobile-expanded) .request-badge {
-                display: none;
-            }
-
-            /* Center items when collapsed */
-            .sidebar:not(.mobile-expanded) .sidebar-logo {
-                justify-content: center;
-                padding: 1rem 0;
-            }
-
-            .sidebar:not(.mobile-expanded) .sidebar-link {
-                justify-content: center;
-                padding: 0.875rem;
-                width: 48px;
-                margin: 0.5rem auto;
-            }
-
-            .sidebar:not(.mobile-expanded) .sidebar-user {
-                padding: 1rem 0;
-                justify-content: center;
-            }
-
-            .sidebar:not(.mobile-expanded) .user-container {
-                justify-content: center;
-            }
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+            .sidebar.open { transform: translateX(0); }
         }
 
-        /* Very small mobile devices */
-        @media (max-width: 480px) {
-            .sidebar {
-                width: 60px;
-            }
-            .main-content {
-                margin-left: 60px;
-                width: calc(100% - 60px);
-            }
-            .sidebar:not(.mobile-expanded) .sidebar-link {
-                width: 44px;
-                padding: 0.75rem;
-            }
-        }
-
-        /* Sidebar Overlay */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -259,104 +118,121 @@
             transition: all 0.3s ease;
             z-index: 999;
         }
-
         .sidebar-overlay.active {
             opacity: 1;
             visibility: visible;
         }
 
-        /* Logo Section */
         .sidebar-logo {
+            padding: 1.25rem 1.25rem 0.75rem;
+            flex-shrink: 0;
             display: flex;
             align-items: center;
-            padding: 1.5rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-            height: 80px;
-            flex-shrink: 0;
+            justify-content: space-between;
         }
 
         .logo-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, #ffffff 0%, #f3e8ff 100%);
-            border-radius: 14px;
+            width: 36px;
+            height: 36px;
+            background: #ffffff;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 2px;
         }
 
         .logo-text {
-            margin-left: 1rem;
-            font-size: 1.375rem;
+            margin-left: 0;
+            font-size: 0.9375rem;
             font-weight: 700;
             color: white;
             white-space: nowrap;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            line-height: 1;
         }
 
-        /* Navigation */
+        .logo-subtitle {
+            font-size: 0.6875rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 400;
+            line-height: 1;
+            margin-left: 0;
+        }
+
         .sidebar-nav {
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 0;
+            padding: 0.5rem 0.75rem;
             min-height: 0;
         }
 
-        .sidebar-nav::-webkit-scrollbar {
-            width: 4px;
+        .sidebar-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(239, 193, 32, 0.25) transparent;
         }
-        .sidebar-nav::-webkit-scrollbar-track {
-            background: transparent;
+        .sidebar-scroll::-webkit-scrollbar { width: 5px; }
+        .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(239, 193, 32, 0.2); border-radius: 10px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb:hover { background: rgba(239, 193, 32, 0.45); }
+
+        .sidebar-group-label {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem 0.375rem;
+            font-size: 0.6875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(239, 193, 32, 0.65);
+            cursor: pointer;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+            border-radius: 0.5rem;
+            margin-top: 0.25rem;
         }
-        .sidebar-nav::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
+        .sidebar-group-label:first-child { margin-top: 0; }
+        .sidebar-group-label:hover { color: rgba(239, 193, 32, 0.9); }
+
+        .sidebar-group-label .chevron {
+            font-size: 0.5625rem;
+            color: rgba(239, 193, 32, 0.4);
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
         }
+        .sidebar-group-label.collapsed .chevron { transform: rotate(0deg); }
+        .sidebar-group-label:not(.collapsed) .chevron { transform: rotate(90deg); }
+
+        .sidebar-group-items {
+            overflow: hidden;
+            transition: max-height 0.25s ease, opacity 0.2s ease;
+            max-height: 800px;
+            opacity: 1;
+        }
+        .sidebar-group-items.collapsed { max-height: 0; opacity: 0; }
 
         .sidebar-link {
             display: flex;
             align-items: center;
-            padding: 0.875rem 1rem;
-            margin-bottom: 0.5rem;
-            color: rgba(255, 255, 255, 0.85);
+            gap: 0.75rem;
+            padding: 0.625rem 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
             text-decoration: none;
-            border-radius: 12px;
-            transition: all 0.3s ease;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
             position: relative;
             cursor: pointer;
-            height: 48px;
-            flex-shrink: 0;
-        }
-
-        .sidebar-link:hover {
-            background-color: rgba(239, 193, 32, 0.15);
-            color: #efc120;
-        }
-
-        .sidebar-link.active {
-            background: linear-gradient(135deg, #efc120 0%, #d4a81c 100%);
-            color: #360958;
-            font-weight: 600;
-        }
-
-        .sidebar-link i {
-            font-size: 1.25rem;
-            width: 24px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .sidebar-text {
-            margin-left: 1rem;
-            font-size: 0.9375rem;
+            font-size: 0.875rem;
             font-weight: 500;
-            white-space: nowrap;
         }
+        .sidebar-link:hover { color: #ffffff; background: rgba(255, 255, 255, 0.1); }
+        .sidebar-link.active { color: #ffffff; background: linear-gradient(135deg, #efc120 0%, #d4a81c 100%); }
+        .sidebar-link i { font-size: 1rem; width: 18px; text-align: center; flex-shrink: 0; }
 
         .request-badge {
             margin-left: auto;
@@ -369,105 +245,63 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         }
 
-        /* Tooltip for collapsed sidebar */
-        .sidebar-tooltip {
-            position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #1f0533;
-            color: white;
-            padding: 0.5rem 0.875rem;
-            border-radius: 8px;
-            font-size: 0.8125rem;
-            font-weight: 500;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s ease;
-            margin-left: 0.875rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            pointer-events: none;
-            z-index: 99999;
-        }
-
-        .sidebar-tooltip::before {
-            content: '';
-            position: absolute;
-            right: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            border: 6px solid transparent;
-            border-right-color: #1f0533;
-        }
-
-        @media (min-width: 1025px) {
-            .sidebar.collapsed .sidebar-link:hover .sidebar-tooltip {
-                opacity: 1;
-                visibility: visible;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .sidebar:not(.mobile-expanded) .sidebar-link:hover .sidebar-tooltip {
-                opacity: 1;
-                visibility: visible;
-            }
-        }
-
-        /* User Profile Section */
-        .sidebar-user {
-            padding: 1.25rem 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.12);
-            margin-top: auto;
-            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
-            height: 80px;
+        .sidebar-bottom {
+            padding: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             flex-shrink: 0;
         }
 
-        .user-container {
+        .sidebar-bottom .sidebar-link {
+            margin-bottom: 0;
+        }
+
+        .sidebar-user {
             display: flex;
             align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 0.75rem;
+            margin-top: 0.5rem;
         }
 
         .user-avatar {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, #ffffff 0%, #f3e8ff 100%);
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #efc120, #d4a81c);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            color: #360958;
+            font-size: 0.75rem;
+            font-weight: 700;
         }
 
         .user-details {
-            margin-left: 1rem;
             flex: 1;
             min-width: 0;
         }
 
         .user-details p:first-child {
-            font-size: 0.9375rem;
+            font-size: 0.875rem;
             font-weight: 600;
             color: white;
-            margin-bottom: 0.125rem;
+            margin-bottom: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .user-details p:last-child {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.6875rem;
+            color: rgba(255, 255, 255, 0.5);
         }
 
-        /* ============================================
-           HEADER STYLES - FIXED WIDTH ISSUE
-           ============================================ */
         .header {
             background: white;
             border-bottom: 1px solid #e5e7eb;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            padding: 1.25rem 1.5rem;
+            height: auto;
+            padding: 1rem 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -475,142 +309,101 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            transition: all 0.3s ease;
             width: 100%;
+        }
+        @media (min-width: 768px) {
+            .header { padding: 1rem 2rem; }
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
             flex: 1;
-            min-width: 0; /* Allows text truncation */
+            min-width: 0;
         }
 
         .toggle-btn {
-            width: 42px;
-            height: 42px;
+            width: 2.25rem;
+            height: 2.25rem;
             background: transparent;
             border: none;
             color: #6b7280;
             cursor: pointer;
-            border-radius: 10px;
+            border-radius: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
             flex-shrink: 0;
         }
+        .toggle-btn:hover { background: #f3f4f6; color: #360958; }
+        .toggle-btn i { font-size: 1.125rem; }
 
-        .toggle-btn:hover {
-            background: #f3f4f6;
-            color: #360958;
-            transform: scale(1.05);
+        @media (min-width: 1025px) {
+            .toggle-btn { display: none; }
         }
 
-        .toggle-btn:active {
-            transform: scale(0.95);
-        }
-
-        .toggle-btn i {
-            font-size: 1.375rem;
-        }
-
-        .header-title {
-            min-width: 0;
-            flex: 1;
-        }
-
-        .header-title h2 {
-            font-size: 1.625rem;
-            font-weight: 600;
-            color: #360958;
-            margin-bottom: 0.25rem;
-            line-height: 1.2;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .header-title p {
+        .header-date {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
             font-size: 0.875rem;
             color: #6b7280;
-            line-height: 1.2;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        }
+        .header-date .separator {
+            width: 1px;
+            height: 14px;
+            background: #d1d5db;
+        }
+        .header-date i { font-size: 0.75rem; color: #9ca3af; }
+        @media (min-width: 640px) {
+            .header-date { display: flex; }
         }
 
         .header-right {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.5rem;
             flex-shrink: 0;
         }
 
         .notification-btn {
             position: relative;
-            width: 42px;
-            height: 42px;
-            background: transparent;
+            width: 2.25rem;
+            height: 2.25rem;
+            background: #f3f4f6;
             border: none;
             color: #6b7280;
             cursor: pointer;
-            border-radius: 10px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
             flex-shrink: 0;
         }
+        .notification-btn:hover { background: #e5e7eb; color: #360958; }
+        .notification-btn i { font-size: 1rem; }
 
-        .notification-btn:hover {
-            background: #f3f4f6;
-            color: #360958;
-            transform: scale(1.05);
-        }
-
-        .notification-btn i {
-            font-size: 1.25rem;
-        }
-
-        .notification-dot {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 9px;
-            height: 9px;
-            background: #ef4444;
-            border-radius: 50%;
-            border: 2px solid white;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Notification Badge */
         .notification-badge {
             position: absolute;
-            top: 4px;
-            right: 4px;
+            top: -2px;
+            right: -2px;
             background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
-            font-size: 0.65rem;
+            font-size: 0.625rem;
             font-weight: 700;
-            min-width: 18px;
-            height: 18px;
+            min-width: 1rem;
+            height: 1rem;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        /* Notification Dropdown */
         .notification-dropdown {
             position: absolute;
             top: 100%;
@@ -625,16 +418,9 @@
             overflow: hidden;
             animation: dropdownSlide 0.2s ease-out;
         }
-
         @keyframes dropdownSlide {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .notification-dropdown-header {
@@ -645,14 +431,12 @@
             justify-content: space-between;
             align-items: center;
         }
-
         .notification-dropdown-header h3 {
             font-size: 1rem;
             font-weight: 600;
             display: flex;
             align-items: center;
         }
-
         .notification-count {
             font-size: 0.75rem;
             background: rgba(255, 255, 255, 0.2);
@@ -660,10 +444,7 @@
             border-radius: 20px;
         }
 
-        .notification-dropdown-body {
-            max-height: 320px;
-            overflow-y: auto;
-        }
+        .notification-dropdown-body { max-height: 320px; overflow-y: auto; }
 
         .notification-empty {
             padding: 2rem;
@@ -680,10 +461,7 @@
             text-decoration: none;
             transition: all 0.2s ease;
         }
-
-        .notification-item:hover {
-            background: #f9fafb;
-        }
+        .notification-item:hover { background: #f9fafb; }
 
         .notification-item-icon {
             width: 44px;
@@ -694,27 +472,16 @@
             justify-content: center;
             flex-shrink: 0;
         }
+        .notification-item-icon i { font-size: 1.125rem; }
 
-        .notification-item-icon i {
-            font-size: 1.125rem;
-        }
-
-        .notification-item-content {
-            flex: 1;
-            min-width: 0;
-        }
-
+        .notification-item-content { flex: 1; min-width: 0; }
         .notification-item-title {
             font-size: 0.875rem;
             font-weight: 600;
             color: #1f2937;
             margin-bottom: 0.125rem;
         }
-
-        .notification-item-desc {
-            font-size: 0.75rem;
-            color: #6b7280;
-        }
+        .notification-item-desc { font-size: 0.75rem; color: #6b7280; }
 
         .notification-item-badge {
             font-size: 0.75rem;
@@ -731,167 +498,119 @@
             border-top: 1px solid #e5e7eb;
             text-align: center;
         }
-
         .notification-dropdown-footer a {
             font-size: 0.875rem;
             color: #360958;
             font-weight: 600;
             text-decoration: none;
-            transition: color 0.2s;
         }
-
-        .notification-dropdown-footer a:hover {
-            color: #efc120;
-        }
+        .notification-dropdown-footer a:hover { color: #efc120; }
 
         @media (max-width: 480px) {
-            .notification-dropdown {
-                width: calc(100vw - 1rem);
-                right: -0.5rem;
-            }
-        }
-
-        .header-date {
-            font-size: 0.875rem;
-            color: #6b7280;
-            white-space: nowrap;
-            font-weight: 500;
-            flex-shrink: 0;
+            .notification-dropdown { width: calc(100vw - 1rem); right: -0.5rem; }
         }
 
         .header-user {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             flex-shrink: 0;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+            border-radius: 9999px;
+            transition: background 0.2s;
+            position: relative;
         }
+        .header-user:hover { background: #f3f4f6; }
 
         .header-user-avatar {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #f3e8ff, #faf5ff);
+            width: 2.25rem;
+            height: 2.25rem;
+            background: linear-gradient(135deg, #efc120, #d4a81c);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #360958;
-            box-shadow: 0 2px 6px rgba(54, 9, 88, 0.15);
+            font-size: 0.75rem;
+            font-weight: 700;
             flex-shrink: 0;
         }
 
-        .header-user-info {
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-        }
-
-        .header-user-info p {
-            font-size: 0.875rem;
+        .header-user-name {
+            display: none;
+            font-size: 0.9375rem;
             font-weight: 600;
             color: #1f2937;
-            line-height: 1.2;
             white-space: nowrap;
         }
+        @media (min-width: 768px) {
+            .header-user-name { display: block; }
+        }
 
-        .header-user-info span {
+        .header-user-chevron {
+            display: none;
             font-size: 0.75rem;
-            color: #6b7280;
-            line-height: 1.2;
-            white-space: nowrap;
+            color: #9ca3af;
+            transition: transform 0.2s;
+        }
+        @media (min-width: 768px) {
+            .header-user-chevron { display: block; }
+        }
+        .header-user.open .header-user-chevron { transform: rotate(180deg); }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            width: 14rem;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+            border: 1px solid #e5e7eb;
+            z-index: 1000;
+            overflow: hidden;
+            animation: dropdownSlide 0.2s ease-out;
         }
 
-        .logout-btn {
-            width: 38px;
-            height: 38px;
-            background: transparent;
-            border: none;
-            color: #6b7280;
-            cursor: pointer;
-            border-radius: 10px;
+        .user-dropdown-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
+            gap: 0.75rem;
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+            color: #374151;
+            text-decoration: none;
+            transition: background 0.15s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .user-dropdown-item:hover { background: #f3f4f6; }
+        .user-dropdown-item i { width: 1rem; text-align: center; color: #6b7280; }
+        .user-dropdown-item.logout { color: #dc2626; }
+        .user-dropdown-item.logout i { color: #dc2626; }
+
+        .header-time { display: none; }
+        @media (min-width: 640px) {
+            .header-time { display: inline; }
         }
 
-        .logout-btn:hover {
-            background: #fee2e2;
-            color: #dc2626;
-            transform: scale(1.05);
-        }
-
-        .logout-btn i {
-            font-size: 1.125rem;
-        }
-
-        /* Responsive Header */
-        @media (max-width: 768px) {
-            .header {
-                padding: 1rem;
-            }
-
-            .header-title h2 {
-                font-size: 1.25rem;
-            }
-
-            .header-title p {
-                font-size: 0.8125rem;
-            }
-
-            .header-date.date-desktop {
-                display: none;
-            }
-
-            .header-user-info {
-                display: none;
-            }
-
-            .header-right {
-                gap: 0.75rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header {
-                padding: 0.875rem;
-            }
-
-            .header-title h2 {
-                font-size: 1.125rem;
-            }
-
-            .header-title p {
-                font-size: 0.75rem;
-            }
-
-            .toggle-btn,
-            .notification-btn,
-            .header-user-avatar,
-            .logout-btn {
-                width: 36px;
-                height: 36px;
-            }
-
-            .toggle-btn i {
-                font-size: 1.25rem;
-            }
-
-            .header-date {
-                font-size: 0.75rem;
-            }
-        }
-
-        /* ============================================
-           MAIN CONTENT - FIXED WIDTH
-           ============================================ */
         .main-content {
+            margin-left: 272px;
             transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background-color: #f8fafc;
-            width: 100%;
+            background-color: #F5F7F5;
+            width: calc(100% - 272px);
+        }
+
+        @media (max-width: 1024px) {
+            .main-content { margin-left: 0; width: 100%; }
         }
 
         .content-area {
@@ -1109,184 +828,516 @@
         }
 
         /* ============================================
-           INSTANT SIDEBAR COLLAPSE STATE
-           Applied via JS before DOM loads to prevent flash
+           PHARMEX-STYLE DESIGN SYSTEM (ROC Adapted)
            ============================================ */
-        @media (min-width: 1025px) {
-            body.sidebar-collapsed-state .sidebar {
-                width: 70px;
-                padding: 1rem 0.5rem;
-            }
-            body.sidebar-collapsed-state .sidebar .sidebar-text,
-            body.sidebar-collapsed-state .sidebar .logo-text,
-            body.sidebar-collapsed-state .sidebar .user-details,
-            body.sidebar-collapsed-state .sidebar .request-badge {
-                display: none;
-            }
-            body.sidebar-collapsed-state .sidebar .sidebar-logo {
-                justify-content: center;
-                padding: 1rem 0;
-            }
-            body.sidebar-collapsed-state .sidebar .sidebar-link {
-                justify-content: center;
-                padding: 0.875rem;
-                width: 48px;
-                margin: 0.5rem auto;
-            }
-            body.sidebar-collapsed-state .sidebar .sidebar-user {
-                padding: 1rem 0;
-                justify-content: center;
-            }
-            body.sidebar-collapsed-state .sidebar .user-container {
-                justify-content: center;
-            }
-            body.sidebar-collapsed-state .main-content {
-                margin-left: 70px;
-                width: calc(100% - 70px);
-            }
+
+        /* --- Cards --- */
+        .rx-card {
+            background: white;
+            border-radius: 1rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            transition: box-shadow 0.3s, border-color 0.3s;
         }
+        .rx-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+        /* --- Stat Cards --- */
+        .rx-stat-card {
+            background: white;
+            border-radius: 1rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .rx-stat-card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            border-color: #f5e6a3;
+            transform: translateY(-2px);
+        }
+
+        /* --- Tables --- */
+        .rx-table { width: 100%; border-collapse: collapse; }
+        .rx-table thead tr { background: #f9fafb; }
+        .rx-table thead th {
+            padding: 0.75rem 1.5rem;
+            text-align: left;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .rx-table tbody { border-top: 1px solid #f3f4f6; }
+        .rx-table tbody td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .rx-table tbody tr { transition: background-color 0.15s; }
+        .rx-table tbody tr:hover { background-color: rgba(239,193,32,0.04); }
+
+        /* --- Buttons --- */
+        .rx-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .rx-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .rx-btn-primary {
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            background: #efc120;
+            color: #360958;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            font-weight: 600;
+        }
+        .rx-btn-primary:hover {
+            background: #d4a81c;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            transform: translateY(-1px);
+        }
+
+        .rx-btn-secondary {
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            background: white;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+        }
+        .rx-btn-secondary:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .rx-btn-danger {
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            background: #ef4444;
+            color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .rx-btn-danger:hover {
+            background: #dc2626;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .rx-btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        /* --- Icon Buttons (for table actions) --- */
+        .rx-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .rx-icon-btn-gold { color: #efc120; background: rgba(239,193,32,0.1); }
+        .rx-icon-btn-gold:hover { background: rgba(239,193,32,0.2); }
+        .rx-icon-btn-blue { color: #3b82f6; background: rgba(59,130,246,0.1); }
+        .rx-icon-btn-blue:hover { background: rgba(59,130,246,0.15); }
+        .rx-icon-btn-red { color: #ef4444; background: rgba(239,68,68,0.1); }
+        .rx-icon-btn-red:hover { background: rgba(239,68,68,0.15); }
+        .rx-icon-btn-purple { color: #360958; background: rgba(54,9,88,0.08); }
+        .rx-icon-btn-purple:hover { background: rgba(54,9,88,0.15); }
+
+        /* --- Badges --- */
+        .rx-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .rx-badge-green { background: #dcfce7; color: #16a34a; }
+        .rx-badge-red { background: #fee2e2; color: #dc2626; }
+        .rx-badge-yellow { background: #fef9c3; color: #a16207; }
+        .rx-badge-blue { background: #dbeafe; color: #2563eb; }
+        .rx-badge-gray { background: #f3f4f6; color: #6b7280; }
+        .rx-badge-purple { background: #ede9fe; color: #7c3aed; }
+        .rx-badge-gold { background: #fef3c7; color: #92400e; }
+
+        /* --- Form Inputs --- */
+        .rx-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            padding-left: 2.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            color: #111827;
+            background: white;
+            transition: all 0.2s;
+        }
+        .rx-input:focus {
+            outline: none;
+            border-color: #efc120;
+            box-shadow: 0 0 0 3px rgba(239,193,32,0.15);
+        }
+        .rx-input::placeholder { color: #9ca3af; }
+
+        .rx-input-no-icon {
+            padding-left: 1rem;
+        }
+
+        .rx-select {
+            width: 100%;
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            color: #111827;
+            background: white url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") right 0.75rem center / 1.25em 1.25em no-repeat;
+            appearance: none;
+            transition: all 0.2s;
+        }
+        .rx-select:focus {
+            outline: none;
+            border-color: #efc120;
+            box-shadow: 0 0 0 3px rgba(239,193,32,0.15);
+        }
+
+        /* --- Search Bar --- */
+        .rx-search {
+            position: relative;
+        }
+        .rx-search svg {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1rem;
+            height: 1rem;
+            color: #9ca3af;
+        }
+        .rx-search input {
+            width: 100%;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            color: #111827;
+            transition: all 0.2s;
+        }
+        .rx-search input:focus {
+            outline: none;
+            border-color: #efc120;
+            box-shadow: 0 0 0 3px rgba(239,193,32,0.15);
+            background: white;
+        }
+        .rx-search input::placeholder { color: #9ca3af; }
+
+        /* --- Empty State --- */
+        .rx-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 1.5rem;
+            text-align: center;
+        }
+        .rx-empty-icon {
+            width: 4rem;
+            height: 4rem;
+            background: #f3f4f6;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        /* --- Animations --- */
+        @keyframes pageEnter {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .content-area > :first-child { animation: pageEnter 0.35s ease-out; }
+
     </style>
     @yield('styles')
 </head>
 <body class="bg-gray-50">
     <script>
-        // Mark CSS as ready to show page
         document.documentElement.classList.add('css-ready');
-
-        // Apply sidebar state immediately to prevent flash
-        (function() {
-            if (window.innerWidth > 1024 && localStorage.getItem('sidebarCollapsed') === 'true') {
-                document.body.classList.add('sidebar-collapsed-state');
-            }
-        })();
     </script>
     <div class="flex h-screen">
         <!-- Sidebar Overlay for Mobile -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
         <!-- Sidebar -->
-        <div class="sidebar text-white flex flex-col fixed h-full" id="sidebar">
+        <div class="sidebar text-white flex flex-col" id="sidebar">
             <!-- Logo -->
             <div class="sidebar-logo">
-                <div class="logo-icon" style="padding: 4px;">
-                    <img src="{{ asset('images/kkkt_logo.png') }}" alt="KKKT Logo" class="w-full h-full object-contain">
-                </div>
-                <span class="logo-text">KKKT Agape</span>
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
+                    <div class="logo-icon">
+                        <img src="{{ asset('images/roc_logo.jpeg') }}" alt="ROC Logo" class="w-full h-full object-contain">
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span class="logo-text">ROC System</span>
+                        <p class="logo-subtitle">Reality of Christ</p>
+                    </div>
+                </a>
+                <button class="toggle-btn md:hidden text-white/60 hover:text-white" id="closeSidebar" aria-label="Close Sidebar">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
             <!-- Navigation -->
-            <nav class="sidebar-nav">
-                <!-- Dashboard - Visible to Mchungaji & Muhasibu ONLY -->
+            <nav class="sidebar-nav sidebar-scroll">
+                <div class="space-y-1">
+                <button class="sidebar-group-label" onclick="toggleGroup(this)">
+                    <span>MAIN</span>
+                    <i class="fas fa-chevron-right chevron"></i>
+                </button>
+                <div class="sidebar-group-items">
                 @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
                 <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                     <i class="fas fa-home"></i>
-                    <span class="sidebar-text">Dashboard</span>
-                    <div class="sidebar-tooltip">Dashboard</div>
+                    <span>Dashboard</span>
                 </a>
                 @endif
-
-                <!-- Member Portal - Visible to All -->
                 <a href="{{ route('member.portal') }}" class="sidebar-link {{ request()->routeIs('member.*') ? 'active' : '' }}">
                     <i class="fas fa-user-circle"></i>
-                    <span class="sidebar-text">Portal Yangu</span>
-                    <div class="sidebar-tooltip">Portal Yangu</div>
+                    <span>Portal Yangu</span>
                 </a>
+                </div>
 
-                <!-- SECTION FOR MCHUNGAJI AND MUHASIBU ONLY -->
                 @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
-                    <!-- Members - Only for Admin & Pastor -->
+                <button class="sidebar-group-label" onclick="toggleGroup(this)">
+                    <span>USIMAMIZI</span>
+                    <i class="fas fa-chevron-right chevron"></i>
+                </button>
+                <div class="sidebar-group-items">
                     <a href="{{ route('members.index') }}" class="sidebar-link {{ request()->routeIs('members.*') ? 'active' : '' }}">
                         <i class="fas fa-users"></i>
-                        <span class="sidebar-text">Waumini</span>
-                        <div class="sidebar-tooltip">Waumini</div>
+                        <span>Waumini</span>
                     </a>
+                    <a href="{{ route('attendance.index') }}" class="sidebar-link {{ request()->routeIs('attendance.*') ? 'active' : '' }}">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Uhudhuriaji</span>
+                    </a>
+                    <a href="{{ route('visitors.index') }}" class="sidebar-link {{ request()->routeIs('visitors.*') ? 'active' : '' }}">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Wageni</span>
+                    </a>
+                    <a href="{{ route('followups.index') }}" class="sidebar-link {{ request()->routeIs('followups.*') ? 'active' : '' }}">
+                        <i class="fas fa-headset"></i>
+                        <span>Ufuatiliaji</span>
+                    </a>
+                    <a href="{{ route('children.index') }}" class="sidebar-link {{ request()->routeIs('children.*') ? 'active' : '' }}">
+                        <i class="fas fa-child"></i>
+                        <span>Sunday School</span>
+                    </a>
+                    <a href="{{ route('transfers.index') }}" class="sidebar-link {{ request()->routeIs('transfers.*') ? 'active' : '' }}">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Uhamisho</span>
+                    </a>
+                </div>
 
-                    <!-- Financial Sections - Only for Admin & Accountant -->
+                <button class="sidebar-group-label" onclick="toggleGroup(this)">
+                    <span>FEDHA</span>
+                    <i class="fas fa-chevron-right chevron"></i>
+                </button>
+                <div class="sidebar-group-items">
                     <a href="{{ route('income.index') }}" class="sidebar-link {{ request()->routeIs('income.*') ? 'active' : '' }}">
                         <i class="fas fa-hand-holding-usd"></i>
-                        <span class="sidebar-text">Mapato</span>
-                        <div class="sidebar-tooltip">Mapato</div>
+                        <span>Mapato</span>
                     </a>
                     <a href="{{ route('expenses.index') }}" class="sidebar-link {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
                         <i class="fas fa-receipt"></i>
-                        <span class="sidebar-text">Matumizi</span>
-                        <div class="sidebar-tooltip">Matumizi</div>
+                        <span>Matumizi</span>
                     </a>
                     <a href="{{ route('offerings.index') }}" class="sidebar-link {{ request()->routeIs('offerings.*') ? 'active' : '' }}">
                         <i class="fas fa-gift"></i>
-                        <span class="sidebar-text">Sadaka</span>
-                        <div class="sidebar-tooltip">Sadaka</div>
+                        <span>Sadaka</span>
                     </a>
                     <a href="{{ route('requests.index') }}" class="sidebar-link {{ request()->routeIs('requests.*') ? 'active' : '' }}">
                         <i class="fas fa-paper-plane"></i>
-                        <span class="sidebar-text">Maombi ya Fedha</span>
-                        <div class="sidebar-tooltip">Maombi ya Fedha</div>
+                        <span>Maombi ya Fedha</span>
                     </a>
-                @endif
-
-                <!-- SECTION FOR ALL USERS (MWANACHAMA, MCHUNGAJI, MUHASIBU) -->
-                <!-- Pastoral Services - Visible to All -->
-                <a href="{{ route('pastoral-services.index') }}" class="sidebar-link {{ request()->routeIs('pastoral-services.*') ? 'active' : '' }}">
-                    <i class="fas fa-praying-hands"></i>
-                    <span class="sidebar-text">Huduma za Kichungaji</span>
-                    <div class="sidebar-tooltip">Huduma za Kichungaji</div>
-                </a>
-
-                <!-- Events - Visible to All -->
-                <a href="{{ route('events.index') }}" class="sidebar-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span class="sidebar-text">Matukio</span>
-                    <div class="sidebar-tooltip">Matukio</div>
-                </a>
-
-                <!-- Messages - Leaders Only (Mchungaji, Mhasibu) -->
-                @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
-                @if(\Illuminate\Support\Facades\Route::has('messages.index'))
-                @php
-                    try {
-                        $sidebarUnreadMessages = \App\Models\Message::where('receiver_id', Auth::id())->where('is_read', false)->count();
-                    } catch (\Exception $e) {
-                        $sidebarUnreadMessages = 0;
-                    }
-                @endphp
-                <a href="{{ route('messages.index') }}" class="sidebar-link {{ request()->routeIs('messages.*') ? 'active' : '' }}">
-                    <i class="fas fa-comments"></i>
-                    <span class="sidebar-text">Ujumbe</span>
-                    @if($sidebarUnreadMessages > 0)
-                        <span class="request-badge">{{ $sidebarUnreadMessages }}</span>
+                    <a href="{{ route('budgets.index') }}" class="sidebar-link {{ request()->routeIs('budgets.*') ? 'active' : '' }}">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Bajeti</span>
+                    </a>
+                    <a href="{{ route('statements.index') }}" class="sidebar-link {{ request()->routeIs('statements.*') ? 'active' : '' }}">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Taarifa za Mwaka</span>
+                    </a>
+                    <a href="{{ route('online-giving.index') }}" class="sidebar-link {{ request()->routeIs('online-giving.*') ? 'active' : '' }}">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Malipo ya Mtandaoni</span>
+                    </a>
+                    @if(Auth::user()->isMhasibu())
+                    <a href="{{ route('accounting.chart-of-accounts') }}" class="sidebar-link {{ request()->routeIs('accounting.*') ? 'active' : '' }}">
+                        <i class="fas fa-book"></i>
+                        <span>Kitabu cha Hesabu</span>
+                    </a>
+                    <a href="{{ route('accounting.journal.index') }}" class="sidebar-link {{ request()->routeIs('accounting.journal.*') ? 'active' : '' }}">
+                        <i class="fas fa-journal-whills"></i>
+                        <span>Ingizo la Kitabu</span>
+                    </a>
+                    @if(Auth::user()->isMchungaji())
+                    <a href="{{ route('payroll.index') }}" class="sidebar-link {{ request()->routeIs('payroll.*') ? 'active' : '' }}">
+                        <i class="fas fa-money-check-alt"></i>
+                        <span>Ushuru</span>
+                    </a>
                     @endif
-                    <div class="sidebar-tooltip">Ujumbe</div>
-                </a>
-                @endif
+                    @endif
+                </div>
+
+                @if(Auth::user()->isMchungaji())
+                <button class="sidebar-group-label" onclick="toggleGroup(this)">
+                    <span>UTAWALA</span>
+                    <i class="fas fa-chevron-right chevron"></i>
+                </button>
+                <div class="sidebar-group-items">
+                    <a href="{{ route('approvals.index') }}" class="sidebar-link {{ request()->routeIs('approvals.*') ? 'active' : '' }}">
+                        <i class="fas fa-file-signature"></i>
+                        <span>Idhini za Idara</span>
+                    </a>
+                    @if(Auth::user()->isMhasibu())
+                    <a href="{{ route('approvals.thresholds') }}" class="sidebar-link {{ request()->routeIs('approvals.thresholds') ? 'active' : '' }}">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>Kiwango cha Idhini</span>
+                    </a>
+                    @endif
+                </div>
                 @endif
 
-                <!-- SECTION FOR MCHUNGAJI AND MUHASIBU ONLY -->
+                <button class="sidebar-group-label" onclick="toggleGroup(this)">
+                    <span>HUDUMA</span>
+                    <i class="fas fa-chevron-right chevron"></i>
+                </button>
+                <div class="sidebar-group-items">
+                    <a href="{{ route('serving.index') }}" class="sidebar-link {{ request()->routeIs('serving.*') ? 'active' : '' }}">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Ratiba ya Kuhudumu</span>
+                    </a>
+                    <a href="{{ route('gallery.index') }}" class="sidebar-link {{ request()->routeIs('gallery.*') ? 'active' : '' }}">
+                        <i class="fas fa-images"></i>
+                        <span>Picha na Video</span>
+                    </a>
+                </div>
+                @endif
+
+                <button class="sidebar-group-label" onclick="toggleGroup(this)">
+                    <span>JAMII</span>
+                    <i class="fas fa-chevron-right chevron"></i>
+                </button>
+                <div class="sidebar-group-items">
+                    <a href="{{ route('pastoral-services.index') }}" class="sidebar-link {{ request()->routeIs('pastoral-services.*') ? 'active' : '' }}">
+                        <i class="fas fa-praying-hands"></i>
+                        <span>Huduma za Kichungaji</span>
+                    </a>
+                    <a href="{{ route('events.index') }}" class="sidebar-link {{ request()->routeIs('events.*') ? 'active' : '' }}">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Matukio</span>
+                    </a>
+                    @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
+                    @if(\Illuminate\Support\Facades\Route::has('messages.index'))
+                    @php
+                        try {
+                            $sidebarUnreadMessages = \App\Models\Message::where('receiver_id', Auth::id())->where('is_read', false)->count();
+                        } catch (\Exception $e) {
+                            $sidebarUnreadMessages = 0;
+                        }
+                    @endphp
+                    <a href="{{ route('messages.index') }}" class="sidebar-link {{ request()->routeIs('messages.*') ? 'active' : '' }}">
+                        <i class="fas fa-comments"></i>
+                        <span>Ujumbe</span>
+                        @if($sidebarUnreadMessages > 0)
+                            <span class="request-badge">{{ $sidebarUnreadMessages }}</span>
+                        @endif
+                    </a>
+                    @endif
+                    @endif
+                </div>
+
                 @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
-                    <!-- Reports - Only for Admin & Accountant -->
+                <button class="sidebar-group-label" onclick="toggleGroup(this)">
+                    <span>RIPOTI & MIPANGILIO</span>
+                    <i class="fas fa-chevron-right chevron"></i>
+                </button>
+                <div class="sidebar-group-items">
                     <a href="{{ route('export.excel') }}" class="sidebar-link {{ request()->routeIs('export.excel*') || request()->routeIs('reports.*') ? 'active' : '' }}">
                         <i class="fas fa-chart-bar"></i>
-                        <span class="sidebar-text">Ripoti</span>
-                        <div class="sidebar-tooltip">Ripoti</div>
+                        <span>Ripoti</span>
                     </a>
+                    @if(Auth::user()->isMhasibu())
+                    <a href="{{ route('accounting.trial-balance') }}" class="sidebar-link {{ request()->routeIs('accounting.trial-balance') ? 'active' : '' }}">
+                        <i class="fas fa-balance-scale"></i>
+                        <span>Mizani ya Majaribio</span>
+                    </a>
+                    <a href="{{ route('accounting.balance-sheet') }}" class="sidebar-link {{ request()->routeIs('accounting.balance-sheet') ? 'active' : '' }}">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Hali ya Fedha</span>
+                    </a>
+                    <a href="{{ route('accounting.income-statement') }}" class="sidebar-link {{ request()->routeIs('accounting.income-statement') ? 'active' : '' }}">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Mapato na Gharama</span>
+                    </a>
+                    @endif
+                    <a href="{{ route('settings.index') }}" class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+                        <i class="fas fa-cog"></i>
+                        <span>Mipangilio</span>
+                    </a>
+                </div>
+                @else
+                <button class="sidebar-group-label" onclick="toggleGroup(this)">
+                    <span>MIPANGILIO</span>
+                    <i class="fas fa-chevron-right chevron"></i>
+                </button>
+                <div class="sidebar-group-items">
+                    <a href="{{ route('settings.index') }}" class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+                        <i class="fas fa-cog"></i>
+                        <span>Mipangilio</span>
+                    </a>
+                </div>
                 @endif
 
-                <!-- Settings - Visible to All -->
-                <a href="{{ route('settings.index') }}" class="sidebar-link {{ request()->routeIs('settings.*') ? 'active' : '' }}">
-                    <i class="fas fa-cog"></i>
-                    <span class="sidebar-text">Mipangilio</span>
-                    <div class="sidebar-tooltip">Mipangilio</div>
-                </a>
+                </div>
             </nav>
 
-            <!-- User Profile -->
-            <div class="sidebar-user">
-                <div class="user-container">
-                    <div class="user-avatar">
-                        <i class="fas fa-user text-primary-500"></i>
-                    </div>
+            <!-- Bottom Section -->
+            <div class="sidebar-bottom">
+                @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
+                @else
+                <a href="{{ route('settings.index') }}" class="sidebar-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Mipangilio</span>
+                </a>
+                @endif
+                <div class="sidebar-user">
+                    @php
+                        $userName = Auth::user()->name ?? 'Admin';
+                        $userInitials = strtoupper(implode('', array_map(function($w) { return $w[0]; }, explode(' ', $userName))));
+                        $userInitials = substr($userInitials, 0, 2);
+                    @endphp
+                    <div class="user-avatar">{{ $userInitials }}</div>
                     <div class="user-details">
-                        <p style="font-size: 0.9375rem; font-weight: 600; color: white; margin-bottom: 0.125rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">{{ Auth::user()->name }}</p>
-                        <p style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.7);">{{ Auth::user()->role->name ?? 'Muumini' }}</p>
+                        <p>{{ $userName }}</p>
+                        <p>{{ Auth::user()->role->name ?? 'Muumini' }}</p>
                     </div>
                 </div>
             </div>
@@ -1300,13 +1351,16 @@
                     <button class="toggle-btn" id="toggleSidebar" aria-label="Toggle Sidebar">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <div class="header-title">
-                        <h2>@yield('page-title', 'Dashboard')</h2>
-                        <p>@yield('page-subtitle', 'Karibu kwenye mfumo wa usimamizi wa kanisa')</p>
+                    <div class="header-date">
+                        <i class="fas fa-calendar"></i>
+                        <span>{{ now()->format('l, F j, Y') }}</span>
+                        <div class="separator"></div>
+                        <i class="fas fa-clock"></i>
+                        <span id="headerTime">{{ now()->format('H:i') }}</span>
                     </div>
                 </div>
                 <div class="header-right">
-                    <!-- Messages Button - Leaders Only (Mchungaji, Mhasibu) -->
+                    <!-- Messages Button -->
                     @if(Auth::user()->isMchungaji() || Auth::user()->isMhasibu())
                     @if(\Illuminate\Support\Facades\Route::has('messages.index'))
                     <a href="{{ route('messages.index') }}" class="notification-btn" aria-label="Ujumbe" title="Ujumbe">
@@ -1319,7 +1373,7 @@
                             }
                         @endphp
                         @if($headerUnreadMessages > 0)
-                        <span class="notification-badge" style="background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 2px 6px rgba(34, 197, 94, 0.4);">{{ $headerUnreadMessages }}</span>
+                        <span class="notification-badge" style="background: linear-gradient(135deg, #22c55e, #16a34a);">{{ $headerUnreadMessages }}</span>
                         @endif
                     </a>
                     @endif
@@ -1330,9 +1384,7 @@
                         <button class="notification-btn" id="notificationToggle" aria-label="Notifications">
                             <i class="fas fa-bell"></i>
                             @php
-                                // Check if user needs to change password
                                 $needsPasswordChange = Auth::user()->needsPasswordChange();
-
                                 $pendingRequests = 0;
                                 $pendingPastoral = 0;
                                 $pendingMembers = 0;
@@ -1340,10 +1392,8 @@
                                 $memberPastoral = 0;
                                 $totalNotifications = ($needsPasswordChange ? 1 : 0);
 
-                                // Different notifications for members vs admin
                                 try {
                                     if (Auth::user()->isMwanachama()) {
-                                        // Member sees only their pastoral service updates and new events
                                         if (Auth::user()->member) {
                                             $memberPastoral = \App\Models\PastoralService::where('member_id', Auth::user()->member->id)
                                                 ->whereIn('status', ['Imeidhinishwa', 'Imekataliwa', 'Imekamilika'])
@@ -1357,7 +1407,6 @@
                                         $pendingPastoral = $memberPastoral;
                                         $totalNotifications = $memberPastoral + $newEvents + ($needsPasswordChange ? 1 : 0);
                                     } else {
-                                        // Admin/Pastor sees all pending items
                                         $pendingRequests = \App\Models\Request::where('status', 'Inasubiri')->count();
                                         $pendingPastoral = \App\Models\PastoralService::where('status', 'Inasubiri')->count();
                                         if (Auth::user()->isMchungaji() || Auth::user()->isMhasibu()) {
@@ -1366,7 +1415,6 @@
                                         $totalNotifications = $pendingRequests + $pendingPastoral + $pendingMembers + ($needsPasswordChange ? 1 : 0);
                                     }
                                 } catch (\Exception $e) {
-                                    // Ignore DB errors; fallbacks already set
                                 }
                             @endphp
                             @if($totalNotifications > 0)
@@ -1387,7 +1435,6 @@
                                     <p>Hakuna arifa mpya</p>
                                 </div>
                                 @else
-                                    {{-- Password change notification (shown first, for all users with default password) --}}
                                     @if($needsPasswordChange)
                                     <a href="{{ route('settings.index') }}?tab=password" class="notification-item">
                                         <div class="notification-item-icon bg-orange-100">
@@ -1402,7 +1449,6 @@
                                     @endif
 
                                     @if(Auth::user()->isMwanachama())
-                                        {{-- Member notifications --}}
                                         @if($pendingPastoral > 0)
                                         <a href="{{ route('pastoral-services.index') }}" class="notification-item">
                                             <div class="notification-item-icon bg-purple-100">
@@ -1429,7 +1475,6 @@
                                         </a>
                                         @endif
                                     @else
-                                        {{-- Admin/Pastor notifications --}}
                                         @if($pendingRequests > 0)
                                         <a href="{{ route('requests.index') }}" class="notification-item">
                                             <div class="notification-item-icon bg-yellow-100">
@@ -1481,30 +1526,41 @@
                         </div>
                     </div>
 
-                    <div class="header-date date-desktop">
-                        {{ \Carbon\Carbon::now()->translatedFormat('l, F d, Y') }}
-                    </div>
-                    <div class="header-date date-mobile" style="display: none;">
-                        {{ \Carbon\Carbon::now()->translatedFormat('M d, Y') }}
-                    </div>
+                    <!-- User Dropdown -->
+                    @php
+                        $headerUserName = Auth::user()->name ?? 'Admin';
+                        $headerInitials = strtoupper(implode('', array_map(function($w) { return $w[0]; }, explode(' ', $headerUserName))));
+                        $headerInitials = substr($headerInitials, 0, 2);
+                    @endphp
+                    <div class="header-user" id="headerUserDropdown">
+                        <div class="header-user-avatar">{{ $headerInitials }}</div>
+                        <span class="header-user-name">{{ $headerUserName }}</span>
+                        <i class="fas fa-chevron-down header-user-chevron"></i>
 
-                    <div class="header-user">
-                        <div class="header-user-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="header-user-info">
-                            <p>{{ Auth::user()->name ?? 'Admin Kanisa' }}</p>
-                            <span> {{Auth::user()->role->name}}</span>
+                        <div class="user-dropdown hidden" id="userDropdownMenu">
+                            <div class="user-dropdown-item" style="cursor: default;">
+                                <i class="fas fa-user"></i>
+                                <div>
+                                    <p style="font-weight: 600; font-size: 0.875rem;">{{ $headerUserName }}</p>
+                                    <p style="font-size: 0.75rem; color: #6b7280;">{{ Auth::user()->role->name ?? 'Muumini' }}</p>
+                                </div>
+                            </div>
+                            <div style="height: 1px; background: #e5e7eb; margin: 0.25rem 0;"></div>
+                            <a href="{{ route('settings.index') }}" class="user-dropdown-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Mipangilio</span>
+                            </a>
+                            @auth
+                            <button class="user-dropdown-item logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Ondoka</span>
+                            </button>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                            @endauth
                         </div>
                     </div>
-                    @auth
-                    <button class="logout-btn" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" aria-label="Logout">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                    @endauth
                 </div>
             </header>
 
@@ -1519,206 +1575,161 @@
     </div>
 
     <script>
+        function toggleGroup(btn) {
+            btn.classList.toggle('collapsed');
+            const items = btn.nextElementSibling;
+            if (items && items.classList.contains('sidebar-group-items')) {
+                items.classList.toggle('collapsed');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('main-content');
-            const toggleButton = document.getElementById('toggleSidebar');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            var sidebar = document.getElementById('sidebar');
+            var sidebarOverlay = document.getElementById('sidebarOverlay');
+            var toggleBtn = document.getElementById('toggleSidebar');
+            var closeBtn = document.getElementById('closeSidebar');
+            var headerUser = document.getElementById('headerUserDropdown');
+            var userDropdownMenu = document.getElementById('userDropdownMenu');
 
-            // Check if sidebar state is saved in localStorage
-            const savedSidebarState = localStorage.getItem('sidebarCollapsed');
-            const isDesktop = window.innerWidth > 1024;
-
-            // Sync classes on page load (body class was already applied by inline script)
-            if (isDesktop && savedSidebarState === 'true') {
-                sidebar.classList.add('collapsed');
-                mainContent.classList.add('sidebar-collapsed');
-                document.body.classList.add('sidebar-collapsed-state');
-            }
-
-            // Toggle sidebar function for both desktop and mobile
-            function toggleSidebar() {
-                if (window.innerWidth <= 1024) {
-                    // Mobile behavior
-                    sidebar.classList.toggle('mobile-expanded');
-                    sidebarOverlay.classList.toggle('active');
-
-                    if (sidebar.classList.contains('mobile-expanded')) {
-                        document.body.style.overflow = 'hidden';
-                    } else {
-                        document.body.style.overflow = 'auto';
+            // Auto-expand group with active link
+            document.querySelectorAll('.sidebar-link.active').forEach(function(link) {
+                var groupItems = link.closest('.sidebar-group-items');
+                if (groupItems && groupItems.classList.contains('collapsed')) {
+                    groupItems.classList.remove('collapsed');
+                    var label = groupItems.previousElementSibling;
+                    if (label && label.classList.contains('sidebar-group-label')) {
+                        label.classList.remove('collapsed');
                     }
-                } else {
-                    // Desktop behavior
-                    sidebar.classList.toggle('collapsed');
-                    mainContent.classList.toggle('sidebar-collapsed');
-                    document.body.classList.toggle('sidebar-collapsed-state');
-
-                    // Save state to localStorage
-                    const isCollapsed = sidebar.classList.contains('collapsed');
-                    localStorage.setItem('sidebarCollapsed', isCollapsed);
-                }
-            }
-
-            // Toggle button click
-            toggleButton.addEventListener('click', toggleSidebar);
-
-            // Close sidebar when clicking on overlay (mobile only)
-            sidebarOverlay.addEventListener('click', function() {
-                if (window.innerWidth <= 1024 && sidebar.classList.contains('mobile-expanded')) {
-                    toggleSidebar();
                 }
             });
 
-            // Close sidebar when clicking on a link (mobile only)
-            document.querySelectorAll('.sidebar-link').forEach(link => {
+            // Mobile sidebar toggle
+            function openSidebar() {
+                sidebar.classList.add('open');
+                sidebarOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeSidebarFn() {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function() {
+                    if (sidebar.classList.contains('open')) {
+                        closeSidebarFn();
+                    } else {
+                        openSidebar();
+                    }
+                });
+            }
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeSidebarFn);
+            }
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeSidebarFn);
+            }
+
+            // Close sidebar on link click (mobile)
+            sidebar.querySelectorAll('.sidebar-link').forEach(function(link) {
                 link.addEventListener('click', function() {
-                    if (window.innerWidth <= 1024 && sidebar.classList.contains('mobile-expanded')) {
-                        toggleSidebar();
+                    if (window.innerWidth <= 1024) {
+                        closeSidebarFn();
                     }
                 });
             });
 
-            // Handle window resize
-            function handleResize() {
-                if (window.innerWidth > 1024) {
-                    // Desktop - remove mobile expanded state
-                    sidebar.classList.remove('mobile-expanded');
-                    sidebarOverlay.classList.remove('active');
-                    document.body.style.overflow = 'auto';
-
-                    // Apply saved collapsed state
-                    const savedState = localStorage.getItem('sidebarCollapsed');
-                    if (savedState === 'true') {
-                        sidebar.classList.add('collapsed');
-                        mainContent.classList.add('sidebar-collapsed');
-                        document.body.classList.add('sidebar-collapsed-state');
-                    } else {
-                        sidebar.classList.remove('collapsed');
-                        mainContent.classList.remove('sidebar-collapsed');
-                        document.body.classList.remove('sidebar-collapsed-state');
-                    }
-                } else {
-                    // Mobile - remove desktop collapsed state and body class
-                    sidebar.classList.remove('collapsed');
-                    mainContent.classList.remove('sidebar-collapsed');
-                    document.body.classList.remove('sidebar-collapsed-state');
-
-                    // Ensure sidebar is collapsed by default on mobile
-                    if (!sidebar.classList.contains('mobile-expanded')) {
-                        sidebar.classList.remove('mobile-expanded');
-                        sidebarOverlay.classList.remove('active');
-                    }
-                }
-
-                updateDateDisplay();
-            }
-
-            // Initialize
-            handleResize();
-            window.addEventListener('resize', handleResize);
-
-            // Toast Notification system (for flash messages)
-            let notifications = [];
-            const notificationContainer = document.getElementById('notificationContainer');
-            const notificationToggle = document.getElementById('notificationToggle');
-
-            function showNotification(message, type = 'success', category = 'Mfumo') {
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('sw-TZ', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: true
+            // Header user dropdown
+            if (headerUser) {
+                headerUser.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdownMenu.classList.toggle('hidden');
+                    headerUser.classList.toggle('open');
                 });
+            }
+            document.addEventListener('click', function(e) {
+                if (headerUser && !headerUser.contains(e.target)) {
+                    userDropdownMenu.classList.add('hidden');
+                    headerUser.classList.remove('open');
+                }
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (userDropdownMenu) userDropdownMenu.classList.add('hidden');
+                    if (headerUser) headerUser.classList.remove('open');
+                }
+            });
 
-                const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
-                notification.innerHTML = `
-                    <div class="notification-header">
-                        <div class="notification-sender">
-                            <i class="fas ${getNotificationIcon(type)}"></i>
-                            Mfumo wa Kanisa
-                        </div>
-                        <div class="notification-time">${timeString}</div>
-                    </div>
-                    <div class="notification-body">
-                        ${message}
-                    </div>
-                    <div class="notification-actions">
-                        <span class="notification-category">${category}</span>
-                        <button class="notification-close">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `;
+            // Header time updater
+            function updateHeaderTime() {
+                var el = document.getElementById('headerTime');
+                if (el) {
+                    var now = new Date();
+                    el.textContent = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                }
+            }
+            setInterval(updateHeaderTime, 30000);
+
+            // Toast notification system
+            var notifications = [];
+            var notificationContainer = document.getElementById('notificationContainer');
+            var notificationToggle = document.getElementById('notificationToggle');
+            var notificationDropdown = document.getElementById('notificationDropdown');
+            var notificationWrapper = document.getElementById('notificationWrapper');
+
+            function showNotification(message, type, category) {
+                type = type || 'success';
+                category = category || 'Mfumo';
+                var now = new Date();
+                var timeString = now.toLocaleTimeString('sw-TZ', { hour: '2-digit', minute: '2-digit', hour12: true });
+                var icons = { 'success': 'fa-check-circle', 'error': 'fa-exclamation-circle', 'warning': 'fa-exclamation-triangle', 'info': 'fa-info-circle' };
+                var iconClass = icons[type] || 'fa-bell';
+
+                var notification = document.createElement('div');
+                notification.className = 'notification ' + type;
+                notification.innerHTML = '<div class="notification-header"><div class="notification-sender"><i class="fas ' + iconClass + '"></i> Mfumo wa ROC</div><div class="notification-time">' + timeString + '</div></div><div class="notification-body">' + message + '</div><div class="notification-actions"><span class="notification-category">' + category + '</span><button class="notification-close"><i class="fas fa-times"></i></button></div>';
                 notificationContainer.appendChild(notification);
                 notifications.push(notification);
 
-                // Auto-remove after 6 seconds
-                setTimeout(() => {
+                setTimeout(function() {
                     if (notification.parentNode) {
                         notification.style.animation = 'slideOut 0.3s ease-in-out';
-                        setTimeout(() => {
+                        setTimeout(function() {
                             notification.remove();
-                            notifications = notifications.filter(n => n !== notification);
-                            updateNotificationDot();
+                            notifications = notifications.filter(function(n) { return n !== notification; });
                         }, 300);
                     }
                 }, 6000);
 
-                // Manual close
-                const closeBtn = notification.querySelector('.notification-close');
-                closeBtn.addEventListener('click', () => {
+                notification.querySelector('.notification-close').addEventListener('click', function() {
                     notification.style.animation = 'slideOut 0.3s ease-in-out';
-                    setTimeout(() => {
+                    setTimeout(function() {
                         notification.remove();
-                        notifications = notifications.filter(n => n !== notification);
-                        updateNotificationDot();
+                        notifications = notifications.filter(function(n) { return n !== notification; });
                     }, 300);
                 });
-
-                updateNotificationDot();
             }
 
-            function getNotificationIcon(type) {
-                const icons = {
-                    'success': 'fa-check-circle',
-                    'error': 'fa-exclamation-circle',
-                    'warning': 'fa-exclamation-triangle',
-                    'info': 'fa-info-circle'
-                };
-                return icons[type] || 'fa-bell';
+            window.showNotification = showNotification;
+
+            // Notification dropdown toggle
+            if (notificationToggle && notificationDropdown) {
+                notificationToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    notificationDropdown.classList.toggle('hidden');
+                });
+                document.addEventListener('click', function(e) {
+                    if (notificationWrapper && !notificationWrapper.contains(e.target)) {
+                        notificationDropdown.classList.add('hidden');
+                    }
+                });
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') notificationDropdown.classList.add('hidden');
+                });
             }
 
-            function updateNotificationDot() {
-                // Notification dot is now replaced with badge in header
-                // Toast notifications are separate from dropdown notifications
-            }
-
-            // Notification Dropdown Toggle
-            const notificationDropdown = document.getElementById('notificationDropdown');
-            const notificationWrapper = document.getElementById('notificationWrapper');
-
-            notificationToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                notificationDropdown.classList.toggle('hidden');
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!notificationWrapper.contains(e.target)) {
-                    notificationDropdown.classList.add('hidden');
-                }
-            });
-
-            // Close dropdown on escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    notificationDropdown.classList.add('hidden');
-                }
-            });
-
-            // Handle Laravel flash messages
+            // Laravel flash messages
             @if(session('success'))
                 showNotification("{{ session('success') }}", 'success', 'Mafanikio');
             @endif
@@ -1732,531 +1743,195 @@
                 showNotification("{{ session('info') }}", 'info', 'Taarifa');
             @endif
 
-            // Show date on mobile
-            function updateDateDisplay() {
-                const dateDesktop = document.querySelector('.date-desktop');
-                const dateMobile = document.querySelector('.date-mobile');
-
-                if (window.innerWidth <= 768) {
-                    dateDesktop.style.display = 'none';
-                    dateMobile.style.display = 'block';
-                } else {
-                    dateDesktop.style.display = 'block';
-                    dateMobile.style.display = 'none';
+            // Responsive - ensure sidebar is closed on desktop resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 1024) {
+                    closeSidebarFn();
                 }
-            }
-
-            updateDateDisplay();
+            });
         });
 
-        // ============================================
-        // REAL-TIME NOTIFICATION UPDATES
-        // ============================================
-        let lastNotificationCount = {{ $totalNotifications }};
+        var lastNotificationCount = {{ $totalNotifications }};
 
         function refreshNotifications() {
             fetch('/panel/notifications', {
                 method: 'GET',
                 credentials: 'same-origin',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json'
-                }
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
             })
-            .then(response => response.json())
-            .then(data => {
-                const badge = document.getElementById('notificationBadge');
-                const dropdownBody = document.querySelector('.notification-dropdown-body');
-                const countSpan = document.querySelector('.notification-count');
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                var badge = document.getElementById('notificationBadge');
+                var dropdownBody = document.querySelector('.notification-dropdown-body');
+                var countSpan = document.querySelector('.notification-count');
 
-                // Update badge
                 if (data.total > 0) {
-                    if (badge) {
-                        badge.textContent = data.total;
-                        badge.classList.remove('hidden');
-                    } else {
-                        // Create badge if it doesn't exist
-                        const btn = document.getElementById('notificationToggle');
-                        const newBadge = document.createElement('span');
+                    if (badge) { badge.textContent = data.total; badge.classList.remove('hidden'); }
+                    else {
+                        var btn = document.getElementById('notificationToggle');
+                        var newBadge = document.createElement('span');
                         newBadge.className = 'notification-badge';
                         newBadge.id = 'notificationBadge';
                         newBadge.textContent = data.total;
                         btn.appendChild(newBadge);
                     }
-
-                    // Show toast notification if count increased
                     if (data.total > lastNotificationCount) {
-                        const diff = data.total - lastNotificationCount;
-                        showNotificationToast(diff);
+                        var diff = data.total - lastNotificationCount;
+                        var msg = diff === 1 ? 'Una arifa mpya 1' : 'Una arifa mpya ' + diff;
+                        if (typeof showNotification === 'function') showNotification(msg, 'info', 'Arifa');
+                        var bellIcon = document.querySelector('#notificationToggle i');
+                        if (bellIcon) { bellIcon.classList.add('fa-shake'); setTimeout(function() { bellIcon.classList.remove('fa-shake'); }, 1000); }
                     }
                 } else {
-                    if (badge) {
-                        badge.classList.add('hidden');
-                    }
+                    if (badge) badge.classList.add('hidden');
                 }
 
-                // Update count in dropdown header
-                if (countSpan) {
-                    countSpan.textContent = data.total + ' mpya';
-                }
-
-                // Update dropdown body content
-                if (dropdownBody) {
-                    updateNotificationDropdown(data);
-                }
-
+                if (countSpan) countSpan.textContent = data.total + ' mpya';
+                if (dropdownBody) updateNotificationDropdown(data);
                 lastNotificationCount = data.total;
             })
-            .catch(error => {
-                console.error('Error refreshing notifications:', error);
-            });
+            .catch(function() {});
         }
 
         function updateNotificationDropdown(data) {
-            const dropdownBody = document.querySelector('.notification-dropdown-body');
+            var dropdownBody = document.querySelector('.notification-dropdown-body');
             if (!dropdownBody) return;
-
-            let html = '';
-            let hasNotifications = data.total > 0 || data.needs_password_change;
+            var html = '';
+            var hasNotifications = data.total > 0 || data.needs_password_change;
 
             if (!hasNotifications) {
-                html = `
-                    <div class="notification-empty">
-                        <i class="fas fa-check-circle text-green-500 text-3xl mb-2"></i>
-                        <p>Hakuna arifa mpya</p>
-                    </div>
-                `;
+                html = '<div class="notification-empty"><i class="fas fa-check-circle text-green-500 text-3xl mb-2"></i><p>Hakuna arifa mpya</p></div>';
             } else {
-                // Password change notification (always show first if needed)
                 if (data.needs_password_change) {
-                    html += `
-                        <a href="{{ route('settings.index') }}?tab=password" class="notification-item">
-                            <div class="notification-item-icon bg-orange-100">
-                                <i class="fas fa-key text-orange-600"></i>
-                            </div>
-                            <div class="notification-item-content">
-                                <p class="notification-item-title">Badilisha Nywila</p>
-                                <p class="notification-item-desc">Unatumia nywila ya msingi. Badilisha kwa usalama wako.</p>
-                            </div>
-                            <span class="notification-item-badge bg-orange-500">!</span>
-                        </a>
-                    `;
+                    html += '<a href="{{ route("settings.index") }}?tab=password" class="notification-item"><div class="notification-item-icon bg-orange-100"><i class="fas fa-key text-orange-600"></i></div><div class="notification-item-content"><p class="notification-item-title">Badilisha Nywila</p><p class="notification-item-desc">Unatumia nywila ya msingi. Badilisha kwa usalama wako.</p></div><span class="notification-item-badge bg-orange-500">!</span></a>';
                 }
-
                 if (data.pending_requests > 0) {
-                    html += `
-                        <a href="{{ route('requests.index') }}" class="notification-item">
-                            <div class="notification-item-icon bg-yellow-100">
-                                <i class="fas fa-paper-plane text-yellow-600"></i>
-                            </div>
-                            <div class="notification-item-content">
-                                <p class="notification-item-title">Maombi ya Fedha</p>
-                                <p class="notification-item-desc">${data.pending_requests} maombi yanasubiri kuidhinishwa</p>
-                            </div>
-                            <span class="notification-item-badge bg-yellow-500">${data.pending_requests}</span>
-                        </a>
-                    `;
+                    html += '<a href="{{ route("requests.index") }}" class="notification-item"><div class="notification-item-icon bg-yellow-100"><i class="fas fa-paper-plane text-yellow-600"></i></div><div class="notification-item-content"><p class="notification-item-title">Maombi ya Fedha</p><p class="notification-item-desc">' + data.pending_requests + ' maombi yanasubiri kuidhinishwa</p></div><span class="notification-item-badge bg-yellow-500">' + data.pending_requests + '</span></a>';
                 }
-
                 if (data.pending_pastoral > 0) {
-                    html += `
-                        <a href="{{ route('pastoral-services.index') }}" class="notification-item">
-                            <div class="notification-item-icon bg-purple-100">
-                                <i class="fas fa-praying-hands text-purple-600"></i>
-                            </div>
-                            <div class="notification-item-content">
-                                <p class="notification-item-title">Huduma za Kichungaji</p>
-                                <p class="notification-item-desc">${data.pending_pastoral} maombi yanasubiri kuidhinishwa</p>
-                            </div>
-                            <span class="notification-item-badge bg-purple-500">${data.pending_pastoral}</span>
-                        </a>
-                    `;
+                    html += '<a href="{{ route("pastoral-services.index") }}" class="notification-item"><div class="notification-item-icon bg-purple-100"><i class="fas fa-praying-hands text-purple-600"></i></div><div class="notification-item-content"><p class="notification-item-title">Huduma za Kichungaji</p><p class="notification-item-desc">' + data.pending_pastoral + ' maombi yanasubiri kuidhinishwa</p></div><span class="notification-item-badge bg-purple-500">' + data.pending_pastoral + '</span></a>';
                 }
-
                 if (data.pending_members > 0) {
-                    html += `
-                        <a href="{{ route('members.index') }}?status=pending" class="notification-item">
-                            <div class="notification-item-icon bg-green-100">
-                                <i class="fas fa-user-plus text-green-600"></i>
-                            </div>
-                            <div class="notification-item-content">
-                                <p class="notification-item-title">Usajili Mpya</p>
-                                <p class="notification-item-desc">${data.pending_members} wanachama wanasubiri kuidhinishwa</p>
-                            </div>
-                            <span class="notification-item-badge bg-green-500">${data.pending_members}</span>
-                        </a>
-                    `;
+                    html += '<a href="{{ route("members.index") }}?status=pending" class="notification-item"><div class="notification-item-icon bg-green-100"><i class="fas fa-user-plus text-green-600"></i></div><div class="notification-item-content"><p class="notification-item-title">Usajili Mpya</p><p class="notification-item-desc">' + data.pending_members + ' wanachama wanasubiri kuidhinishwa</p></div><span class="notification-item-badge bg-green-500">' + data.pending_members + '</span></a>';
                 }
-
-                // New events notification (for members)
                 if (data.new_events > 0) {
-                    html += `
-                        <a href="{{ route('events.index') }}" class="notification-item">
-                            <div class="notification-item-icon bg-blue-100">
-                                <i class="fas fa-calendar-alt text-blue-600"></i>
-                            </div>
-                            <div class="notification-item-content">
-                                <p class="notification-item-title">Matukio Mapya</p>
-                                <p class="notification-item-desc">${data.new_events} matukio mapya yameongezwa</p>
-                            </div>
-                            <span class="notification-item-badge bg-blue-500">${data.new_events}</span>
-                        </a>
-                    `;
+                    html += '<a href="{{ route("events.index") }}" class="notification-item"><div class="notification-item-icon bg-blue-100"><i class="fas fa-calendar-alt text-blue-600"></i></div><div class="notification-item-content"><p class="notification-item-title">Matukio Mapya</p><p class="notification-item-desc">' + data.new_events + ' matukio mapya yameongezwa</p></div><span class="notification-item-badge bg-blue-500">' + data.new_events + '</span></a>';
                 }
             }
-
             dropdownBody.innerHTML = html;
         }
 
-        function showNotificationToast(count) {
-            const message = count === 1
-                ? 'Una arifa mpya 1'
-                : `Una arifa mpya ${count}`;
-
-            // Use existing notification system
-            if (typeof showNotification === 'function') {
-                showNotification(message, 'info', 'Arifa');
-            }
-
-            // Add visual pulse to bell icon
-            const bellIcon = document.querySelector('#notificationToggle i');
-            if (bellIcon) {
-                bellIcon.classList.add('fa-shake');
-                setTimeout(() => {
-                    bellIcon.classList.remove('fa-shake');
-                }, 1000);
-            }
-        }
-
-        // Refresh notifications every 15 seconds
         setInterval(refreshNotifications, 15000);
+        document.addEventListener('visibilitychange', function() { if (!document.hidden) refreshNotifications(); });
 
-        // Also refresh when page becomes visible
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                refreshNotifications();
-            }
-        });
-
-        // Session Timeout - Logout after 10 minutes of inactivity
-        const SESSION_TIMEOUT = 10 * 60 * 1000; // 10 minutes in milliseconds
-        const WARNING_TIME = 60 * 1000; // Show warning 1 minute before timeout
-        let inactivityTimer;
-        let warningTimer;
-        let warningShown = false;
+        // Session timeout
+        var SESSION_TIMEOUT = 10 * 60 * 1000;
+        var WARNING_TIME = 60 * 1000;
+        var inactivityTimer, warningTimer, warningShown = false;
 
         function resetInactivityTimer() {
-            // Clear existing timers
             clearTimeout(inactivityTimer);
             clearTimeout(warningTimer);
             warningShown = false;
-
-            // Hide warning if shown
-            const warningBanner = document.getElementById('sessionWarningBanner');
-            if (warningBanner) {
-                warningBanner.remove();
-            }
-
-            // Set warning timer (1 minute before logout)
+            var warningBanner = document.getElementById('sessionWarningBanner');
+            if (warningBanner) warningBanner.remove();
             warningTimer = setTimeout(showSessionWarning, SESSION_TIMEOUT - WARNING_TIME);
-
-            // Set logout timer
             inactivityTimer = setTimeout(logoutDueToInactivity, SESSION_TIMEOUT);
         }
 
         function showSessionWarning() {
             if (warningShown) return;
             warningShown = true;
-
-            const warningHTML = `
-                <div id="sessionWarningBanner" class="fixed inset-0 z-[9999] flex items-center justify-center p-4" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);">
-                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" style="animation: modalSlideIn 0.3s ease-out;">
-                        <div class="p-6 text-center">
-                            <div class="h-20 w-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4" style="animation: pulse 2s infinite;">
-                                <i class="fas fa-clock text-orange-600 text-4xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Muda wa Kikao Unakaribia Kuisha!</h3>
-                            <p class="text-gray-600 mb-2">Utaondolewa kwenye mfumo baada ya <span id="countdownSeconds" class="font-bold text-red-600">60</span> sekunde kwa kukosa shughuli.</p>
-                            <p class="text-sm text-gray-500 mb-6">Bofya kitufe hapa chini kuendelea kutumia mfumo.</p>
-                            <button onclick="resetInactivityTimer()" class="w-full px-6 py-3 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #360958 0%, #2a0745 100%);">
-                                <i class="fas fa-sync-alt"></i>
-                                <span>Endelea Kutumia Mfumo</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <style>
-                    @keyframes modalSlideIn {
-                        from { opacity: 0; transform: scale(0.9) translateY(-20px); }
-                        to { opacity: 1; transform: scale(1) translateY(0); }
-                    }
-                    @keyframes pulse {
-                        0%, 100% { transform: scale(1); }
-                        50% { transform: scale(1.05); }
-                    }
-                </style>
-            `;
+            var warningHTML = '<div id="sessionWarningBanner" class="fixed inset-0 z-[9999] flex items-center justify-center p-4" style="background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"><div class="p-6 text-center"><div class="h-20 w-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-clock text-orange-600 text-4xl"></i></div><h3 class="text-xl font-bold text-gray-900 mb-2">Muda wa Kikao Unakaribia Kuisha!</h3><p class="text-gray-600 mb-2">Utaondolewa kwenye mfumo baada ya <span id="countdownSeconds" class="font-bold text-red-600">60</span> sekunde kwa kukosa shughuli.</p><p class="text-sm text-gray-500 mb-6">Bofya kitufe hapa chini kuendelea kutumia mfumo.</p><button onclick="resetInactivityTimer()" class="w-full px-6 py-3 text-white font-semibold rounded-xl" style="background:linear-gradient(135deg,#360958,#2a0745);"><i class="fas fa-sync-alt mr-2"></i>Endelea Kutumia Mfumo</button></div></div></div>';
             document.body.insertAdjacentHTML('afterbegin', warningHTML);
-
-            // Start countdown
-            let seconds = 60;
-            const countdownEl = document.getElementById('countdownSeconds');
-            const countdownInterval = setInterval(() => {
-                seconds--;
-                if (countdownEl) countdownEl.textContent = seconds;
-                if (seconds <= 0) clearInterval(countdownInterval);
-            }, 1000);
+            var seconds = 60;
+            var countdownEl = document.getElementById('countdownSeconds');
+            var countdownInterval = setInterval(function() { seconds--; if (countdownEl) countdownEl.textContent = seconds; if (seconds <= 0) clearInterval(countdownInterval); }, 1000);
         }
 
         function logoutDueToInactivity() {
-            // Remove warning modal if exists
-            const warningBanner = document.getElementById('sessionWarningBanner');
+            var warningBanner = document.getElementById('sessionWarningBanner');
             if (warningBanner) warningBanner.remove();
-
-            // Show styled logout modal
-            const logoutModalHTML = `
-                <div id="sessionLogoutModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);">
-                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" style="animation: modalSlideIn 0.3s ease-out;">
-                        <div class="p-6 text-center">
-                            <div class="h-20 w-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-sign-out-alt text-red-600 text-4xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Kikao Kimeisha</h3>
-                            <p class="text-gray-600 mb-6">Umekuwa bila shughuli kwa muda mrefu. Unaondolewa kwenye mfumo kwa usalama wako.</p>
-                            <div class="flex items-center justify-center gap-2 text-gray-500">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <span>Inaondoka...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+            var logoutModalHTML = '<div id="sessionLogoutModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4" style="background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"><div class="p-6 text-center"><div class="h-20 w-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-sign-out-alt text-red-600 text-4xl"></i></div><h3 class="text-xl font-bold text-gray-900 mb-2">Kikao Kimeisha</h3><p class="text-gray-600 mb-6">Umekuwa bila shughuli kwa muda mrefu. Unaondolewa kwenye mfumo kwa usalama wako.</p><div class="flex items-center justify-center gap-2 text-gray-500"><i class="fas fa-spinner fa-spin"></i><span>Inaondoka...</span></div></div></div></div>';
             document.body.insertAdjacentHTML('afterbegin', logoutModalHTML);
-
-            // Submit logout form after a brief delay to show the modal
-            setTimeout(() => {
-                document.getElementById('logout-form').submit();
-            }, 1500);
+            setTimeout(function() { document.getElementById('logout-form').submit(); }, 1500);
         }
 
-        // Reset timer on user activity
         ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(function(event) {
             document.addEventListener(event, resetInactivityTimer, true);
         });
-
-        // Initialize the timer
         resetInactivityTimer();
 
-        // Global Styled Alert/Confirm Modal System
-        const alertModalHTML = `
-            <div id="globalAlertModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[9999]">
-                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95" id="alertModalContent">
-                    <div class="p-6">
-                        <div class="flex items-start gap-4">
-                            <div id="alertIconContainer" class="flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center">
-                                <i id="alertIcon" class="text-xl"></i>
-                            </div>
-                            <div class="flex-1">
-                                <h3 id="alertTitle" class="text-lg font-bold text-gray-900 mb-2"></h3>
-                                <p id="alertMessage" class="text-gray-600"></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="alertActions" class="flex justify-end gap-3 px-6 py-4 bg-gray-50 rounded-b-2xl border-t border-gray-200">
-                        <button id="alertCancelBtn" class="hidden px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all duration-200">
-                            Ghairi
-                        </button>
-                        <button id="alertOkBtn" class="px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-all duration-200 flex items-center gap-2">
-                            <span>Sawa</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        // Add modal to body
+        // Global alert/confirm modal
+        var alertModalHTML = '<div id="globalAlertModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[9999]"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95" id="alertModalContent"><div class="p-6"><div class="flex items-start gap-4"><div id="alertIconContainer" class="flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center"><i id="alertIcon" class="text-xl"></i></div><div class="flex-1"><h3 id="alertTitle" class="text-lg font-bold text-gray-900 mb-2"></h3><p id="alertMessage" class="text-gray-600"></p></div></div></div><div id="alertActions" class="flex justify-end gap-3 px-6 py-4 bg-gray-50 rounded-b-2xl border-t border-gray-200"><button id="alertCancelBtn" class="hidden px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">Ghairi</button><button id="alertOkBtn" class="px-5 py-2.5 text-sm font-medium text-white rounded-lg flex items-center gap-2"><span>Sawa</span></button></div></div></div>';
         document.body.insertAdjacentHTML('beforeend', alertModalHTML);
 
-        // Modal configuration by type
-        const alertTypes = {
-            success: {
-                bgColor: 'bg-green-100',
-                iconColor: 'text-green-600',
-                icon: 'fas fa-check-circle',
-                btnColor: 'bg-green-600 hover:bg-green-700',
-                title: 'Imefanikiwa!'
-            },
-            error: {
-                bgColor: 'bg-red-100',
-                iconColor: 'text-red-600',
-                icon: 'fas fa-exclamation-circle',
-                btnColor: 'bg-red-600 hover:bg-red-700',
-                title: 'Hitilafu!'
-            },
-            warning: {
-                bgColor: 'bg-yellow-100',
-                iconColor: 'text-yellow-600',
-                icon: 'fas fa-exclamation-triangle',
-                btnColor: 'bg-yellow-600 hover:bg-yellow-700',
-                title: 'Onyo!'
-            },
-            info: {
-                bgColor: 'bg-blue-100',
-                iconColor: 'text-blue-600',
-                icon: 'fas fa-info-circle',
-                btnColor: 'bg-blue-600 hover:bg-blue-700',
-                title: 'Taarifa'
-            },
-            confirm: {
-                bgColor: 'bg-purple-100',
-                iconColor: 'text-purple-600',
-                icon: 'fas fa-question-circle',
-                btnColor: 'bg-primary-600 hover:bg-primary-700',
-                title: 'Thibitisha'
-            }
+        var alertTypes = {
+            success: { bgColor: 'bg-green-100', iconColor: 'text-green-600', icon: 'fas fa-check-circle', btnColor: 'bg-green-600 hover:bg-green-700', title: 'Imefanikiwa!' },
+            error: { bgColor: 'bg-red-100', iconColor: 'text-red-600', icon: 'fas fa-exclamation-circle', btnColor: 'bg-red-600 hover:bg-red-700', title: 'Hitilafu!' },
+            warning: { bgColor: 'bg-yellow-100', iconColor: 'text-yellow-600', icon: 'fas fa-exclamation-triangle', btnColor: 'bg-yellow-600 hover:bg-yellow-700', title: 'Onyo!' },
+            info: { bgColor: 'bg-blue-100', iconColor: 'text-blue-600', icon: 'fas fa-info-circle', btnColor: 'bg-blue-600 hover:bg-blue-700', title: 'Taarifa' },
+            confirm: { bgColor: 'bg-purple-100', iconColor: 'text-purple-600', icon: 'fas fa-question-circle', btnColor: 'bg-primary-600 hover:bg-primary-700', title: 'Thibitisha' }
         };
 
-        // Show styled alert modal
-        function showAlertModal(message, type = 'info', title = null, callback = null) {
-            const modal = document.getElementById('globalAlertModal');
-            const content = document.getElementById('alertModalContent');
-            const iconContainer = document.getElementById('alertIconContainer');
-            const icon = document.getElementById('alertIcon');
-            const titleEl = document.getElementById('alertTitle');
-            const messageEl = document.getElementById('alertMessage');
-            const okBtn = document.getElementById('alertOkBtn');
-            const cancelBtn = document.getElementById('alertCancelBtn');
+        function showAlertModal(message, type, title, callback) {
+            type = type || 'info';
+            var modal = document.getElementById('globalAlertModal');
+            var content = document.getElementById('alertModalContent');
+            var iconContainer = document.getElementById('alertIconContainer');
+            var icon = document.getElementById('alertIcon');
+            var titleEl = document.getElementById('alertTitle');
+            var messageEl = document.getElementById('alertMessage');
+            var okBtn = document.getElementById('alertOkBtn');
+            var cancelBtn = document.getElementById('alertCancelBtn');
+            var config = alertTypes[type] || alertTypes.info;
 
-            const config = alertTypes[type] || alertTypes.info;
-
-            // Reset classes
             iconContainer.className = 'flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center ' + config.bgColor;
             icon.className = config.icon + ' text-xl ' + config.iconColor;
-            okBtn.className = 'px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-all duration-200 flex items-center gap-2 ' + config.btnColor;
-
+            okBtn.className = 'px-5 py-2.5 text-sm font-medium text-white rounded-lg flex items-center gap-2 ' + config.btnColor;
             titleEl.textContent = title || config.title;
             messageEl.textContent = message;
+            if (type === 'confirm') cancelBtn.classList.remove('hidden'); else cancelBtn.classList.add('hidden');
 
-            // Show/hide cancel button for confirm type
-            if (type === 'confirm') {
-                cancelBtn.classList.remove('hidden');
-            } else {
-                cancelBtn.classList.add('hidden');
-            }
-
-            // Show modal with animation
             modal.classList.remove('hidden');
-            setTimeout(() => {
-                content.classList.remove('scale-95');
-                content.classList.add('scale-100');
-            }, 10);
+            setTimeout(function() { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 10);
 
-            // Handle OK button
-            const handleOk = () => {
-                closeAlertModal();
-                if (callback) callback(true);
-                okBtn.removeEventListener('click', handleOk);
-                cancelBtn.removeEventListener('click', handleCancel);
-            };
-
-            // Handle Cancel button
-            const handleCancel = () => {
-                closeAlertModal();
-                if (callback) callback(false);
-                okBtn.removeEventListener('click', handleOk);
-                cancelBtn.removeEventListener('click', handleCancel);
-            };
-
+            var handleOk = function() { closeAlertModal(); if (callback) callback(true); okBtn.removeEventListener('click', handleOk); cancelBtn.removeEventListener('click', handleCancel); };
+            var handleCancel = function() { closeAlertModal(); if (callback) callback(false); okBtn.removeEventListener('click', handleOk); cancelBtn.removeEventListener('click', handleCancel); };
             okBtn.addEventListener('click', handleOk);
             cancelBtn.addEventListener('click', handleCancel);
-
-            // Close on backdrop click (for non-confirm modals)
-            modal.onclick = (e) => {
-                if (e.target === modal && type !== 'confirm') {
-                    handleOk();
-                }
-            };
+            modal.onclick = function(e) { if (e.target === modal && type !== 'confirm') handleOk(); };
         }
 
-        // Close alert modal
         function closeAlertModal() {
-            const modal = document.getElementById('globalAlertModal');
-            const content = document.getElementById('alertModalContent');
-
+            var modal = document.getElementById('globalAlertModal');
+            var content = document.getElementById('alertModalContent');
             content.classList.remove('scale-100');
             content.classList.add('scale-95');
-
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 200);
+            setTimeout(function() { modal.classList.add('hidden'); }, 200);
         }
 
-        // Show confirm modal (returns promise)
-        function showConfirmModal(message, title = 'Thibitisha') {
-            return new Promise((resolve) => {
-                showAlertModal(message, 'confirm', title, (result) => {
-                    resolve(result);
-                });
-            });
+        function showConfirmModal(message, title) {
+            return new Promise(function(resolve) { showAlertModal(message, 'confirm', title || 'Thibitisha', function(result) { resolve(result); }); });
         }
 
-        // Convenience functions
-        window.showSuccess = (message, title = null) => showAlertModal(message, 'success', title);
-        window.showError = (message, title = null) => showAlertModal(message, 'error', title);
-        window.showWarning = (message, title = null) => showAlertModal(message, 'warning', title);
-        window.showInfo = (message, title = null) => showAlertModal(message, 'info', title);
+        window.showSuccess = function(message, title) { showAlertModal(message, 'success', title); };
+        window.showError = function(message, title) { showAlertModal(message, 'error', title); };
+        window.showWarning = function(message, title) { showAlertModal(message, 'warning', title); };
+        window.showInfo = function(message, title) { showAlertModal(message, 'info', title); };
         window.showConfirm = showConfirmModal;
 
-        // Override native alert (optional - uncomment to auto-replace all alerts)
-        // window.alert = (message) => showAlertModal(message, 'info');
-
-        // ============================================
-        // PREVENT BROWSER BACK/FORWARD NAVIGATION
-        // ============================================
+        // Prevent browser back/forward
         (function() {
-            // Push current state to prevent going back
             history.pushState(null, null, location.href);
-
-            // Listen for popstate (when user tries to go back/forward)
-            window.addEventListener('popstate', function(event) {
-                // Push state again to keep user on current page
-                history.pushState(null, null, location.href);
-            });
-
-            // Handle page show event (when page is restored from bfcache)
-            window.addEventListener('pageshow', function(event) {
-                if (event.persisted) {
-                    // Page was restored from browser cache - force full reload from server
-                    window.location.replace(window.location.href);
-                }
-            });
-
-            // Check session validity
+            window.addEventListener('popstate', function() { history.pushState(null, null, location.href); });
+            window.addEventListener('pageshow', function(event) { if (event.persisted) window.location.replace(window.location.href); });
             function checkSessionValidity() {
-                fetch('/panel/check-session', {
-                    method: 'GET',
-                    credentials: 'same-origin',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
-                }).then(function(response) {
-                    if (!response.ok || response.status === 401) {
-                        // Session invalid - redirect to login
-                        window.location.replace('{{ route("login") }}');
-                    }
-                }).catch(function() {
-                    // On error, reload page to let server handle it
-                    window.location.reload();
-                });
+                fetch('/panel/check-session', { method: 'GET', credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+                .then(function(response) { if (!response.ok || response.status === 401) window.location.replace('{{ route("login") }}'); })
+                .catch(function() { window.location.reload(); });
             }
-
-            // Check session when page becomes visible after being hidden
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) {
-                    checkSessionValidity();
-                }
-            });
+            document.addEventListener('visibilitychange', function() { if (!document.hidden) checkSessionValidity(); });
         })();
     </script>
 

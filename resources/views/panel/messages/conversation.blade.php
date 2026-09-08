@@ -6,7 +6,6 @@
 
 @section('styles')
 <style>
-    /* WhatsApp Modern Design */
     :root {
         --whatsapp-primary: #360958;
         --whatsapp-primary-dark: #2a0745;
@@ -29,19 +28,15 @@
         --whatsapp-gradient: linear-gradient(135deg, var(--whatsapp-primary) 0%, var(--whatsapp-secondary) 50%, var(--whatsapp-primary-dark) 100%);
     }
 
-    /* WhatsApp Container - Modern Layout */
     .whatsapp-modern {
         display: flex;
-        height: calc(100vh - 140px);
+        height: 100%;
         min-height: 600px;
         background: var(--whatsapp-bg);
-        border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         position: relative;
     }
 
-    /* Left Sidebar - Modern Chats */
     .whatsapp-modern-sidebar {
         width: 30%;
         min-width: 320px;
@@ -53,40 +48,37 @@
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Modern Sidebar Header */
     .modern-sidebar-header {
-        padding: 16px 20px;
-        background: linear-gradient(135deg, var(--whatsapp-primary) 0%, var(--whatsapp-primary-dark) 100%);
+        padding: 14px 16px;
+        background: linear-gradient(135deg, #360958 0%, #2a0745 100%);
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 12px;
         flex-shrink: 0;
     }
 
     .modern-user-avatar {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 0.75rem;
+        background: rgba(239,193,32,0.15);
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
         position: relative;
         cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.2s ease;
+        border: 1px solid rgba(239,193,32,0.3);
     }
 
     .modern-user-avatar:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        background: rgba(239,193,32,0.2);
     }
 
     .modern-user-avatar i {
-        color: var(--whatsapp-primary);
-        font-size: 20px;
+        color: #efc120;
+        font-size: 16px;
     }
 
     .online-status {
@@ -128,7 +120,6 @@
         transform: translateY(-2px);
     }
 
-    /* Modern Search Bar */
     .modern-search-bar {
         padding: 16px 20px;
         background: white;
@@ -175,7 +166,6 @@
         font-weight: 400;
     }
 
-    /* Modern Chats List */
     .modern-chats-list {
         flex: 1;
         overflow-y: auto;
@@ -195,7 +185,6 @@
         border-radius: 3px;
     }
 
-    /* Modern Chat Item */
     .modern-chat-item {
         display: flex;
         align-items: center;
@@ -280,7 +269,7 @@
     }
 
     .modern-chat-unread {
-        background: linear-gradient(135deg, var(--whatsapp-primary) 0%, var(--whatsapp-secondary) 100%);
+        background: linear-gradient(135deg, #ef4444, #dc2626);
         color: white;
         border-radius: 50%;
         min-width: 22px;
@@ -295,7 +284,6 @@
         box-shadow: 0 2px 8px rgba(54, 9, 88, 0.3);
     }
 
-    /* Quick Contacts Section */
     .quick-contacts-section {
         padding: 20px;
         border-top: 1px solid var(--whatsapp-border);
@@ -385,7 +373,6 @@
         display: inline-block;
     }
 
-    /* Right Side - Modern Chat Area */
     .modern-chat-area {
         flex: 1;
         display: flex;
@@ -395,7 +382,6 @@
         overflow: hidden;
     }
 
-    /* Modern Chat Header */
     .modern-chat-header-bar {
         background: linear-gradient(135deg, var(--whatsapp-primary) 0%, var(--whatsapp-primary-dark) 100%);
         padding: 16px 24px;
@@ -492,7 +478,6 @@
         transform: scale(1.1);
     }
 
-    /* Modern Messages Container */
     .modern-messages-container {
         flex: 1;
         padding: 24px 12% 16px;
@@ -503,7 +488,6 @@
         background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='smallGrid' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 40 0 L 0 0 0 40' fill='none' stroke='rgba(54, 9, 88, 0.05)' stroke-width='0.5'/%3E%3C/pattern%3E%3Cpattern id='grid' width='80' height='80' patternUnits='userSpaceOnUse' patternTransform='rotate(45)'%3E%3Crect width='80' height='80' fill='url(%23smallGrid)'/%3E%3Cpath d='M 80 0 L 0 0 0 80' fill='none' stroke='rgba(54, 9, 88, 0.08)' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grid)' opacity='0.3'/%3E%3C/svg%3E");
     }
 
-    /* Modern Date Separator */
     .modern-date-separator {
         text-align: center;
         margin: 24px 0;
@@ -522,7 +506,6 @@
         backdrop-filter: blur(10px);
     }
 
-    /* Modern Message Bubbles - CLASSIC DESIGN */
     .modern-message-row {
         display: flex;
         margin-bottom: 16px;
@@ -539,7 +522,6 @@
         margin-right: auto;
     }
 
-    /* Classic Message Bubble */
     .classic-message-bubble {
         max-width: 65%;
         padding: 12px 16px;
@@ -552,7 +534,6 @@
         border: 1px solid transparent;
     }
 
-    /* Sent Message - Purple Gradient Border */
     .sent .classic-message-bubble {
         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
         border-radius: 18px 4px 18px 18px;
@@ -573,7 +554,6 @@
         z-index: -1;
     }
 
-    /* Received Message - Light Gray Border */
     .received .classic-message-bubble {
         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
         border-radius: 4px 18px 18px 18px;
@@ -581,7 +561,6 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
-    /* Message content */
     .classic-message-content {
         font-size: 15px;
         line-height: 1.5;
@@ -589,7 +568,6 @@
         margin-bottom: 6px;
     }
 
-    /* Message time and status */
     .classic-message-time {
         text-align: right;
         font-size: 11px;
@@ -609,14 +587,12 @@
         font-size: 12px;
     }
 
-    /* LUXURY INPUT AREA - MODERN CLASSIC DESIGN */
     .luxury-input-area {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        padding: 20px 24px;
-        border-top: 1px solid rgba(54, 9, 88, 0.1);
+        background: white;
+        padding: 16px 20px;
+        border-top: 1px solid #e5e7eb;
         position: relative;
         z-index: 10;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
     }
 
     .luxury-input-area::before {
@@ -626,19 +602,19 @@
         left: 0;
         right: 0;
         height: 1px;
-        background: linear-gradient(90deg, transparent, var(--whatsapp-primary), transparent);
+        background: transparent;
     }
 
     .luxury-input-wrapper {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
         background: white;
-        border-radius: 28px;
-        padding: 4px 20px;
-        border: 2px solid #e9edef;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 20px rgba(54, 9, 88, 0.08);
+        border-radius: 0.75rem;
+        padding: 4px 16px;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         position: relative;
         overflow: hidden;
     }
@@ -650,30 +626,27 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(54, 9, 88, 0.02) 0%, rgba(138, 43, 226, 0.02) 100%);
-        border-radius: 28px;
+        background: transparent;
+        border-radius: 0.75rem;
     }
 
     .luxury-input-wrapper:focus-within {
-        border-color: var(--whatsapp-primary);
-        box-shadow: 0 6px 30px rgba(54, 9, 88, 0.15);
-        transform: translateY(-2px);
+        border-color: #efc120;
+        box-shadow: 0 0 0 3px rgba(239,193,32,0.1);
     }
 
     .luxury-input-wrapper:hover:not(:focus-within) {
-        border-color: rgba(54, 9, 88, 0.3);
-        box-shadow: 0 4px 25px rgba(54, 9, 88, 0.12);
+        border-color: #d1d5db;
     }
 
-    /* Input Action Buttons */
     .luxury-input-action-btn {
-        color: var(--whatsapp-light-gray);
+        color: #9ca3af;
         cursor: pointer;
-        font-size: 22px;
-        padding: 10px;
-        transition: all 0.3s;
-        width: 44px;
-        height: 44px;
+        font-size: 18px;
+        padding: 8px;
+        transition: all 0.2s;
+        width: 36px;
+        height: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -689,45 +662,43 @@
         transform: scale(1.1);
     }
 
-    /* Textarea Input */
     .luxury-message-textarea {
         flex: 1;
         border: none;
         outline: none;
         background: transparent;
-        color: var(--whatsapp-dark);
-        font-size: 15.5px;
+        color: #111827;
+        font-size: 14px;
         line-height: 1.5;
         resize: none;
         max-height: 120px;
-        min-height: 24px;
-        padding: 12px 0;
+        min-height: 20px;
+        padding: 8px 0;
         font-family: inherit;
         position: relative;
         z-index: 1;
     }
 
     .luxury-message-textarea::placeholder {
-        color: var(--whatsapp-light-gray);
+        color: #9ca3af;
         font-weight: 400;
     }
 
-    /* Send Button - Luxury Design */
     .luxury-send-btn {
-        width: 48px;
-        height: 48px;
-        background: linear-gradient(135deg, var(--whatsapp-primary) 0%, var(--whatsapp-secondary) 50%, var(--whatsapp-primary-dark) 100%);
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, #360958 0%, #2a0745 100%);
         border: none;
-        border-radius: 50%;
+        border-radius: 0.75rem;
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.4s;
+        transition: all 0.2s;
         position: relative;
         z-index: 1;
-        box-shadow: 0 4px 15px rgba(54, 9, 88, 0.3);
+        box-shadow: 0 2px 8px rgba(54, 9, 88, 0.25);
         overflow: hidden;
     }
 
@@ -739,12 +710,12 @@
         right: 0;
         bottom: 0;
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
-        border-radius: 50%;
+        border-radius: 0.75rem;
     }
 
     .luxury-send-btn:hover {
-        transform: scale(1.1) rotate(15deg);
-        box-shadow: 0 6px 25px rgba(54, 9, 88, 0.4);
+        background: linear-gradient(135deg, #2a0745 0%, #1f0533 100%);
+        box-shadow: 0 4px 12px rgba(54, 9, 88, 0.35);
     }
 
     .luxury-send-btn:active {
@@ -752,30 +723,29 @@
     }
 
     .luxury-send-btn:disabled {
-        background: var(--whatsapp-light-gray);
+        background: #9ca3af;
         cursor: not-allowed;
         transform: none;
         box-shadow: none;
     }
 
     .luxury-send-btn i {
-        transition: transform 0.3s;
+        transition: transform 0.2s;
         position: relative;
         z-index: 1;
+        font-size: 16px;
     }
 
     .luxury-send-btn:hover i {
         transform: translateX(2px);
     }
 
-    /* Input Icons Container */
     .input-icons-container {
         display: flex;
         align-items: center;
         gap: 8px;
     }
 
-    /* Empty Chat State */
     .modern-empty-chat {
         flex: 1;
         display: flex;
@@ -819,30 +789,24 @@
         margin-bottom: 32px;
     }
 
-    /* Responsive Design */
     @media (max-width: 768px) {
-        .whatsapp-modern {
-            height: 100vh;
-            border-radius: 0;
-        }
-        
-        .modern-chat-area.hidden {
+        .whatsapp-modern-sidebar {
             display: none;
         }
-        
+
         .modern-back-btn {
             display: flex;
         }
-        
+
         .luxury-input-area {
             padding: 16px;
         }
-        
+
         .luxury-input-wrapper {
             padding: 4px 16px;
             border-radius: 24px;
         }
-        
+
         .luxury-message-textarea {
             font-size: 15px;
         }
@@ -851,226 +815,197 @@
 @endsection
 
 @section('content')
-<div class="whatsapp-modern">
-    <!-- Left Sidebar - Modern Chats -->
-    <div class="whatsapp-modern-sidebar {{ $messages->isEmpty() ? '' : 'hidden' }}" id="modernSidebar">
-        <!-- Sidebar Header -->
-        <div class="modern-sidebar-header">
-            <div class="modern-user-avatar" title="Wasifu wangu">
-                <i class="fas fa-user"></i>
-                <div class="online-status"></div>
-            </div>
-            
-            <div class="modern-header-actions">
-                <div class="modern-header-btn" title="Mazungumzo Mapya">
-                    <i class="fas fa-edit"></i>
+<div class="rx-card shadow-sm border-0 overflow-hidden" style="height: calc(100vh - 180px); min-height: 600px;">
+    <div class="whatsapp-modern">
+        <div class="whatsapp-modern-sidebar {{ $messages->isEmpty() ? '' : 'hidden' }}" id="modernSidebar">
+            <div class="modern-sidebar-header">
+                <div class="modern-user-avatar" title="Wasifu wangu">
+                    <i class="fas fa-user"></i>
+                    <div class="online-status"></div>
                 </div>
-                <div class="modern-header-btn" title="Mipangilio">
-                    <i class="fas fa-cog"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Search Bar -->
-        <div class="modern-search-bar">
-            <div class="modern-search-container">
-                <i class="fas fa-search modern-search-icon"></i>
-                <input type="text" class="modern-search-input" placeholder="Tafuta mazungumzo...">
-            </div>
-        </div>
-
-        <!-- Chats List -->
-        <div class="modern-chats-list" id="modernChatsList">
-            @foreach($conversations as $conv)
-                <a href="{{ route('messages.conversation', $conv['user']->id) }}" 
-                   class="modern-chat-item {{ $conv['user']->id == $otherUser->id ? 'active' : '' }}"
-                   data-chat-id="{{ $conv['user']->id }}">
-                    
-                    <div class="modern-chat-avatar">
-                        <i class="fas fa-user"></i>
+                <div class="modern-header-actions">
+                    <div class="modern-header-btn" title="Mazungumzo Mapya">
+                        <i class="fas fa-edit"></i>
                     </div>
-                    
-                    <div class="modern-chat-info">
-                        <div class="modern-chat-header">
-                            <h3 class="modern-chat-name">{{ $conv['user']->name }}</h3>
-                            <span class="modern-chat-time">
-                                {{ $conv['last_message']->created_at->format('H:i') }}
-                            </span>
-                        </div>
-                        
-                        <div class="modern-chat-preview">
-                            <span class="modern-chat-message">
-                                @if($conv['last_message']->sender_id == Auth::id())
-                                    <span style="color: var(--whatsapp-gray);">Wewe: </span>
-                                @endif
-                                {{ Str::limit($conv['last_message']->content, 30) }}
-                            </span>
-                        </div>
+                    <div class="modern-header-btn" title="Mipangilio">
+                        <i class="fas fa-cog"></i>
                     </div>
-                    
-                    @if($conv['unread_count'] > 0 && $conv['user']->id != $otherUser->id)
-                        <div class="modern-chat-unread">
-                            {{ $conv['unread_count'] }}
+                </div>
+            </div>
+
+            <div class="modern-search-bar">
+                <div class="modern-search-container">
+                    <i class="fas fa-search modern-search-icon"></i>
+                    <input type="text" class="modern-search-input" placeholder="Tafuta mazungumzo...">
+                </div>
+            </div>
+
+            <div class="modern-chats-list" id="modernChatsList">
+                @foreach($conversations as $conv)
+                    <a href="{{ route('messages.conversation', $conv['user']->id) }}"
+                       class="modern-chat-item {{ $conv['user']->id == $otherUser->id ? 'active' : '' }}"
+                       data-chat-id="{{ $conv['user']->id }}">
+                        <div class="modern-chat-avatar">
+                            <i class="fas fa-user"></i>
                         </div>
-                    @endif
-                </a>
-            @endforeach
-        </div>
-
-        <!-- Quick Contacts -->
-        @if(Auth::user()->isMwanachama() && $leaders->isNotEmpty())
-            <div class="quick-contacts-section">
-                <div class="quick-contacts-title">
-                    <i class="fas fa-users"></i>
-                    Viongozi wa Kanisa
-                </div>
-                <div class="quick-contacts-list">
-                    @foreach($leaders as $leader)
-                        <a href="{{ route('messages.conversation', $leader->id) }}" class="quick-contact-item">
-                            <div class="quick-contact-avatar">
-                                <i class="fas fa-user"></i>
+                        <div class="modern-chat-info">
+                            <div class="modern-chat-header">
+                                <h3 class="modern-chat-name">{{ $conv['user']->name }}</h3>
+                                <span class="modern-chat-time">{{ $conv['last_message']->created_at->format('H:i') }}</span>
                             </div>
-                            <div class="quick-contact-info">
-                                <div class="quick-contact-name">{{ $leader->name }}</div>
-                                <div class="quick-contact-role">{{ $leader->role->name ?? 'Kiongozi' }}</div>
+                            <div class="modern-chat-preview">
+                                <span class="modern-chat-message">
+                                    @if($conv['last_message']->sender_id == Auth::id())
+                                        <span style="color: var(--whatsapp-gray);">Wewe: </span>
+                                    @endif
+                                    {{ Str::limit($conv['last_message']->content, 30) }}
+                                </span>
                             </div>
-                        </a>
-                    @endforeach
-                </div>
+                        </div>
+                        @if($conv['unread_count'] > 0 && $conv['user']->id != $otherUser->id)
+                            <div class="modern-chat-unread">{{ $conv['unread_count'] }}</div>
+                        @endif
+                    </a>
+                @endforeach
             </div>
-        @endif
-    </div>
 
-    <!-- Right Side - Modern Chat Area -->
-    <div class="modern-chat-area {{ $messages->isEmpty() ? 'hidden' : '' }}" id="modernChatArea">
-        <!-- Empty Chat State -->
-        <div class="modern-empty-chat" id="emptyChatState">
-            <div class="modern-empty-icon">
-                <i class="fas fa-comments"></i>
-            </div>
-            
-            <h2 class="modern-empty-title">Mazungumzo ya WhatsApp</h2>
-            
-            <p class="modern-empty-subtitle">
-                Chagua mazungumzo kutoka kwenye orodha upande wa kushoto 
-                au anza mazungumzo mapya na miongoni mwa viongozi wa kanisa.
-            </p>
+            @if(Auth::user()->isMwanachama() && $leaders->isNotEmpty())
+                <div class="quick-contacts-section">
+                    <div class="quick-contacts-title">
+                        <i class="fas fa-users"></i>
+                        Viongozi wa Kanisa
+                    </div>
+                    <div class="quick-contacts-list">
+                        @foreach($leaders as $leader)
+                            <a href="{{ route('messages.conversation', $leader->id) }}" class="quick-contact-item">
+                                <div class="quick-contact-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="quick-contact-info">
+                                    <div class="quick-contact-name">{{ $leader->name }}</div>
+                                    <div class="quick-contact-role">{{ $leader->role->name ?? 'Kiongozi' }}</div>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </div>
 
-        <!-- Chat Header -->
-        <div class="modern-chat-header-bar" id="modernChatHeader" style="{{ $messages->isEmpty() ? 'display: none;' : '' }}">
-            <div class="modern-back-btn" id="modernBackBtn">
-                <i class="fas fa-arrow-left"></i>
-            </div>
-            
-            <div class="modern-chat-contact-avatar" id="modernContactAvatar">
-                <i class="fas fa-user"></i>
-            </div>
-            
-            <div class="modern-chat-contact-info">
-                <div class="modern-contact-name" id="modernContactName">{{ $otherUser->name }}</div>
-                <div class="modern-contact-status" id="modernContactStatus">
-                    <i class="fas fa-circle" style="font-size: 8px;"></i>
-                    {{ $otherUser->role->name ?? 'Mwanachama' }}
+        <div class="modern-chat-area {{ $messages->isEmpty() ? 'hidden' : '' }}" id="modernChatArea">
+            <div class="modern-empty-chat" id="emptyChatState">
+                <div class="modern-empty-icon">
+                    <i class="fas fa-comments"></i>
                 </div>
+                <h2 class="modern-empty-title">Mazungumzo ya WhatsApp</h2>
+                <p class="modern-empty-subtitle">
+                    Chagua mazungumzo kutoka kwenye orodha upande wa kushoto
+                    au anza mazungumzo mapya na miongoni mwa viongozi wa kanisa.
+                </p>
             </div>
-            
-            <div class="modern-chat-header-actions">
-                <div class="modern-chat-action-btn">
-                    <i class="fas fa-search"></i>
-                </div>
-                <div class="modern-chat-action-btn">
-                    <i class="fas fa-ellipsis-v"></i>
-                </div>
-            </div>
-        </div>
 
-        <!-- Messages Container -->
-        <div class="modern-messages-container" id="modernMessagesContainer" style="{{ $messages->isEmpty() ? 'display: none;' : '' }}">
-            @php
-                $currentDate = null;
-            @endphp
-            
-            @forelse($messages as $message)
+            <div class="modern-chat-header-bar" id="modernChatHeader" style="{{ $messages->isEmpty() ? 'display: none;' : '' }}">
+                <div class="modern-back-btn" id="modernBackBtn">
+                    <i class="fas fa-arrow-left"></i>
+                </div>
+                <div class="modern-chat-contact-avatar" id="modernContactAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="modern-chat-contact-info">
+                    <div class="modern-contact-name" id="modernContactName">{{ $otherUser->name }}</div>
+                    <div class="modern-contact-status" id="modernContactStatus">
+                        <i class="fas fa-circle" style="font-size: 8px;"></i>
+                        {{ $otherUser->role->name ?? 'Mwanachama' }}
+                    </div>
+                </div>
+                <div class="modern-chat-header-actions">
+                    <div class="modern-chat-action-btn">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="modern-chat-action-btn">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modern-messages-container" id="modernMessagesContainer" style="{{ $messages->isEmpty() ? 'display: none;' : '' }}">
                 @php
-                    $messageDate = $message->created_at->format('Y-m-d');
-                    $today = \Carbon\Carbon::today()->format('Y-m-d');
-                    $yesterday = \Carbon\Carbon::yesterday()->format('Y-m-d');
-                    
-                    if ($messageDate === $today) {
-                        $dateLabel = 'Leo';
-                    } elseif ($messageDate === $yesterday) {
-                        $dateLabel = 'Jana';
-                    } else {
-                        $dateLabel = $message->created_at->translatedFormat('l, F j, Y');
-                    }
+                    $currentDate = null;
                 @endphp
-                
-                @if($currentDate !== $messageDate)
-                    <div class="modern-date-separator">
-                        <span>{{ $dateLabel }}</span>
-                    </div>
-                    @php $currentDate = $messageDate; @endphp
-                @endif
-                
-                <div class="modern-message-row {{ $message->sender_id == Auth::id() ? 'sent' : 'received' }}">
-                    <div class="classic-message-bubble">
-                        <div class="classic-message-content">{{ $message->content }}</div>
-                        <div class="classic-message-time">
-                            {{ $message->created_at->format('H:i') }}
-                            @if($message->sender_id == Auth::id())
-                                <i class="fas {{ $message->is_read ? 'fa-check-double' : 'fa-check' }} classic-message-status"></i>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <!-- Messages will be loaded via JavaScript -->
-            @endforelse
-        </div>
 
-        <!-- LUXURY INPUT AREA -->
-        <div class="luxury-input-area" id="luxuryInputArea" style="{{ $messages->isEmpty() ? 'display: none;' : '' }}">
-            <form id="luxuryMessageForm" action="{{ route('messages.send') }}" method="POST">
-                @csrf
-                <input type="hidden" name="receiver_id" value="{{ $otherUser->id }}">
-                
-                <div class="luxury-input-wrapper">
-                    <!-- Left Side Icons -->
-                    <div class="input-icons-container">
-                        <div class="luxury-input-action-btn" title="Emoji">
-                            <i class="far fa-smile"></i>
+                @forelse($messages as $message)
+                    @php
+                        $messageDate = $message->created_at->format('Y-m-d');
+                        $today = \Carbon\Carbon::today()->format('Y-m-d');
+                        $yesterday = \Carbon\Carbon::yesterday()->format('Y-m-d');
+
+                        if ($messageDate === $today) {
+                            $dateLabel = 'Leo';
+                        } elseif ($messageDate === $yesterday) {
+                            $dateLabel = 'Jana';
+                        } else {
+                            $dateLabel = $message->created_at->translatedFormat('l, F j, Y');
+                        }
+                    @endphp
+
+                    @if($currentDate !== $messageDate)
+                        <div class="modern-date-separator">
+                            <span>{{ $dateLabel }}</span>
                         </div>
-                        <div class="luxury-input-action-btn" title="Picha">
-                            <i class="fas fa-image"></i>
-                        </div>
-                        <div class="luxury-input-action-btn" title="Faili">
-                            <i class="fas fa-paperclip"></i>
+                        @php $currentDate = $messageDate; @endphp
+                    @endif
+
+                    <div class="modern-message-row {{ $message->sender_id == Auth::id() ? 'sent' : 'received' }}">
+                        <div class="classic-message-bubble">
+                            <div class="classic-message-content">{{ $message->content }}</div>
+                            <div class="classic-message-time">
+                                {{ $message->created_at->format('H:i') }}
+                                @if($message->sender_id == Auth::id())
+                                    <i class="fas {{ $message->is_read ? 'fa-check-double' : 'fa-check' }} classic-message-status"></i>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Text Input -->
-                    <textarea 
-                        name="content" 
-                        id="luxuryMessageContent" 
-                        rows="1" 
-                        required
-                        class="luxury-message-textarea"
-                        placeholder="Andika ujumbe hapa..."
-                        autocomplete="off"
-                        autofocus></textarea>
-                    
-                    <!-- Right Side Icons -->
-                    <div class="input-icons-container">
-                        <div class="luxury-input-action-btn" title="Rekodi Sauti">
-                            <i class="fas fa-microphone"></i>
+                @empty
+                @endforelse
+            </div>
+
+            <div class="luxury-input-area" id="luxuryInputArea" style="{{ $messages->isEmpty() ? 'display: none;' : '' }}">
+                <form id="luxuryMessageForm" action="{{ route('messages.send') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="receiver_id" value="{{ $otherUser->id }}">
+                    <div class="luxury-input-wrapper">
+                        <div class="input-icons-container">
+                            <div class="luxury-input-action-btn" title="Emoji">
+                                <i class="far fa-smile"></i>
+                            </div>
+                            <div class="luxury-input-action-btn" title="Picha">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            <div class="luxury-input-action-btn" title="Faili">
+                                <i class="fas fa-paperclip"></i>
+                            </div>
                         </div>
-                        <button type="submit" id="luxurySendBtn" class="luxury-send-btn" title="Tuma ujumbe">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
+                        <textarea
+                            name="content"
+                            id="luxuryMessageContent"
+                            rows="1"
+                            required
+                            class="luxury-message-textarea"
+                            placeholder="Andika ujumbe hapa..."
+                            autocomplete="off"
+                            autofocus></textarea>
+                        <div class="input-icons-container">
+                            <div class="luxury-input-action-btn" title="Rekodi Sauti">
+                                <i class="fas fa-microphone"></i>
+                            </div>
+                            <button type="submit" id="luxurySendBtn" class="luxury-send-btn" title="Tuma ujumbe">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -1079,7 +1014,6 @@
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
     const modernSidebar = document.getElementById('modernSidebar');
     const modernChatArea = document.getElementById('modernChatArea');
     const emptyChatState = document.getElementById('emptyChatState');
@@ -1091,14 +1025,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const luxuryMessageContent = document.getElementById('luxuryMessageContent');
     const luxurySendBtn = document.getElementById('luxurySendBtn');
     const modernChatsList = document.getElementById('modernChatsList');
-    
+
     let lastMessageId = {{ $messages->last()?->id ?? 0 }};
     let isMobile = window.innerWidth <= 768;
 
-    // Initialize UI
     function initializeUI() {
         const hasMessages = {{ $messages->isEmpty() ? 'false' : 'true' }};
-        
         if (isMobile) {
             if (hasMessages) {
                 modernSidebar.classList.add('hidden');
@@ -1123,20 +1055,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Scroll to bottom
     function scrollToBottom() {
         if (modernMessagesContainer) {
             modernMessagesContainer.scrollTop = modernMessagesContainer.scrollHeight;
         }
     }
 
-    // Auto-resize textarea with luxury effect
     if (luxuryMessageContent) {
         luxuryMessageContent.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-            
-            // Add active class to wrapper
             const wrapper = this.closest('.luxury-input-wrapper');
             if (wrapper) {
                 if (this.value.trim()) {
@@ -1147,22 +1075,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Add focus effect
         luxuryMessageContent.addEventListener('focus', function() {
             const wrapper = this.closest('.luxury-input-wrapper');
-            if (wrapper) {
-                wrapper.classList.add('focused');
-            }
+            if (wrapper) wrapper.classList.add('focused');
         });
 
         luxuryMessageContent.addEventListener('blur', function() {
             const wrapper = this.closest('.luxury-input-wrapper');
-            if (wrapper) {
-                wrapper.classList.remove('focused');
-            }
+            if (wrapper) wrapper.classList.remove('focused');
         });
 
-        // Submit on Enter (without Shift)
         luxuryMessageContent.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -1173,20 +1095,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Handle form submission
     if (luxuryMessageForm) {
         luxuryMessageForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-
             const content = luxuryMessageContent.value.trim();
             if (!content) return;
 
-            // Disable send button with animation
             luxurySendBtn.disabled = true;
             luxurySendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             luxurySendBtn.style.background = 'var(--whatsapp-gray)';
 
-            // Create temporary message with animation
             const tempId = 'temp-' + Date.now();
             const messageHTML = `
                 <div class="modern-message-row sent">
@@ -1199,11 +1117,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `;
-            
-            // Check if we need a date separator
+
             const today = new Date().toISOString().split('T')[0];
             const lastDateSeparator = modernMessagesContainer.querySelector('.modern-date-separator:last-child');
-            
+
             if (!lastDateSeparator || !modernMessagesContainer.querySelector(`.modern-date-separator span`).textContent.includes('Leo')) {
                 const dateHTML = `
                     <div class="modern-date-separator">
@@ -1215,8 +1132,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 modernMessagesContainer.insertAdjacentHTML('beforeend', messageHTML);
             }
-            
-            // Animate the new message
+
             setTimeout(() => {
                 const tempEl = document.getElementById(tempId);
                 if (tempEl) {
@@ -1225,20 +1141,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     tempEl.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
                 }
             }, 10);
-            
+
             scrollToBottom();
-            
-            // Clear textarea and reset
             luxuryMessageContent.value = '';
             luxuryMessageContent.style.height = 'auto';
-            
-            // Remove active class from wrapper
             const wrapper = luxuryMessageContent.closest('.luxury-input-wrapper');
-            if (wrapper) {
-                wrapper.classList.remove('active');
-            }
+            if (wrapper) wrapper.classList.remove('active');
 
-            // Send AJAX request
             try {
                 const response = await fetch(luxuryMessageForm.action, {
                     method: 'POST',
@@ -1248,21 +1157,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     }
                 });
-
                 const data = await response.json();
-                
                 if (data.success) {
                     const tempEl = document.getElementById(tempId);
                     if (tempEl && data.message) {
                         const statusIcon = tempEl.querySelector('.fa-clock');
                         if (statusIcon) {
-                            statusIcon.className = data.message.is_read ? 
-                                'fas fa-check-double classic-message-status' : 
+                            statusIcon.className = data.message.is_read ?
+                                'fas fa-check-double classic-message-status' :
                                 'fas fa-check classic-message-status';
                         }
                         lastMessageId = data.message.id;
-                        
-                        // Add success animation
                         tempEl.style.borderColor = 'rgba(54, 9, 88, 0.3)';
                     }
                 } else {
@@ -1272,7 +1177,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error:', error);
                 showError(tempId);
             } finally {
-                // Reset send button
                 setTimeout(() => {
                     luxurySendBtn.disabled = false;
                     luxurySendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
@@ -1283,7 +1187,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Show error on failed message send
     function showError(tempId) {
         const tempEl = document.getElementById(tempId);
         if (tempEl) {
@@ -1296,7 +1199,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Poll for new messages
     setInterval(async function() {
         if (lastMessageId > 0 && modernMessagesContainer.style.display !== 'none') {
             try {
@@ -1306,9 +1208,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         'Accept': 'application/json'
                     }
                 });
-
                 const data = await response.json();
-                
                 if (data.messages && data.messages.length > 0) {
                     data.messages.forEach(message => {
                         if (!document.querySelector(`[data-message-id="${message.id}"]`)) {
@@ -1323,8 +1223,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             `;
                             modernMessagesContainer.insertAdjacentHTML('beforeend', messageHTML);
-                            
-                            // Animate new message
                             setTimeout(() => {
                                 const newMessage = modernMessagesContainer.querySelector(`[data-message-id="${message.id}"]`);
                                 if (newMessage) {
@@ -1335,12 +1233,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             }, 10);
                         }
                     });
-                    
                     lastMessageId = data.last_id;
-                    
-                    if (isNearBottom()) {
-                        scrollToBottom();
-                    }
+                    if (isNearBottom()) scrollToBottom();
                 }
             } catch (error) {
                 console.error('Polling error:', error);
@@ -1348,13 +1242,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 3000);
 
-    // Check if user is near bottom of messages
     function isNearBottom() {
         if (!modernMessagesContainer) return false;
         return modernMessagesContainer.scrollHeight - modernMessagesContainer.scrollTop - modernMessagesContainer.clientHeight < 100;
     }
 
-    // Utility functions
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
@@ -1366,30 +1258,25 @@ document.addEventListener('DOMContentLoaded', function() {
         return date.toLocaleTimeString('sw-TZ', {hour: '2-digit', minute: '2-digit'});
     }
 
-    // Mobile navigation
     if (modernChatsList) {
         modernChatsList.addEventListener('click', function(e) {
             const chatItem = e.target.closest('.modern-chat-item');
             if (chatItem && isMobile) {
                 e.preventDefault();
-                
                 modernSidebar.classList.add('hidden');
                 modernChatArea.classList.remove('hidden');
                 emptyChatState.style.display = 'none';
                 modernChatHeader.style.display = 'flex';
                 modernMessagesContainer.style.display = 'flex';
                 luxuryInputArea.style.display = 'block';
-                
                 const chatName = chatItem.querySelector('.modern-chat-name').textContent;
                 document.getElementById('modernContactName').textContent = chatName;
-                
                 const chatId = chatItem.dataset.chatId;
                 window.history.pushState({}, '', `/messages/conversation/${chatId}`);
             }
         });
     }
 
-    // Mobile back button
     if (modernBackBtn) {
         modernBackBtn.addEventListener('click', function() {
             if (isMobile) {
@@ -1399,26 +1286,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 modernMessagesContainer.style.display = 'none';
                 luxuryInputArea.style.display = 'none';
                 emptyChatState.style.display = 'flex';
-                
                 window.history.pushState({}, '', '/messages');
             }
         });
     }
 
-    // Handle window resize
     window.addEventListener('resize', function() {
         isMobile = window.innerWidth <= 768;
         initializeUI();
     });
 
-    // Initialize
     initializeUI();
     scrollToBottom();
-
-    // Add smooth scroll
     modernMessagesContainer.style.scrollBehavior = 'smooth';
-    
-    // Add input animation
+
     const luxuryWrapper = document.querySelector('.luxury-input-wrapper');
     if (luxuryWrapper) {
         luxuryWrapper.addEventListener('mouseenter', function() {
@@ -1426,7 +1307,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.style.transform = 'translateY(-1px)';
             }
         });
-        
         luxuryWrapper.addEventListener('mouseleave', function() {
             if (!this.classList.contains('focused')) {
                 this.style.transform = 'translateY(0)';

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Ongeza Jumuiya - Mfumo wa Kanisa')
+@section('title', 'Ongeza Jumuiya - Mfumo wa ROC')
 @section('page-title', 'Ongeza Jumuiya')
 @section('page-subtitle', 'Sajili jumuiya mpya')
 

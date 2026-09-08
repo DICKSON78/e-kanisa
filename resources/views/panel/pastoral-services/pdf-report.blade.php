@@ -320,8 +320,8 @@
     <!-- Header with Logo -->
     <div class="report-header">
         <div class="header-left">
-            @if(file_exists(public_path('images/kkkt_logo.png')))
-                <img src="{{ public_path('images/kkkt_logo.png') }}" alt="Logo" class="logo">
+            @if(file_exists(public_path('images/roc_logo.jpeg')))
+                <img src="{{ public_path('images/roc_logo.jpeg') }}" alt="Logo" class="logo">
             @endif
         </div>
         <div class="header-center">

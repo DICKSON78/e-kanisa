@@ -12,10 +12,17 @@ class Department extends Model
         'slug',
         'description',
         'is_active',
+        'annual_budget',
+        'spent_amount',
+        'head_of_department',
+        'contact_email',
+        'contact_phone',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'annual_budget' => 'decimal:2',
+        'spent_amount' => 'decimal:2',
     ];
 
     // Automatically generate slug from name

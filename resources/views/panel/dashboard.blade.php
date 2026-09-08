@@ -1,384 +1,427 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard - Mfumo wa Kanisa')
-@section('page-title', 'Dashboard')
-@section('page-subtitle', 'Takwimu za jumla za kanisa')
+@section('title', 'Dashboard - Mfumo wa ROC')
 
 @section('content')
 @php
-// Helper function to format money with M, B, K
 function formatMoney($amount) {
-    if ($amount >= 1000000000) { // Billions
+    if ($amount >= 1000000000) {
         return number_format($amount / 1000000000, 2) . 'B';
-    } elseif ($amount >= 1000000) { // Millions
+    } elseif ($amount >= 1000000) {
         return number_format($amount / 1000000, 2) . 'M';
-    } elseif ($amount >= 1000) { // Thousands
+    } elseif ($amount >= 1000) {
         return number_format($amount / 1000, 1) . 'K';
     } else {
         return number_format($amount, 0);
     }
 }
 @endphp
+
+<!-- Page Header -->
+<div class="flex items-center justify-between mb-8 pt-2 pb-4">
+    <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+            <i class="fas fa-th-large" style="color: #efc120"></i>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p class="text-sm text-gray-500">MFUMO WA ROC — Overview ya kanisa, wanachama na shughuli</p>
+        </div>
+    </div>
+    <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500">
+        <i class="fas fa-calendar text-xs" style="color: #efc120"></i>
+        {{ \Carbon\Carbon::now()->translatedFormat('l, d M Y') }}
+    </div>
+</div>
+
 <!-- Stats Cards -->
-<div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
-    <div class="card bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6 hover:shadow-lg transition-shadow duration-200">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm font-medium text-gray-700">Jumla ya Waumini</p>
-                <p class="mt-1 text-2xl md:text-3xl font-semibold text-gray-900">{{ number_format($totalMembers) }}</p>
-                <p class="mt-1 text-xs md:text-sm text-gray-500 flex items-center">
-                    <span class="text-green-600 mr-1"><i class="fas fa-users"></i></span>
-                    <span>{{ number_format($activeMembers) }} hai</span>
-                </p>
-            </div>
-            <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-primary-100 flex items-center justify-center">
-                <i class="fas fa-users text-primary-500 text-lg md:text-xl"></i>
+<div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 transition-all duration-300 hover:shadow-lg group">
+        <div class="flex items-center justify-between mb-3">
+            <p class="text-sm font-medium text-gray-500">Jumla ya Wanachama</p>
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(54,9,88,0.08)">
+                <i class="fas fa-users text-sm" style="color: #360958"></i>
             </div>
         </div>
+        <p class="text-2xl font-bold text-gray-900 mb-1">{{ number_format($totalMembers) }}</p>
+        <p class="text-xs text-gray-400">+0 wanachama wapya mwezi huu</p>
     </div>
 
-    <div class="card bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6 hover:shadow-lg transition-shadow duration-200">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm font-medium text-gray-700">Mapato ya Mwezi</p>
-                <p class="mt-1 text-2xl md:text-3xl font-semibold text-gray-900">{{ formatMoney($monthlyIncome) }} TSh</p>
-                <p class="mt-1 text-xs md:text-sm text-gray-500 flex items-center">
-                    <span class="text-green-600 mr-1"><i class="fas fa-arrow-up"></i></span>
-                    <span>{{ \Carbon\Carbon::now()->translatedFormat('F Y') }}</span>
-                </p>
-            </div>
-            <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-green-100 flex items-center justify-center">
-                <i class="fas fa-hand-holding-usd text-green-500 text-lg md:text-xl"></i>
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 transition-all duration-300 hover:shadow-lg group">
+        <div class="flex items-center justify-between mb-3">
+            <p class="text-sm font-medium text-gray-500">Wanachama Hai</p>
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-50">
+                <i class="fas fa-user-check text-sm text-emerald-500"></i>
             </div>
         </div>
+        <p class="text-2xl font-bold text-gray-900 mb-1">{{ number_format($activeMembers) }}</p>
+        <p class="text-xs text-gray-400">Kati ya {{ number_format($totalMembers) }} wanachama</p>
     </div>
 
-    <div class="card bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6 hover:shadow-lg transition-shadow duration-200">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm font-medium text-gray-700">Matukio Yanayokuja</p>
-                <p class="mt-1 text-2xl md:text-3xl font-semibold text-gray-900">{{ count($upcomingEvents) }}</p>
-                <p class="mt-1 text-xs md:text-sm text-gray-500 flex items-center">
-                    <span class="text-blue-500 mr-1"><i class="fas fa-calendar-alt"></i></span>
-                    <span>Yaliyopangwa</span>
-                </p>
-            </div>
-            <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-blue-100 flex items-center justify-center">
-                <i class="fas fa-calendar-alt text-blue-500 text-lg md:text-xl"></i>
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 transition-all duration-300 hover:shadow-lg group">
+        <div class="flex items-center justify-between mb-3">
+            <p class="text-sm font-medium text-gray-500">Mapato ya Mwezi</p>
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-50">
+                <i class="fas fa-hand-holding-usd text-sm text-blue-500"></i>
             </div>
         </div>
+        <p class="text-2xl font-bold text-gray-900 mb-1">TZS {{ formatMoney($monthlyIncome) }}</p>
+        <p class="text-xs text-gray-400">Jumla mpaka sasa</p>
     </div>
 
-    <div class="card bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6 hover:shadow-lg transition-shadow duration-200">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm font-medium text-gray-700">Maombi ya Fedha</p>
-                <p class="mt-1 text-2xl md:text-3xl font-semibold text-yellow-600">{{ $pendingRequests }}</p>
-                <p class="mt-1 text-xs md:text-sm text-gray-500 flex items-center">
-                    <span class="text-orange-500 mr-1"><i class="fas fa-clock"></i></span>
-                    <span>Yanasubiri</span>
-                </p>
-            </div>
-            <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-secondary-100 flex items-center justify-center">
-                <i class="fas fa-paper-plane text-secondary-500 text-lg md:text-xl"></i>
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 transition-all duration-300 hover:shadow-lg group">
+        <div class="flex items-center justify-between mb-3">
+            <p class="text-sm font-medium text-gray-500">Matukio Yanayokuja</p>
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-purple-50">
+                <i class="fas fa-calendar-alt text-sm text-purple-500"></i>
             </div>
         </div>
+        <p class="text-2xl font-bold text-gray-900 mb-1">{{ count($upcomingEvents) }}</p>
+        <p class="text-xs text-gray-400">Yaliyopangwa</p>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 transition-all duration-300 hover:shadow-lg group">
+        <div class="flex items-center justify-between mb-3">
+            <p class="text-sm font-medium text-gray-500">Maombi ya Fedha</p>
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-amber-50">
+                <i class="fas fa-paper-plane text-sm text-amber-500"></i>
+            </div>
+        </div>
+        <p class="text-2xl font-bold text-gray-900 mb-1">{{ $pendingRequests }}</p>
+        <p class="text-xs text-gray-400">Yanasubiri majibu</p>
     </div>
 </div>
 
 <!-- Quick Actions -->
-<div class="mb-6 md:mb-8">
-    <h3 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
-        <i class="fas fa-bolt text-secondary-500 mr-2"></i> Vitendo Vya Haraka
-    </h3>
-    <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
-        <!-- Add Member -->
-        <a href="{{ route('members.create') }}" class="card bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-4 md:p-6 cursor-pointer block">
-            <div class="flex items-center">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-primary-100 rounded-lg flex items-center justify-center mr-3 md:mr-4">
-                    <i class="fas fa-user-plus text-primary-500 text-lg md:text-xl"></i>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-gray-900 text-sm md:text-base">Ongeza Muumini</h4>
-                    <p class="text-xs md:text-sm text-gray-500">Sajili muumini mpya</p>
-                </div>
+<div class="bg-white rounded-2xl border border-gray-200 shadow-sm mb-6 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                <i class="fas fa-bolt text-sm" style="color: #efc120"></i>
             </div>
-        </a>
-
-        <!-- Record Income -->
-        <a href="{{ route('income.create') }}" class="card bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-4 md:p-6 cursor-pointer block">
-            <div class="flex items-center">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-green-100 rounded-lg flex items-center justify-center mr-3 md:mr-4">
-                    <i class="fas fa-hand-holding-usd text-green-500 text-lg md:text-xl"></i>
+            Vitendo Vya Haraka
+        </h3>
+        <span class="text-xs text-gray-400">Fanya kazi kwa haraka</span>
+    </div>
+    <div class="p-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <a href="{{ route('members.create') }}" class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-300 hover:shadow-[0_10px_25px_rgba(0,0,0,0.08)] hover:-translate-y-2 group cursor-pointer block">
+                <div class="flex flex-col items-center text-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-user-plus text-lg text-blue-500"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900 text-sm">Ongeza Muumini</h4>
+                        <p class="text-xs text-gray-400 mt-0.5">Sajili muumini mpya</p>
+                    </div>
                 </div>
-                <div>
-                    <h4 class="font-semibold text-gray-900 text-sm md:text-base">Rekodi Mapato</h4>
-                    <p class="text-xs md:text-sm text-gray-500">Andika mapato mapya</p>
+            </a>
+            <a href="{{ route('income.create') }}" class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-300 hover:shadow-[0_10px_25px_rgba(0,0,0,0.08)] hover:-translate-y-2 group cursor-pointer block">
+                <div class="flex flex-col items-center text-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-hand-holding-usd text-lg text-emerald-500"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900 text-sm">Rekodi Mapato</h4>
+                        <p class="text-xs text-gray-400 mt-0.5">Andika mapato mapya</p>
+                    </div>
                 </div>
-            </div>
-        </a>
-
-        <!-- Add Offering -->
-        <a href="{{ route('offerings.create') }}" class="card bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-4 md:p-6 cursor-pointer block">
-            <div class="flex items-center">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-3 md:mr-4">
-                    <i class="fas fa-gift text-blue-500 text-lg md:text-xl"></i>
+            </a>
+            <a href="{{ route('offerings.create') }}" class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-300 hover:shadow-[0_10px_25px_rgba(0,0,0,0.08)] hover:-translate-y-2 group cursor-pointer block">
+                <div class="flex flex-col items-center text-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-gift text-lg text-amber-500"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900 text-sm">Ongeza Sadaka</h4>
+                        <p class="text-xs text-gray-400 mt-0.5">Rekodi sadaka mpya</p>
+                    </div>
                 </div>
-                <div>
-                    <h4 class="font-semibold text-gray-900 text-sm md:text-base">Ongeza Sadaka</h4>
-                    <p class="text-xs md:text-sm text-gray-500">Rekodi sadaka mpya</p>
+            </a>
+            <a href="{{ route('events.create') }}" class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 transition-all duration-300 hover:shadow-[0_10px_25px_rgba(0,0,0,0.08)] hover:-translate-y-2 group cursor-pointer block">
+                <div class="flex flex-col items-center text-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-calendar-plus text-lg text-purple-500"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900 text-sm">Tengeneza Tukio</h4>
+                        <p class="text-xs text-gray-400 mt-0.5">Ongeza tukio jipya</p>
+                    </div>
                 </div>
-            </div>
-        </a>
-
-        <!-- Create Event -->
-        <a href="{{ route('events.create') }}" class="card bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 p-4 md:p-6 cursor-pointer block">
-            <div class="flex items-center">
-                <div class="w-10 h-10 md:w-12 md:h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-3 md:mr-4">
-                    <i class="fas fa-calendar-plus text-purple-500 text-lg md:text-xl"></i>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-gray-900 text-sm md:text-base">Tengeneza Tukio</h4>
-                    <p class="text-xs md:text-sm text-gray-500">Ongeza tukio jipya</p>
-                </div>
-            </div>
-        </a>
+            </a>
+        </div>
     </div>
 </div>
 
-<!-- Charts and Recent Activity -->
-<div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6 md:mb-8">
-    <!-- Mapato Chart -->
-    <div class="card bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6">
-        <div class="flex flex-col gap-3 mb-4">
-            <!-- Header with Title and Total -->
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                <h3 class="text-lg font-medium text-gray-700 flex items-center">
-                    <i class="fas fa-chart-line mr-2 text-primary-500"></i>
-                    Mapato ya Miezi 6 Iliyopita
-                </h3>
-                <div class="text-sm text-gray-600">
-                    <i class="fas fa-coins mr-1"></i>
-                    Jumla: <span id="chartTotal" class="font-semibold text-primary-600">{{ formatMoney(collect($monthlyIncomeData)->sum('amount')) }} TSh</span>
+<!-- Charts + Activity Row -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
+    <!-- Income Chart -->
+    <div class="xl:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                    <i class="fas fa-chart-area text-sm" style="color: #efc120"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold text-gray-900">Mapato ya Miezi</h3>
+                    <p class="text-xs text-gray-400">Mpangilio wa mapato kwa mwezi</p>
                 </div>
             </div>
-
+            <span id="chartTotal" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-900">{{ formatMoney(collect($monthlyIncomeData)->sum('amount')) }} TSh</span>
+        </div>
+        <div class="p-6">
             <!-- Filters -->
-            <div class="flex flex-wrap items-center gap-2">
-                <div class="flex items-center gap-2">
-                    <label for="yearFilter" class="text-sm text-gray-600">Mwaka:</label>
-                    <select id="yearFilter" class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+            <div class="flex flex-wrap items-center gap-2 mb-5">
+                <div class="flex items-center gap-1.5 bg-gray-100 rounded-lg px-2 py-1">
+                    <i class="fas fa-calendar text-[10px] text-gray-400"></i>
+                    <select id="yearFilter" class="bg-transparent text-xs font-medium text-gray-700 border-none outline-none cursor-pointer">
                         @php
                             $currentYear = date('Y');
-                            $startYear = 2020; // Start from 2020 or adjust as needed
+                            $startYear = 2020;
                         @endphp
                         @for($year = $currentYear; $year >= $startYear; $year--)
                             <option value="{{ $year }}" {{ $year == $currentYear ? 'selected' : '' }}>{{ $year }}</option>
                         @endfor
                     </select>
                 </div>
-
-                <div class="flex items-center gap-2">
-                    <label for="periodFilter" class="text-sm text-gray-600">Kipindi:</label>
-                    <select id="periodFilter" class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                        <option value="last_6_months" selected>Miezi 6 Iliyopita</option>
+                <div class="flex items-center gap-1.5 bg-gray-100 rounded-lg px-2 py-1">
+                    <select id="periodFilter" class="bg-transparent text-xs font-medium text-gray-700 border-none outline-none cursor-pointer">
+                        <option value="last_6_months" selected>Miezi 6</option>
                         <option value="this_year">Mwaka Huu</option>
                         <option value="custom_year">Mwaka Mzima</option>
                     </select>
                 </div>
-
-                <span id="loadingIndicator" class="text-xs text-gray-500 hidden">
+                <span id="loadingIndicator" class="text-[10px] text-gray-400 hidden">
                     <i class="fas fa-spinner fa-spin"></i> Inapakia...
                 </span>
             </div>
-        </div>
-        <div class="h-48 md:h-64 relative">
-            @php
-                $hasData = collect($monthlyIncomeData)->sum('amount') > 0;
-            @endphp
-            @if($hasData)
-                <canvas id="incomeLineChart"></canvas>
-            @else
-                <div class="w-full h-full flex items-center justify-center">
-                    <div class="text-center">
-                        <i class="fas fa-chart-line text-4xl text-gray-300 mb-2"></i>
-                        <p class="text-gray-500 text-sm">Hakuna data ya mapato</p>
+
+            <div class="h-72 relative">
+                @php
+                    $hasData = collect($monthlyIncomeData)->sum('amount') > 0;
+                @endphp
+                @if($hasData)
+                    <canvas id="incomeLineChart"></canvas>
+                @else
+                    <div class="w-full h-full flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-chart-line text-2xl text-gray-300"></i>
+                            </div>
+                            <p class="text-sm font-medium text-gray-900 mb-1">Hakuna data ya mapato</p>
+                            <p class="text-xs text-gray-400">Data itaonekana baada ya kurekodi mapato</p>
+                        </div>
                     </div>
-                </div>
-            @endif
+                @endif
+            </div>
         </div>
     </div>
 
-    <!-- Recent Activity -->
-    <div class="card bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6">
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
-            <h3 class="text-lg font-medium text-gray-700 flex items-center">
-                <i class="fas fa-history mr-2 text-primary-500"></i>
-                Shughuli Za Hivi Karibuni
-            </h3>
+    <!-- Recent Activity Timeline -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                    <i class="fas fa-history text-sm" style="color: #efc120"></i>
+                </div>
+                <h3 class="text-base font-semibold text-gray-900">Shughuli</h3>
+            </div>
+            <span class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Hivi Karibuni</span>
         </div>
-        <div class="space-y-3 md:space-y-4">
-            @forelse($recentMembers->take(2) as $member)
-            <div class="flex items-start hover:bg-gray-50 p-2 rounded-lg transition-colors duration-200">
-                <div class="w-8 h-8 md:w-10 md:h-10 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mr-3 md:mr-4 flex-shrink-0">
-                    <i class="fas fa-user-plus text-sm md:text-base"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-medium text-gray-900 text-sm md:text-base truncate">Muumini mpya: {{ $member->full_name }}</p>
-                    <p class="text-xs md:text-sm text-gray-500">{{ $member->created_at->diffForHumans() }}</p>
-                </div>
-            </div>
-            @empty
-            @endforelse
+        <div class="p-6">
+            @php
+                $timelineItems = collect();
+                foreach($recentMembers->take(2) as $m) {
+                    $timelineItems->push(['type' => 'member', 'title' => 'Muumini mpya: ' . $m->full_name, 'time' => $m->created_at, 'icon' => 'fa-user-plus', 'color' => 'emerald']);
+                }
+                foreach($recentIncomes->take(2) as $i) {
+                    $timelineItems->push(['type' => 'income', 'title' => 'Mapato: ' . ($i->category->name ?? 'Bila aina') . ' - ' . formatMoney($i->amount) . ' TSh', 'time' => $i->created_at, 'icon' => 'fa-hand-holding-usd', 'color' => 'blue']);
+                }
+                foreach($recentEvents->take(1) as $e) {
+                    $timelineItems->push(['type' => 'event', 'title' => 'Tukio: ' . $e->name, 'time' => $e->created_at, 'icon' => 'fa-calendar-plus', 'color' => 'purple']);
+                }
+                $timelineItems = $timelineItems->sortByDesc('time')->take(6);
+            @endphp
 
-            @forelse($recentIncomes->take(1) as $income)
-            <div class="flex items-start hover:bg-gray-50 p-2 rounded-lg transition-colors duration-200">
-                <div class="w-8 h-8 md:w-10 md:h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3 md:mr-4 flex-shrink-0">
-                    <i class="fas fa-hand-holding-usd text-sm md:text-base"></i>
+            @if($timelineItems->count() > 0)
+            <div class="space-y-0">
+                @foreach($timelineItems as $index => $item)
+                <div class="relative pl-8 {{ !$loop->last ? 'pb-6' : '' }}">
+                    @if(!$loop->last)
+                    <div class="absolute left-[11px] top-6 bottom-0 w-px bg-gray-200"></div>
+                    @endif
+                    <div class="absolute left-0 top-0.5 w-6 h-6 rounded-full flex items-center justify-center
+                        @if($item['color'] === 'emerald') bg-emerald-50
+                        @elseif($item['color'] === 'blue') bg-blue-50
+                        @elseif($item['color'] === 'purple') bg-purple-50
+                        @else bg-gray-50 @endif z-10">
+                        <i class="fas {{ $item['icon'] }} text-[10px]
+                            @if($item['color'] === 'emerald') text-emerald-500
+                            @elseif($item['color'] === 'blue') text-blue-500
+                            @elseif($item['color'] === 'purple') text-purple-500
+                            @else text-gray-400 @endif"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-sm font-medium text-gray-900 leading-tight">{{ $item['title'] }}</p>
+                        <p class="text-[11px] text-gray-400 mt-0.5">{{ $item['time']->diffForHumans() }}</p>
+                    </div>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-medium text-gray-900 text-sm md:text-base truncate">
-                        Mapato ya {{ $income->category->name ?? 'Bila aina' }}: {{ formatMoney($income->amount) }} TSh
-                    </p>
-                    <p class="text-xs md:text-sm text-gray-500">{{ $income->created_at->diffForHumans() }}</p>
-                </div>
+                @endforeach
             </div>
-            @empty
-            @endforelse
-
-            @forelse($recentEvents->take(1) as $event)
-            <div class="flex items-start hover:bg-gray-50 p-2 rounded-lg transition-colors duration-200">
-                <div class="w-8 h-8 md:w-10 md:h-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mr-3 md:mr-4 flex-shrink-0">
-                    <i class="fas fa-calendar-plus text-sm md:text-base"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-medium text-gray-900 text-sm md:text-base truncate">Tukio: {{ $event->name }}</p>
-                    <p class="text-xs md:text-sm text-gray-500">{{ $event->created_at->diffForHumans() }}</p>
-                </div>
-            </div>
-            @empty
-            @endforelse
-
-            @if($recentMembers->isEmpty() && $recentIncomes->isEmpty() && $recentEvents->isEmpty())
+            @else
             <div class="text-center py-8">
-                <i class="fas fa-inbox text-4xl text-gray-300 mb-2"></i>
-                <p class="text-gray-500 text-sm">Hakuna shughuli za hivi karibuni</p>
+                <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-inbox text-xl text-gray-300"></i>
+                </div>
+                <p class="text-sm font-medium text-gray-900 mb-1">Hakuna shughuli</p>
+                <p class="text-xs text-gray-400">Shughuli zitaonekana hapa</p>
             </div>
             @endif
         </div>
     </div>
 </div>
 
+<!-- Bottom Row: Upcoming Events + Recent Members -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Upcoming Events -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                    <i class="fas fa-calendar-alt text-sm" style="color: #efc120"></i>
+                </div>
+                <h3 class="text-base font-semibold text-gray-900">Matukio Yanayokuja</h3>
+            </div>
+            <a href="{{ route('events.index') }}" class="text-xs font-medium hover:underline" style="color: #efc120">Tazama Zote</a>
+        </div>
+        <div class="p-6">
+            @forelse($upcomingEvents->take(4) as $event)
+            <div class="flex items-start gap-4 {{ !$loop->last ? 'pb-4 mb-4 border-b border-gray-100' : '' }}">
+                <div class="w-12 h-12 rounded-xl bg-purple-50 flex flex-col items-center justify-center flex-shrink-0">
+                    <span class="text-[10px] font-bold text-purple-600 uppercase">{{ \Carbon\Carbon::parse($event->event_date)->translatedFormat('M') }}</span>
+                    <span class="text-base font-bold text-purple-700 -mt-0.5">{{ \Carbon\Carbon::parse($event->event_date)->format('d') }}</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-900 truncate">{{ $event->name }}</h4>
+                    <div class="flex items-center gap-3 mt-1">
+                        <span class="text-xs text-gray-500"><i class="fas fa-clock mr-1"></i>{{ $event->event_time ?? '10:00' }}</span>
+                        <span class="text-xs text-gray-500"><i class="fas fa-map-marker-alt mr-1"></i>{{ $event->venue ?? 'Kanisa' }}</span>
+                    </div>
+                </div>
+            </div>
+            @empty
+            <div class="text-center py-8">
+                <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-calendar-plus text-xl text-gray-300"></i>
+                </div>
+                <p class="text-sm font-medium text-gray-900 mb-1">Hakuna matukio</p>
+                <p class="text-xs text-gray-400 mb-3">Matukio yajayo yataonekana hapa</p>
+                <a href="{{ route('events.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white" style="background: #360958">
+                    <i class="fas fa-plus"></i> Tengeneza Tukio
+                </a>
+            </div>
+            @endforelse
+        </div>
+    </div>
+
+    <!-- Recent Members -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                    <i class="fas fa-user-plus text-sm" style="color: #efc120"></i>
+                </div>
+                <h3 class="text-base font-semibold text-gray-900">Wanachama Wapya</h3>
+            </div>
+            <a href="{{ route('members.index') }}" class="text-xs font-medium hover:underline" style="color: #efc120">Tazama Zote</a>
+        </div>
+        <div class="p-6">
+            @forelse($recentMembers->take(4) as $member)
+            <div class="flex items-center gap-4 {{ !$loop->last ? 'pb-4 mb-4 border-b border-gray-100' : '' }}">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold" style="background: linear-gradient(135deg, #efc120, #d4a81c); color: #360958;">
+                    {{ strtoupper(substr($member->first_name, 0, 1) . substr($member->last_name, 0, 1)) }}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-semibold text-gray-900 truncate">{{ $member->full_name }}</h4>
+                    <p class="text-xs text-gray-400 mt-0.5">{{ $member->created_at->diffForHumans() }} • {{ $member->member_number }}</p>
+                </div>
+                <a href="{{ route('members.show', $member->id) }}" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all">
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+            @empty
+            <div class="text-center py-8">
+                <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-users text-xl text-gray-300"></i>
+                </div>
+                <p class="text-sm font-medium text-gray-900 mb-1">Hakuna wanachama wapya</p>
+                <p class="text-xs text-gray-400 mb-3">Wanachama wapya wataonekana hapa</p>
+                <a href="{{ route('members.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white" style="background: #360958">
+                    <i class="fas fa-plus"></i> Sajili Mwanachama
+                </a>
+            </div>
+            @endforelse
+        </div>
+    </div>
+</div>
 
 @endsection
 
 @section('scripts')
-<!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('Dashboard loaded successfully');
-
-        // Add hover effects to cards
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px)';
-                this.style.boxShadow = '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-            });
-
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)';
-            });
-        });
-
-        // Format money helper for JavaScript
         function formatMoneyJS(amount) {
-            if (amount >= 1000000000) {
-                return (amount / 1000000000).toFixed(2) + 'M';
-            } else if (amount >= 1000000) {
-                return (amount / 1000000).toFixed(2) + 'M';
-            } else if (amount >= 1000) {
-                return (amount / 1000).toFixed(1) + 'K';
-            } else {
-                return amount.toLocaleString();
-            }
+            if (amount >= 1000000000) { return (amount / 1000000000).toFixed(2) + 'B'; }
+            else if (amount >= 1000000) { return (amount / 1000000).toFixed(2) + 'M'; }
+            else if (amount >= 1000) { return (amount / 1000).toFixed(1) + 'K'; }
+            else { return amount.toLocaleString(); }
         }
 
-        // Auto-refresh dashboard statistics
         function refreshDashboardStats() {
             fetch('/api/dashboard-stats')
                 .then(response => response.json())
                 .then(data => {
-                    // Update stats cards - find by the card content structure
-                    const statsCards = document.querySelectorAll('.card');
-
+                    const statsCards = document.querySelectorAll('.group');
                     statsCards.forEach(card => {
-                        const label = card.querySelector('p.text-sm');
-                        const value = card.querySelector('p.text-2xl, p.text-3xl');
-
+                        const label = card.querySelector('.uppercase');
+                        const value = card.querySelector('.text-3xl');
                         if (label && value) {
                             const labelText = label.textContent.trim();
-
-                            // Update each stat based on label
-                            if (labelText === 'Jumla ya Waumini') {
-                                value.textContent = data.total_members.toLocaleString();
-                            } else if (labelText === 'Mapato ya Mwezi') {
-                                value.textContent = formatMoneyJS(data.monthly_income) + ' TSh';
-                            } else if (labelText === 'Maombi ya Fedha') {
-                                value.textContent = data.pending_requests;
-                            } else if (labelText === 'Matukio Yanayokuja') {
-                                value.textContent = data.upcoming_events;
-                            }
+                            if (labelText === 'Jumla ya Waumini') { value.textContent = data.total_members.toLocaleString(); }
+                            else if (labelText === 'Mapato ya Mwezi') { value.textContent = formatMoneyJS(data.monthly_income) + ' TSh'; }
+                            else if (labelText === 'Maombi ya Fedha') { value.textContent = data.pending_requests; }
+                            else if (labelText === 'Matukio Yanayokuja') { value.textContent = data.upcoming_events; }
                         }
                     });
-
-                    console.log('Dashboard stats updated:', data);
                 })
-                .catch(error => {
-                    console.error('Error refreshing dashboard stats:', error);
-                });
+                .catch(error => console.error('Error refreshing stats:', error));
         }
 
-        // Refresh stats every 30 seconds
         setInterval(refreshDashboardStats, 30000);
+        document.addEventListener('visibilitychange', function() { if (!document.hidden) refreshDashboardStats(); });
 
-        // Also refresh when page becomes visible (user switches back to tab)
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                refreshDashboardStats();
-            }
-        });
-
-        // Initialize Line Chart for Monthly Income
         const incomeChartCanvas = document.getElementById('incomeLineChart');
         if (incomeChartCanvas) {
-            // Data from Laravel
             const monthlyData = @json($monthlyIncomeData);
 
-            // Format money function for chart
             function formatChartMoney(amount) {
-                if (amount >= 1000000000) {
-                    return (amount / 1000000000).toFixed(2) + 'B';
-                } else if (amount >= 1000000) {
-                    return (amount / 1000000).toFixed(2) + 'M';
-                } else if (amount >= 1000) {
-                    return (amount / 1000).toFixed(1) + 'K';
-                } else {
-                    return amount.toFixed(0);
-                }
+                if (amount >= 1000000000) { return (amount / 1000000000).toFixed(2) + 'B'; }
+                else if (amount >= 1000000) { return (amount / 1000000).toFixed(2) + 'M'; }
+                else if (amount >= 1000) { return (amount / 1000).toFixed(1) + 'K'; }
+                else { return amount.toFixed(0); }
             }
 
-            // Extract labels and data
             const labels = monthlyData.map(item => item.month);
             const amounts = monthlyData.map(item => item.amount);
-
-            // Get canvas context
             const ctx = incomeChartCanvas.getContext('2d');
 
-            // Initialize Chart
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(54, 9, 88, 0.25)');
+            gradient.addColorStop(0.5, 'rgba(54, 9, 88, 0.08)');
+            gradient.addColorStop(1, 'rgba(54, 9, 88, 0.01)');
+
             const incomeChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -386,18 +429,18 @@ function formatMoney($amount) {
                     datasets: [{
                         label: 'Mapato',
                         data: amounts,
-                        borderColor: '#360958',                    // Primary color
-                        backgroundColor: 'rgba(54, 9, 88, 0.08)',  // Solid light purple background
+                        borderColor: '#360958',
+                        backgroundColor: gradient,
                         borderWidth: 3,
-                        fill: true,                                // Enable fill
-                        tension: 0.4,                              // Smooth curves
-                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
                         pointBackgroundColor: '#360958',
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2,
                         pointHoverRadius: 7,
-                        pointHoverBackgroundColor: '#360958',
-                        pointHoverBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#efc120',
+                        pointHoverBorderColor: '#360958',
                         pointHoverBorderWidth: 3
                     }]
                 },
@@ -405,17 +448,18 @@ function formatMoney($amount) {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            display: false
-                        },
+                        legend: { display: false },
                         tooltip: {
                             backgroundColor: '#1f2937',
                             titleColor: '#fff',
                             bodyColor: '#fff',
-                            borderColor: '#360958',
+                            borderColor: '#efc120',
                             borderWidth: 1,
-                            padding: 12,
+                            padding: 14,
+                            cornerRadius: 12,
                             displayColors: false,
+                            titleFont: { weight: '600', size: 13 },
+                            bodyFont: { size: 12 },
                             callbacks: {
                                 label: function(context) {
                                     return 'Mapato: ' + formatChartMoney(context.parsed.y) + ' TSh';
@@ -426,94 +470,50 @@ function formatMoney($amount) {
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)',
-                                drawBorder: false
-                            },
+                            grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false },
                             ticks: {
-                                callback: function(value) {
-                                    return formatChartMoney(value);
-                                },
-                                color: '#6b7280',
-                                font: {
-                                    size: 11
-                                }
+                                callback: function(value) { return formatChartMoney(value); },
+                                color: '#9ca3af',
+                                font: { size: 11, weight: '500' },
+                                padding: 8
                             }
                         },
                         x: {
-                            grid: {
-                                display: false,
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: '#6b7280',
-                                font: {
-                                    size: 11
-                                }
-                            }
+                            grid: { display: false, drawBorder: false },
+                            ticks: { color: '#9ca3af', font: { size: 11, weight: '500' }, padding: 8 }
                         }
                     },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    }
+                    interaction: { intersect: false, mode: 'index' }
                 }
             });
 
-            // Auto-filter functionality
             const yearFilter = document.getElementById('yearFilter');
             const periodFilter = document.getElementById('periodFilter');
             const loadingIndicator = document.getElementById('loadingIndicator');
 
-            // Function to update chart
             function updateChart() {
                 const year = yearFilter.value;
                 const period = periodFilter.value;
+                if (loadingIndicator) loadingIndicator.classList.remove('hidden');
 
-                // Show loading indicator
-                if (loadingIndicator) {
-                    loadingIndicator.classList.remove('hidden');
-                }
-
-                // Fetch filtered data
                 fetch(`/api/filtered-income?year=${year}&period=${period}`)
                     .then(response => response.json())
                     .then(data => {
-                        // Update chart data
-                        const newLabels = data.data.map(item => item.month);
-                        const newAmounts = data.data.map(item => item.amount);
-
-                        incomeChart.data.labels = newLabels;
-                        incomeChart.data.datasets[0].data = newAmounts;
-                        incomeChart.update();
-
-                        // Update total
+                        incomeChart.data.labels = data.data.map(item => item.month);
+                        incomeChart.data.datasets[0].data = data.data.map(item => item.amount);
+                        incomeChart.update('active');
                         const chartTotal = document.getElementById('chartTotal');
-                        if (chartTotal) {
-                            chartTotal.textContent = formatChartMoney(data.total) + ' TSh';
-                        }
-
-                        // Hide loading indicator
-                        if (loadingIndicator) {
-                            loadingIndicator.classList.add('hidden');
-                        }
+                        if (chartTotal) chartTotal.textContent = formatChartMoney(data.total) + ' TSh';
+                        if (loadingIndicator) loadingIndicator.classList.add('hidden');
                     })
                     .catch(error => {
-                        console.error('Error fetching chart data:', error);
-                        alert('Kuna tatizo la kupata data. Tafadhali jaribu tena.');
-
-                        // Hide loading indicator
-                        if (loadingIndicator) {
-                            loadingIndicator.classList.add('hidden');
-                        }
+                        console.error('Error:', error);
+                        if (loadingIndicator) loadingIndicator.classList.add('hidden');
                     });
             }
 
-            // Add change event listeners to both filters
-            if (yearFilter && periodFilter) {
-                yearFilter.addEventListener('change', updateChart);
-                periodFilter.addEventListener('change', updateChart);
-            }
+            if (yearFilter) yearFilter.addEventListener('change', updateChart);
+            if (periodFilter) periodFilter.addEventListener('change', updateChart);
         }
     });
 </script>

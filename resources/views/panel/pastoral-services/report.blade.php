@@ -1,368 +1,410 @@
 @extends('layouts.app')
 
-@section('title', 'Ripoti ya Huduma za Kichungaji - Mfumo wa Kanisa')
+@section('title', 'Ripoti ya Huduma za Kichungaji - Mfumo wa ROC')
 @section('page-title', 'Ripoti ya Huduma za Kichungaji')
-@section('page-subtitle', 'Takwimu za huduma za kichungaji kwa wiki, mwezi na mwaka')
+@section('page-subtitle', 'Takwimu na muhtasari wa huduma kwa mwaka {{ $year }}')
+
+@section('styles')
+<style>
+    .report-hero {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2rem 2.5rem;
+        color: #111827;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .report-hero-stat {
+        background: #f9fafb;
+        border: 1px solid #f0f0f0;
+        border-radius: 1rem;
+        padding: 1.25rem;
+        transition: all 0.3s;
+    }
+    .report-hero-stat:hover {
+        background: #f3f4f6;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .chart-card {
+        background: white;
+        border-radius: 1.25rem;
+        border: 1px solid #f0f0f0;
+        overflow: hidden;
+        transition: all 0.3s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .chart-card:hover {
+        box-shadow: 0 8px 25px rgba(54,9,88,0.08);
+        transform: translateY(-2px);
+    }
+    .chart-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .chart-body { padding: 1.5rem; }
+    .chart-icon-box {
+        width: 42px;
+        height: 42px;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .stat-mini-card {
+        background: white;
+        border: 1px solid #f0f0f0;
+        border-radius: 1rem;
+        padding: 1.25rem;
+        transition: all 0.3s;
+    }
+    .stat-mini-card:hover {
+        border-color: #e5e7eb;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .progress-ring {
+        width: 80px;
+        height: 80px;
+        position: relative;
+    }
+    .progress-ring svg {
+        transform: rotate(-90deg);
+    }
+    .progress-ring-circle {
+        transition: stroke-dashoffset 1s ease-out;
+    }
+    .progress-ring-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+        font-weight: 700;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 0;
+    }
+    .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .animate-fade-in {
+        animation: fadeInUp 0.5s ease-out forwards;
+        opacity: 0;
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .glass-card {
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    canvas { max-width: 100%; }
+</style>
+@endsection
 
 @section('content')
 <div class="space-y-6">
-    <!-- Header Section -->
-    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Ripoti ya Huduma za Kichungaji</h1>
-            <p class="text-gray-600 mt-2">Takwimu za huduma kwa {{ $year }}</p>
-        </div>
-        <div class="flex flex-wrap gap-3">
-            <a href="{{ route('pastoral-services.index') }}" class="px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg bg-gray-200 text-gray-800 hover:bg-gray-300">
-                <i class="fas fa-arrow-left"></i>
-                <span class="font-medium">Rudi Nyuma</span>
-            </a>
-            <button onclick="openExportModal()" class="text-white px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
-                <i class="fas fa-file-pdf"></i>
-                <span class="font-medium">Export PDF</span>
-            </button>
-        </div>
-    </div>
 
-    <!-- Period Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Weekly Stats -->
-        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 text-white">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold opacity-90">Wiki Hii</h3>
-                <div class="h-12 w-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-calendar-week text-2xl"></i>
+    <!-- Hero Banner -->
+    <div class="report-hero">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                    <i class="fas fa-chart-bar text-2xl" style="color: #efc120"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Ripoti ya Huduma za Kichungaji</h1>
+                    <p class="text-sm text-gray-500 mt-1">Muhtasari kamili wa takwimu za huduma — Mwaka {{ $year }}</p>
                 </div>
             </div>
-            <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <span class="opacity-80">Jumla</span>
-                    <span class="text-2xl font-bold">{{ $weeklyStats['total'] }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="opacity-80">Zimekamilika</span>
-                    <span class="text-xl font-semibold">{{ $weeklyStats['completed'] }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="opacity-80">Zinasubiri</span>
-                    <span class="text-xl font-semibold">{{ $weeklyStats['pending'] }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="opacity-80">Zimeidhinishwa</span>
-                    <span class="text-xl font-semibold">{{ $weeklyStats['approved'] }}</span>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t border-white/20">
-                <button onclick="quickExport('week')" class="w-full flex items-center justify-center gap-2 text-sm bg-white/20 hover:bg-white/30 rounded-lg py-2 transition-all">
-                    <i class="fas fa-file-pdf"></i>
-                    <span>Export Wiki (PDF)</span>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('pastoral-services.index') }}" class="rx-btn rx-btn-secondary flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i> Rudi
+                </a>
+                <button onclick="openModal('exportModal')" class="rx-btn rx-btn-primary flex items-center gap-2">
+                    <i class="fas fa-file-pdf"></i> Export PDF
                 </button>
             </div>
         </div>
 
-        <!-- Monthly Stats -->
-        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg p-6 text-white">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold opacity-90">Mwezi Huu</h3>
-                <div class="h-12 w-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-calendar-alt text-2xl"></i>
+        <!-- Hero Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            <div class="report-hero-stat">
+                <div class="flex items-center gap-2 mb-2">
+                    <i class="fas fa-calendar-week text-gray-400 text-sm"></i>
+                    <span class="text-xs text-gray-500 font-medium">Wiki Hii</span>
+                </div>
+                <p class="text-3xl font-bold text-gray-900">{{ $weeklyStats['total'] }}</p>
+                <div class="flex gap-3 mt-2">
+                    <span class="text-xs text-green-600"><i class="fas fa-check mr-1"></i>{{ $weeklyStats['completed'] }}</span>
+                    <span class="text-xs text-yellow-600"><i class="fas fa-clock mr-1"></i>{{ $weeklyStats['pending'] }}</span>
                 </div>
             </div>
-            <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <span class="opacity-80">Jumla</span>
-                    <span class="text-2xl font-bold">{{ $monthlyStats['total'] }}</span>
+            <div class="report-hero-stat">
+                <div class="flex items-center gap-2 mb-2">
+                    <i class="fas fa-calendar-alt text-gray-400 text-sm"></i>
+                    <span class="text-xs text-gray-500 font-medium">Mwezi Huu</span>
                 </div>
-                <div class="flex justify-between items-center">
-                    <span class="opacity-80">Zimekamilika</span>
-                    <span class="text-xl font-semibold">{{ $monthlyStats['completed'] }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="opacity-80">Zinasubiri</span>
-                    <span class="text-xl font-semibold">{{ $monthlyStats['pending'] }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="opacity-80">Zimeidhinishwa</span>
-                    <span class="text-xl font-semibold">{{ $monthlyStats['approved'] }}</span>
+                <p class="text-3xl font-bold text-gray-900">{{ $monthlyStats['total'] }}</p>
+                <div class="flex gap-3 mt-2">
+                    <span class="text-xs text-green-600"><i class="fas fa-check mr-1"></i>{{ $monthlyStats['completed'] }}</span>
+                    <span class="text-xs text-yellow-600"><i class="fas fa-clock mr-1"></i>{{ $monthlyStats['pending'] }}</span>
                 </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-white/20">
-                <button onclick="quickExport('month')" class="w-full flex items-center justify-center gap-2 text-sm bg-white/20 hover:bg-white/30 rounded-lg py-2 transition-all">
-                    <i class="fas fa-file-pdf"></i>
-                    <span>Export Mwezi (PDF)</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Yearly Stats -->
-        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold opacity-90">Mwaka {{ $year }}</h3>
-                <div class="h-12 w-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-calendar text-2xl"></i>
+            <div class="report-hero-stat">
+                <div class="flex items-center gap-2 mb-2">
+                    <i class="fas fa-calendar text-gray-400 text-sm"></i>
+                    <span class="text-xs text-gray-500 font-medium">Mwaka {{ $year }}</span>
+                </div>
+                <p class="text-3xl font-bold text-gray-900">{{ $yearlyStats['total'] }}</p>
+                <div class="flex gap-3 mt-2">
+                    <span class="text-xs text-green-600"><i class="fas fa-check mr-1"></i>{{ $yearlyStats['completed'] }}</span>
+                    <span class="text-xs text-yellow-600"><i class="fas fa-clock mr-1"></i>{{ $yearlyStats['pending'] }}</span>
                 </div>
             </div>
-            <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <span class="opacity-80">Jumla</span>
-                    <span class="text-2xl font-bold">{{ $yearlyStats['total'] }}</span>
+            <div class="report-hero-stat">
+                <div class="flex items-center gap-2 mb-2">
+                    <i class="fas fa-chart-line text-gray-400 text-sm"></i>
+                    <span class="text-xs text-gray-500 font-medium">Kiwango cha Ukamilifu</span>
                 </div>
-                <div class="flex justify-between items-center">
-                    <span class="opacity-80">Zimekamilika</span>
-                    <span class="text-xl font-semibold">{{ $yearlyStats['completed'] }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="opacity-80">Zinasubiri</span>
-                    <span class="text-xl font-semibold">{{ $yearlyStats['pending'] }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="opacity-80">Zimeidhinishwa</span>
-                    <span class="text-xl font-semibold">{{ $yearlyStats['approved'] }}</span>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t border-white/20">
-                <button onclick="quickExport('year')" class="w-full flex items-center justify-center gap-2 text-sm bg-white/20 hover:bg-white/30 rounded-lg py-2 transition-all">
-                    <i class="fas fa-file-pdf"></i>
-                    <span>Export Mwaka (PDF)</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Charts Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Services by Type -->
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <i class="fas fa-chart-pie text-primary-500 mr-2"></i>
-                Huduma kwa Aina ({{ $year }})
-            </h3>
-            <div class="space-y-4">
                 @php
-                    $colors = [
-                        'Ubatizo' => 'bg-blue-500',
-                        'Uthibitisho' => 'bg-green-500',
-                        'Ndoa' => 'bg-pink-500',
-                        'Wakfu' => 'bg-yellow-500',
-                        'Mazishi' => 'bg-gray-500',
-                        'Ushauri wa Kichungaji' => 'bg-purple-500',
-                        'Nyingine' => 'bg-indigo-500',
-                    ];
-                    $totalServices = $servicesByType->sum('total') ?: 1;
+                    $overallTotal = $yearlyStats['total'] ?: 1;
+                    $overallRate = round(($yearlyStats['completed'] / $overallTotal) * 100);
                 @endphp
-                @forelse($servicesByType as $type)
-                    @php
-                        $percentage = round(($type->total / $totalServices) * 100, 1);
-                        $colorClass = $colors[$type->service_type] ?? 'bg-gray-400';
-                    @endphp
+                <p class="text-3xl font-bold" style="color: #16a34a">{{ $overallRate }}%</p>
+                <div class="mt-2">
+                    <div class="w-full rounded-full h-1.5" style="background: #e5e7eb">
+                        <div class="h-1.5 rounded-full" style="width: {{ $overallRate }}%; background: #16a34a; transition: width 1s ease;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 1: Bar + Doughnut -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Monthly Bar Chart -->
+        <div class="chart-card lg:col-span-2 animate-fade-in" style="animation-delay: 0.1s">
+            <div class="chart-header">
+                <div class="flex items-center gap-3">
+                    <div class="chart-icon-box" style="background: rgba(59,130,246,0.1)">
+                        <i class="fas fa-chart-column" style="color: #3b82f6"></i>
+                    </div>
                     <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="text-sm font-medium text-gray-700">{{ $type->service_type }}</span>
-                            <span class="text-sm text-gray-500">{{ $type->total }} ({{ $percentage }}%)</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-3">
-                            <div class="{{ $colorClass }} h-3 rounded-full transition-all duration-500" style="width: {{ $percentage }}%"></div>
-                        </div>
+                        <h3 class="text-sm font-bold text-gray-900">Huduma kwa Mwezi</h3>
+                        <p class="text-xs text-gray-500">Jumla dhidi ya zilizokamilika</p>
                     </div>
-                @empty
-                    <div class="text-center py-8 text-gray-500">
-                        <i class="fas fa-chart-pie text-4xl mb-3 opacity-50"></i>
-                        <p>Hakuna huduma kwa mwaka {{ $year }}</p>
-                    </div>
-                @endforelse
+                </div>
+            </div>
+            <div class="chart-body" style="height: 300px;">
+                <canvas id="monthlyBarChart"></canvas>
             </div>
         </div>
 
-        <!-- Monthly Breakdown -->
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <i class="fas fa-chart-bar text-primary-500 mr-2"></i>
-                Muhtasari wa Kila Mwezi ({{ $year }})
-            </h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="border-b border-gray-200">
-                            <th class="py-2 text-left font-semibold text-gray-700">Mwezi</th>
-                            <th class="py-2 text-center font-semibold text-gray-700">Jumla</th>
-                            <th class="py-2 text-center font-semibold text-gray-700">Zimekamilika</th>
-                            <th class="py-2 text-right font-semibold text-gray-700">%</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach($monthlyData as $data)
-                            @php
-                                $completionRate = $data['total'] > 0 ? round(($data['completed'] / $data['total']) * 100) : 0;
-                            @endphp
-                            <tr class="hover:bg-gray-50">
-                                <td class="py-2 text-gray-700">{{ $data['name'] }}</td>
-                                <td class="py-2 text-center">
-                                    <span class="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                        {{ $data['total'] }}
-                                    </span>
-                                </td>
-                                <td class="py-2 text-center">
-                                    <span class="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        {{ $data['completed'] }}
-                                    </span>
-                                </td>
-                                <td class="py-2 text-right">
-                                    <span class="text-xs {{ $completionRate >= 70 ? 'text-green-600' : ($completionRate >= 40 ? 'text-yellow-600' : 'text-red-600') }}">
-                                        {{ $completionRate }}%
-                                    </span>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot class="border-t-2 border-gray-200">
-                        <tr class="font-semibold">
-                            <td class="py-2 text-gray-900">Jumla</td>
-                            <td class="py-2 text-center text-gray-900">{{ collect($monthlyData)->sum('total') }}</td>
-                            <td class="py-2 text-center text-green-600">{{ collect($monthlyData)->sum('completed') }}</td>
-                            <td class="py-2 text-right">
-                                @php
-                                    $totalAll = collect($monthlyData)->sum('total');
-                                    $totalCompleted = collect($monthlyData)->sum('completed');
-                                    $overallRate = $totalAll > 0 ? round(($totalCompleted / $totalAll) * 100) : 0;
-                                @endphp
-                                <span class="text-primary-600">{{ $overallRate }}%</span>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
+        <!-- Type Doughnut -->
+        <div class="chart-card animate-fade-in" style="animation-delay: 0.2s">
+            <div class="chart-header">
+                <div class="flex items-center gap-3">
+                    <div class="chart-icon-box" style="background: rgba(239,193,32,0.1)">
+                        <i class="fas fa-chart-pie" style="color: #efc120"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-900">Aina za Huduma</h3>
+                        <p class="text-xs text-gray-500">Mwaka {{ $year }}</p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Recent Completed Services -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="p-6 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                <i class="fas fa-check-double text-green-500 mr-2"></i>
-                Huduma Zilizokamilika Hivi Karibuni
-            </h3>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead>
-                    <tr class="bg-gray-50 text-sm text-gray-600">
-                        <th class="py-3 px-6 text-left font-semibold">Namba</th>
-                        <th class="py-3 px-6 text-left font-semibold">Muumini</th>
-                        <th class="py-3 px-6 text-left font-semibold">Aina ya Huduma</th>
-                        <th class="py-3 px-6 text-left font-semibold">Tarehe ya Kukamilika</th>
-                        <th class="py-3 px-6 text-left font-semibold">Vitendo</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse($recentCompleted as $service)
-                        <tr class="hover:bg-gray-50">
-                            <td class="py-3 px-6">
-                                <span class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{{ $service->service_number }}</span>
-                            </td>
-                            <td class="py-3 px-6">
-                                <div class="text-sm text-gray-900">{{ $service->member->first_name }} {{ $service->member->last_name }}</div>
-                                <div class="text-xs text-gray-500">{{ $service->member->member_number }}</div>
-                            </td>
-                            <td class="py-3 px-6">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    {{ $service->service_type }}
-                                </span>
-                            </td>
-                            <td class="py-3 px-6 text-sm text-gray-600">
-                                {{ $service->updated_at->format('d/m/Y') }}
-                            </td>
-                            <td class="py-3 px-6">
-                                <a href="{{ route('pastoral-services.show', $service->id) }}" class="text-primary-600 hover:text-primary-800 text-sm font-medium">
-                                    <i class="fas fa-eye mr-1"></i> Angalia
-                                </a>
-                            </td>
-                        </tr>
+            <div class="chart-body flex flex-col items-center">
+                <div style="height: 200px; width: 200px;">
+                    <canvas id="typeDoughnutChart"></canvas>
+                </div>
+                <div class="mt-4 w-full space-y-1">
+                    @php
+                        $chartColors = [
+                            'Ubatizo' => '#3b82f6', 'Uthibitisho' => '#16a34a', 'Ndoa' => '#ec4899',
+                            'Wakfu' => '#ca8a04', 'Mazishi' => '#6b7280', 'Ushauri wa Kichungaji' => '#7c3aed', 'Nyingine' => '#6366f1',
+                        ];
+                    @endphp
+                    @forelse($servicesByType as $type)
+                        <div class="legend-item">
+                            <span class="legend-dot" style="background: {{ $chartColors[$type->service_type] ?? '#9ca3af' }}"></span>
+                            <span class="text-xs text-gray-600 flex-1">{{ $type->service_type }}</span>
+                            <span class="text-xs font-bold text-gray-900">{{ $type->total }}</span>
+                        </div>
                     @empty
-                        <tr>
-                            <td colspan="5" class="py-12 px-6 text-center text-gray-500">
-                                <i class="fas fa-check-double text-4xl mb-3 opacity-50"></i>
-                                <p>Hakuna huduma zilizokamilika hivi karibuni</p>
-                            </td>
-                        </tr>
+                        <p class="text-xs text-gray-400 text-center py-4">Hakuna data</p>
                     @endforelse
-                </tbody>
-            </table>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Charts Row 2: Line Trend + Status Doughnut + Completion Ring -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Trend Line Chart -->
+        <div class="chart-card lg:col-span-2 animate-fade-in" style="animation-delay: 0.3s">
+            <div class="chart-header">
+                <div class="flex items-center gap-3">
+                    <div class="chart-icon-box" style="background: rgba(124,58,237,0.1)">
+                        <i class="fas fa-wave-square" style="color: #7c3aed"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-gray-900">Mwenendo wa Huduma</h3>
+                        <p class="text-xs text-gray-500">Mpaka wa mwezi kwa mwezi</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-body" style="height: 280px;">
+                <canvas id="trendLineChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Status + Completion -->
+        <div class="space-y-6">
+            <!-- Status Breakdown -->
+            <div class="chart-card animate-fade-in" style="animation-delay: 0.4s">
+                <div class="chart-header">
+                    <div class="flex items-center gap-3">
+                        <div class="chart-icon-box" style="background: rgba(54,9,88,0.08)">
+                            <i class="fas fa-signal" style="color: #360958"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-900">Hali ya Huduma</h3>
+                            <p class="text-xs text-gray-500">Mwaka {{ $year }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-body">
+                    @php
+                        $statusCounts = [
+                            'Imekamilika' => $yearlyStats['completed'],
+                            'Inasubiri' => $yearlyStats['pending'],
+                            'Imeidhinishwa' => $yearlyStats['approved'],
+                        ];
+                        $statusColors = ['Imekamilika' => '#16a34a', 'Inasubiri' => '#ca8a04', 'Imeidhinishwa' => '#3b82f6'];
+                        $statusIcons = ['Imekamilika' => 'fa-check-circle', 'Inasubiri' => 'fa-clock', 'Imeidhinishwa' => 'fa-shield-halved'];
+                    @endphp
+                    <div class="space-y-3">
+                        @foreach($statusCounts as $label => $count)
+                            @php
+                                $pct = $yearlyStats['total'] > 0 ? round(($count / $yearlyStats['total']) * 100) : 0;
+                            @endphp
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas {{ $statusIcons[$label] }} text-xs" style="color: {{ $statusColors[$label] }}"></i>
+                                        <span class="text-xs font-medium text-gray-600">{{ $label }}</span>
+                                    </div>
+                                    <span class="text-xs font-bold text-gray-900">{{ $count }} <span class="text-gray-400 font-normal">({{ $pct }}%)</span></span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2">
+                                    <div class="h-2 rounded-full transition-all duration-1000 ease-out" style="width: {{ $pct }}%; background: {{ $statusColors[$label] }}"></div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completion Ring -->
+            <div class="chart-card animate-fade-in" style="animation-delay: 0.5s">
+                <div class="chart-body flex flex-col items-center py-6">
+                    <div class="progress-ring">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle cx="40" cy="40" r="34" fill="none" stroke="#f3f4f6" stroke-width="8"/>
+                            <circle cx="40" cy="40" r="34" fill="none" stroke="#16a34a" stroke-width="8"
+                                stroke-linecap="round"
+                                stroke-dasharray="{{ 2 * 3.14159 * 34 }}"
+                                stroke-dashoffset="{{ 2 * 3.14159 * 34 * (1 - $overallRate / 100) }}"
+                                class="progress-ring-circle"/>
+                        </svg>
+                        <span class="progress-ring-text" style="color: #16a34a">{{ $overallRate }}%</span>
+                    </div>
+                    <p class="text-xs font-bold text-gray-900 mt-3">Ukamilifu wa Jumla</p>
+                    <p class="text-[11px] text-gray-500">{{ $yearlyStats['completed'] }} kati ya {{ $yearlyStats['total'] }} huduma</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 </div>
 
 <!-- Export PDF Modal -->
-<div id="exportModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-[9999]">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95" id="exportModalContent">
-        <div class="p-6 border-b border-gray-200">
+<div id="exportModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-[9999]">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
+        <div class="sticky top-0 bg-white px-6 py-5 rounded-t-2xl border-b border-gray-200 z-10">
             <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <div class="h-16 w-16 bg-red-100 rounded-full flex items-center justify-center mr-4">
-                        <i class="fas fa-file-pdf text-red-600 text-2xl"></i>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(54,9,88,0.08)">
+                        <i class="fas fa-file-pdf" style="color: #360958"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900">Export Ripoti (PDF)</h3>
-                        <p class="text-sm text-gray-500">Chagua kipindi cha ripoti</p>
+                        <h3 class="text-base font-bold text-gray-900">Export Ripoti (PDF)</h3>
+                        <p class="text-xs text-gray-500">Chagua kipindi cha ripoti</p>
                     </div>
                 </div>
-                <button onclick="closeExportModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <i class="fas fa-times text-xl"></i>
+                <button onclick="closeModal('exportModal')" class="rx-icon-btn rx-icon-btn-purple">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
         </div>
-
         <form id="exportForm" action="{{ route('pastoral-services.export') }}" method="GET">
             <input type="hidden" name="format" value="pdf">
             <div class="p-6 space-y-5">
-                <!-- Period Selection -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-3">Kipindi cha Ripoti</label>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Kipindi cha Ripoti</label>
                     <div class="grid grid-cols-3 gap-3">
                         <label class="relative cursor-pointer">
                             <input type="radio" name="period" value="week" class="peer sr-only">
                             <div class="flex flex-col items-center p-4 rounded-xl border-2 border-gray-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all hover:border-gray-300">
-                                <div class="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center mb-2">
-                                    <i class="fas fa-calendar-week text-blue-600"></i>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">Wiki Hii</span>
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-2" style="background: rgba(59,130,246,0.1)"><i class="fas fa-calendar-week" style="color: #3b82f6"></i></div>
+                                <span class="text-xs font-medium text-gray-700">Wiki Hii</span>
                             </div>
                         </label>
                         <label class="relative cursor-pointer">
                             <input type="radio" name="period" value="month" class="peer sr-only" checked>
                             <div class="flex flex-col items-center p-4 rounded-xl border-2 border-gray-200 peer-checked:border-green-500 peer-checked:bg-green-50 transition-all hover:border-gray-300">
-                                <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center mb-2">
-                                    <i class="fas fa-calendar-alt text-green-600"></i>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">Mwezi Huu</span>
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-2" style="background: rgba(22,163,74,0.1)"><i class="fas fa-calendar-alt" style="color: #16a34a"></i></div>
+                                <span class="text-xs font-medium text-gray-700">Mwezi Huu</span>
                             </div>
                         </label>
                         <label class="relative cursor-pointer">
                             <input type="radio" name="period" value="year" class="peer sr-only">
                             <div class="flex flex-col items-center p-4 rounded-xl border-2 border-gray-200 peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all hover:border-gray-300">
-                                <div class="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center mb-2">
-                                    <i class="fas fa-calendar text-purple-600"></i>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">Mwaka Huu</span>
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-2" style="background: rgba(124,58,237,0.1)"><i class="fas fa-calendar" style="color: #7c3aed"></i></div>
+                                <span class="text-xs font-medium text-gray-700">Mwaka Huu</span>
                             </div>
                         </label>
                     </div>
                 </div>
-
-                <!-- Service Type Filter -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Aina ya Huduma (Hiari)</label>
-                    <select name="service_type" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Aina ya Huduma (Hiari)</label>
+                    <select name="service_type" class="rx-select">
                         <option value="">Huduma Zote</option>
                         @foreach($serviceTypes as $type)
                             <option value="{{ $type }}">{{ $type }}</option>
                         @endforeach
                     </select>
                 </div>
-
-                <!-- Status Filter -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">Hali (Hiari)</label>
-                    <select name="status" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Hali (Hiari)</label>
+                    <select name="status" class="rx-select">
                         <option value="">Hali Zote</option>
                         <option value="Inasubiri">Zinasubiri</option>
                         <option value="Imeidhinishwa">Zimeidhinishwa</option>
@@ -371,12 +413,9 @@
                     </select>
                 </div>
             </div>
-
-            <div class="px-6 py-4 bg-gray-50 rounded-b-2xl border-t border-gray-200 flex justify-end gap-3">
-                <button type="button" onclick="closeExportModal()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-xl hover:bg-gray-300 transition-all">
-                    Ghairi
-                </button>
-                <button type="submit" class="px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-red-700 rounded-xl hover:from-red-700 hover:to-red-800 transition-all flex items-center gap-2">
+            <div class="sticky bottom-0 bg-gray-50 px-6 py-4 rounded-b-2xl border-t border-gray-200 flex justify-end gap-3">
+                <button type="button" onclick="closeModal('exportModal')" class="rx-btn rx-btn-secondary">Ghairi</button>
+                <button type="submit" class="rx-btn rx-btn-primary flex items-center gap-2">
                     <i class="fas fa-file-pdf"></i>
                     <span>Download PDF</span>
                 </button>
@@ -387,42 +426,248 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script>
-function openExportModal() {
-    const modal = document.getElementById('exportModal');
-    const content = document.getElementById('exportModalContent');
+document.addEventListener('DOMContentLoaded', function() {
+    // Monthly Bar Chart
+    const barCtx = document.getElementById('monthlyBarChart');
+    if (barCtx) {
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode(collect($monthlyData)->pluck('name')) !!},
+                datasets: [
+                    {
+                        label: 'Jumla',
+                        data: {!! json_encode(collect($monthlyData)->pluck('total')) !!},
+                        backgroundColor: 'rgba(54, 9, 88, 0.75)',
+                        borderColor: '#360958',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    },
+                    {
+                        label: 'Zimekamilika',
+                        data: {!! json_encode(collect($monthlyData)->pluck('completed')) !!},
+                        backgroundColor: 'rgba(22, 163, 74, 0.75)',
+                        borderColor: '#16a34a',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'rectRounded',
+                            padding: 20,
+                            font: { size: 12, family: 'Inter, system-ui, sans-serif' }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1f2937',
+                        titleFont: { size: 13 },
+                        bodyFont: { size: 12 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: true,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.04)' },
+                        ticks: { font: { size: 11 } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11 } }
+                    }
+                }
+            }
+        });
+    }
 
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
-    }, 10);
+    // Type Doughnut Chart
+    const doughnutCtx = document.getElementById('typeDoughnutChart');
+    if (doughnutCtx) {
+        const typeLabels = {!! json_encode($servicesByType->pluck('service_type')) !!};
+        const typeData = {!! json_encode($servicesByType->pluck('total')) !!};
+        const typeColors = {
+            'Ubatizo': '#3b82f6', 'Uthibitisho': '#16a34a', 'Ndoa': '#ec4899',
+            'Wakfu': '#ca8a04', 'Mazishi': '#6b7280', 'Ushauri wa Kichungaji': '#7c3aed', 'Nyingine': '#6366f1'
+        };
+        const colors = typeLabels.map(l => typeColors[l] || '#9ca3af');
+
+        new Chart(doughnutCtx, {
+            type: 'doughnut',
+            data: {
+                labels: typeLabels,
+                datasets: [{
+                    data: typeData,
+                    backgroundColor: colors,
+                    borderWidth: 3,
+                    borderColor: '#fff',
+                    hoverBorderWidth: 0,
+                    hoverOffset: 8,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                cutout: '65%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1f2937',
+                        titleFont: { size: 13 },
+                        bodyFont: { size: 12 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(ctx) {
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                const pct = total > 0 ? Math.round((ctx.parsed / total) * 100) : 0;
+                                return ctx.label + ': ' + ctx.parsed + ' (' + pct + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Trend Line Chart
+    const lineCtx = document.getElementById('trendLineChart');
+    if (lineCtx) {
+        const monthNames = {!! json_encode(collect($monthlyData)->pluck('name')) !!};
+        const totalData = {!! json_encode(collect($monthlyData)->pluck('total')) !!};
+        const completedData = {!! json_encode(collect($monthlyData)->pluck('completed')) !!};
+        const pendingData = totalData.map((t, i) => t - completedData[i]);
+
+        new Chart(lineCtx, {
+            type: 'line',
+            data: {
+                labels: monthNames,
+                datasets: [
+                    {
+                        label: 'Jumla',
+                        data: totalData,
+                        borderColor: '#360958',
+                        backgroundColor: 'rgba(54, 9, 88, 0.08)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#360958',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    },
+                    {
+                        label: 'Zimekamilika',
+                        data: completedData,
+                        borderColor: '#16a34a',
+                        backgroundColor: 'rgba(22, 163, 74, 0.08)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#16a34a',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                    },
+                    {
+                        label: 'Zinasubiri',
+                        data: pendingData,
+                        borderColor: '#ca8a04',
+                        backgroundColor: 'rgba(202, 138, 4, 0.05)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.4,
+                        pointBackgroundColor: '#ca8a04',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 20,
+                            font: { size: 12, family: 'Inter, system-ui, sans-serif' }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1f2937',
+                        titleFont: { size: 13 },
+                        bodyFont: { size: 12 },
+                        padding: 12,
+                        cornerRadius: 8,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.04)' },
+                        ticks: { font: { size: 11 } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11 } }
+                    }
+                }
+            }
+        });
+    }
+});
+
+function openModal(id) {
+    var modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        setTimeout(function() { modal.querySelector('div').classList.remove('scale-95'); }, 10);
+    }
 }
 
-function closeExportModal() {
-    const modal = document.getElementById('exportModal');
-    const content = document.getElementById('exportModalContent');
-
-    content.classList.remove('scale-100');
-    content.classList.add('scale-95');
-
-    setTimeout(() => {
-        modal.classList.add('hidden');
-    }, 200);
+function closeModal(id) {
+    var modal = document.getElementById(id);
+    if (modal) {
+        modal.querySelector('div').classList.add('scale-95');
+        setTimeout(function() { modal.classList.add('hidden'); document.body.style.overflow = 'auto'; }, 200);
+    }
 }
+
+document.querySelectorAll('[id$="Modal"]').forEach(function(m) {
+    m.addEventListener('click', function(e) { if (e.target === this) closeModal(this.id); });
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') document.querySelectorAll('[id$="Modal"]:not(.hidden)').forEach(function(m) { closeModal(m.id); });
+});
 
 function quickExport(period) {
-    window.location.href = `{{ route('pastoral-services.export') }}?period=${period}&format=pdf`;
+    window.location.href = '{{ route("pastoral-services.export") }}?period=' + period + '&format=pdf';
 }
-
-// Close modal on backdrop click
-document.getElementById('exportModal')?.addEventListener('click', function(e) {
-    if (e.target === this) closeExportModal();
-});
-
-// Close modal on Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeExportModal();
-});
 </script>
 @endsection

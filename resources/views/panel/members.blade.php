@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Waumini - Mfumo wa Kanisa')
+@section('title', 'Waumini - Mfumo wa ROC')
 
 @section('page-title', 'Waumini')
 @section('page-subtitle', 'Usimamizi wa waumini wa kanisa')

@@ -1,493 +1,299 @@
 @extends('layouts.app')
 
-@section('title', 'Ripoti - Mfumo wa Kanisa')
+@section('title', 'Ripoti - Mfumo wa ROC')
 @section('page-title', 'Ripoti za Fedha')
 @section('page-subtitle', 'Tengeneza na pakua ripoti za fedha za kitaalamu')
 
 @section('content')
 <div class="space-y-6">
-    <!-- Header Section -->
-    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Ripoti za Fedha</h1>
-            <p class="text-gray-600 mt-2">Tengeneza na pakua ripoti za fedha za {{ $settings->company_name ?? 'KKKT Makabe Agape' }}</p>
-        </div>
-        <div class="flex flex-wrap gap-3">
-            <button onclick="toggleGenerateForm()" class="text-white px-5 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800">
-                <i class="fas fa-plus"></i>
-                <span class="font-medium">Tengeneza Ripoti</span>
-            </button>
+
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                <i class="fas fa-file-pdf" style="color: #efc120"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Ripoti za Fedha</h1>
+                <p class="text-sm text-gray-500">Tengeneza na pakua ripoti za fedha za {{ $settings->company_name ?? 'ROC [Reality of Christ]' }}</p>
+            </div>
         </div>
     </div>
 
     <!-- Quick Report Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Weekly Report Card -->
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:shadow-md transition-shadow duration-200">
-            <div class="flex items-center justify-between mb-4">
-                <div class="h-14 w-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-calendar-week text-2xl text-blue-600"></i>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Wiki -->
+        <div class="rx-card rounded-2xl overflow-hidden">
+            <div class="p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(59,130,246,0.1)">
+                        <i class="fas fa-calendar-week text-xl" style="color: #3b82f6"></i>
+                    </div>
+                    <span class="rx-badge rx-badge-blue">Wiki</span>
                 </div>
-                <span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">Wiki</span>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Ripoti ya Kila Wiki</h3>
-            <p class="text-sm text-gray-600 mb-4">Muhtasari wa mapato na matumizi ya wiki iliyopita</p>
-            <div class="flex gap-2">
-                <button onclick="generateQuickReport('weekly', 'pdf')" class="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200 flex items-center justify-center gap-2">
-                    <i class="fas fa-file-pdf"></i> PDF
-                </button>
-                <button onclick="generateQuickReport('weekly', 'excel')" class="flex-1 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-all duration-200 flex items-center justify-center gap-2">
-                    <i class="fas fa-file-excel"></i> Excel
-                </button>
-                <button onclick="printReport('weekly')" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition-all duration-200">
-                    <i class="fas fa-print"></i>
+                <h3 class="text-base font-bold text-gray-900 mb-1">Ripoti ya Kila Wiki</h3>
+                <p class="text-xs text-gray-500 mb-4">Muhtasari wa mapato na matumizi ya wiki iliyopita</p>
+                <button onclick="generateReport('weekly')" class="w-full rx-btn rx-btn-sm flex items-center justify-center gap-2" id="btn-weekly" style="background: rgba(59,130,246,0.08); color: #3b82f6;">
+                    <i class="fas fa-file-pdf"></i>
+                    <span class="btn-text">Pakua PDF</span>
                 </button>
             </div>
         </div>
 
-        <!-- Monthly Report Card -->
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:shadow-md transition-shadow duration-200">
-            <div class="flex items-center justify-between mb-4">
-                <div class="h-14 w-14 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-calendar-alt text-2xl text-purple-600"></i>
+        <!-- Mwezi -->
+        <div class="rx-card rounded-2xl overflow-hidden">
+            <div class="p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(124,58,237,0.1)">
+                        <i class="fas fa-calendar-alt text-xl" style="color: #7c3aed"></i>
+                    </div>
+                    <span class="rx-badge rx-badge-purple">Mwezi</span>
                 </div>
-                <span class="px-3 py-1 bg-purple-100 text-purple-700 text-sm font-medium rounded-full">Mwezi</span>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Ripoti ya Kila Mwezi</h3>
-            <p class="text-sm text-gray-600 mb-4">Muhtasari wa mapato na matumizi ya mwezi uliopita</p>
-            <div class="flex gap-2">
-                <button onclick="generateQuickReport('monthly', 'pdf')" class="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200 flex items-center justify-center gap-2">
-                    <i class="fas fa-file-pdf"></i> PDF
-                </button>
-                <button onclick="generateQuickReport('monthly', 'excel')" class="flex-1 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-all duration-200 flex items-center justify-center gap-2">
-                    <i class="fas fa-file-excel"></i> Excel
-                </button>
-                <button onclick="printReport('monthly')" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition-all duration-200">
-                    <i class="fas fa-print"></i>
+                <h3 class="text-base font-bold text-gray-900 mb-1">Ripoti ya Kila Mwezi</h3>
+                <p class="text-xs text-gray-500 mb-4">Muhtasari wa mapato na matumizi ya mwezi uliopita</p>
+                <button onclick="generateReport('monthly')" class="w-full rx-btn rx-btn-sm flex items-center justify-center gap-2" id="btn-monthly" style="background: rgba(124,58,237,0.08); color: #7c3aed;">
+                    <i class="fas fa-file-pdf"></i>
+                    <span class="btn-text">Pakua PDF</span>
                 </button>
             </div>
         </div>
 
-        <!-- Yearly Report Card -->
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:shadow-md transition-shadow duration-200">
-            <div class="flex items-center justify-between mb-4">
-                <div class="h-14 w-14 bg-orange-100 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-calendar text-2xl text-orange-600"></i>
+        <!-- Mwaka -->
+        <div class="rx-card rounded-2xl overflow-hidden">
+            <div class="p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                        <i class="fas fa-calendar text-xl" style="color: #efc120"></i>
+                    </div>
+                    <span class="rx-badge rx-badge-yellow">Mwaka</span>
                 </div>
-                <span class="px-3 py-1 bg-orange-100 text-orange-700 text-sm font-medium rounded-full">Mwaka</span>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Ripoti ya Kila Mwaka</h3>
-            <p class="text-sm text-gray-600 mb-4">Muhtasari wa mapato na matumizi ya mwaka mzima</p>
-            <div class="flex gap-2">
-                <button onclick="generateQuickReport('yearly', 'pdf')" class="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-all duration-200 flex items-center justify-center gap-2">
-                    <i class="fas fa-file-pdf"></i> PDF
-                </button>
-                <button onclick="generateQuickReport('yearly', 'excel')" class="flex-1 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-all duration-200 flex items-center justify-center gap-2">
-                    <i class="fas fa-file-excel"></i> Excel
-                </button>
-                <button onclick="printReport('yearly')" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition-all duration-200">
-                    <i class="fas fa-print"></i>
+                <h3 class="text-base font-bold text-gray-900 mb-1">Ripoti ya Kila Mwaka</h3>
+                <p class="text-xs text-gray-500 mb-4">Muhtasari wa mapato na matumizi ya mwaka mzima</p>
+                <button onclick="generateReport('yearly')" class="w-full rx-btn rx-btn-sm flex items-center justify-center gap-2" id="btn-yearly" style="background: rgba(239,193,32,0.08); color: #d4a81c;">
+                    <i class="fas fa-file-pdf"></i>
+                    <span class="btn-text">Pakua PDF</span>
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="rx-stat-card rounded-2xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Jumla ya Faili</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ count($recentExports) }}</p>
+                    <p class="text-xs font-medium text-gray-500 mb-1">Jumla ya Ripoti</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ $recentExports->count() }}</p>
                 </div>
-                <div class="h-12 w-12 bg-primary-100 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-folder-open text-xl text-primary-600"></i>
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(54,9,88,0.08)">
+                    <i class="fas fa-folder-open" style="color: #360958"></i>
                 </div>
             </div>
         </div>
-
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
+        <div class="rx-stat-card rounded-2xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Ripoti za Mapato</p>
-                    <p class="text-2xl font-bold text-green-600">{{ collect($recentExports)->where('type', 'mapato')->count() }}</p>
+                    <p class="text-xs font-medium text-gray-500 mb-1">Mapato</p>
+                    <p class="text-2xl font-bold" style="color: #16a34a">{{ $recentExports->where('type', 'mapato')->count() }}</p>
                 </div>
-                <div class="h-12 w-12 bg-green-100 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-hand-holding-usd text-xl text-green-600"></i>
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(22,163,74,0.1)">
+                    <i class="fas fa-hand-holding-usd" style="color: #16a34a"></i>
                 </div>
             </div>
         </div>
-
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
+        <div class="rx-stat-card rounded-2xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Ripoti za Matumizi</p>
-                    <p class="text-2xl font-bold text-red-600">{{ collect($recentExports)->where('type', 'matumizi')->count() }}</p>
+                    <p class="text-xs font-medium text-gray-500 mb-1">Matumizi</p>
+                    <p class="text-2xl font-bold text-red-600">{{ $recentExports->where('type', 'matumizi')->count() }}</p>
                 </div>
-                <div class="h-12 w-12 bg-red-100 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-receipt text-xl text-red-600"></i>
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(239,68,68,0.1)">
+                    <i class="fas fa-receipt" style="color: #ef4444"></i>
                 </div>
             </div>
         </div>
-
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:shadow-md transition-shadow duration-200">
+        <div class="rx-stat-card rounded-2xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Ripoti za PDF</p>
-                    <p class="text-2xl font-bold text-red-600">{{ collect($recentExports)->where('format', 'pdf')->count() }}</p>
+                    <p class="text-xs font-medium text-gray-500 mb-1">Zilizopo</p>
+                    <p class="text-2xl font-bold" style="color: #360958">{{ $recentExports->count() }}</p>
                 </div>
-                <div class="h-12 w-12 bg-red-100 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-file-pdf text-xl text-red-600"></i>
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                    <i class="fas fa-check-circle" style="color: #efc120"></i>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Generate Export Form (Hidden by default) -->
-    <div id="generateFormContainer" class="hidden">
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <div class="flex items-center mb-6">
-                <div class="h-10 w-10 bg-primary-100 rounded-lg flex items-center justify-center mr-3">
-                    <i class="fas fa-magic text-primary-600"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold text-gray-900">Tengeneza Ripoti Mpya</h3>
-                    <p class="text-sm text-gray-600">Jaza maelezo ya ripoti unayotaka kutengeneza</p>
-                </div>
-                <button onclick="toggleGenerateForm()" class="ml-auto text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-
-            <form id="generateExportForm" class="space-y-6">
-                @csrf
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Report Type -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Aina ya Ripoti</label>
-                        <select name="export_type" id="export_type" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                            <option value="">Chagua aina ya ripoti</option>
-                            <option value="mapato">Mapato (Michango)</option>
-                            <option value="matumizi">Matumizi (Expenses)</option>
-                            <option value="mapato_matumizi">Mapato na Matumizi</option>
-                            <option value="kiwanja">Kiwanja na Ahadi</option>
-                            <option value="custom">Muhtasari wa Kila Kitu</option>
-                        </select>
-                    </div>
-
-                    <!-- Period Type -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Kipindi</label>
-                        <select name="period_type" id="period_type" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                            <option value="">Chagua kipindi</option>
-                            <option value="weekly">Wiki (Siku 7 zilizopita)</option>
-                            <option value="monthly">Mwezi (Siku 30 zilizopita)</option>
-                            <option value="yearly">Mwaka (Miezi 12 iliyopita)</option>
-                            <option value="custom">Kipindi Maalum</option>
-                        </select>
-                    </div>
-
-                    <!-- Start Date (shown for custom period) -->
-                    <div id="customDateRange" class="hidden md:col-span-2">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Tarehe ya Kuanzia</label>
-                                <input type="text" name="start_date" id="start_date" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Toka...">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Tarehe ya Mwisho</label>
-                                <input type="text" name="end_date" id="end_date" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Mpaka...">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Format -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Muundo wa Faili</label>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-red-500 transition-all duration-200 format-option" data-format="pdf">
-                            <input type="radio" name="export_format" value="pdf" class="hidden">
-                            <div class="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center mr-3">
-                                <i class="fas fa-file-pdf text-2xl text-red-600"></i>
-                            </div>
-                            <div>
-                                <span class="block font-semibold text-gray-900">PDF</span>
-                                <span class="text-xs text-gray-500">Ripoti ya Kitaalamu</span>
-                            </div>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-green-500 transition-all duration-200 format-option" data-format="excel">
-                            <input type="radio" name="export_format" value="excel" checked class="hidden">
-                            <div class="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                                <i class="fas fa-file-excel text-2xl text-green-600"></i>
-                            </div>
-                            <div>
-                                <span class="block font-semibold text-gray-900">Excel</span>
-                                <span class="text-xs text-gray-500">Faili ya .xlsx</span>
-                            </div>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition-all duration-200 format-option" data-format="csv">
-                            <input type="radio" name="export_format" value="csv" class="hidden">
-                            <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                                <i class="fas fa-file-csv text-2xl text-blue-600"></i>
-                            </div>
-                            <div>
-                                <span class="block font-semibold text-gray-900">CSV</span>
-                                <span class="text-xs text-gray-500">Faili ya .csv</span>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- PDF Options (shown when PDF selected) -->
-                <div id="pdfOptions" class="hidden">
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Chaguo za PDF</label>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <label class="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
-                            <input type="checkbox" name="include_logo" checked class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
-                            <span class="text-sm text-gray-700">Jumuisha Logo</span>
-                        </label>
-                        <label class="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
-                            <input type="checkbox" name="include_header" checked class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
-                            <span class="text-sm text-gray-700">Jumuisha Header ya Kanisa</span>
-                        </label>
-                        <label class="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
-                            <input type="checkbox" name="include_signature" class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
-                            <span class="text-sm text-gray-700">Nafasi ya Sahihi</span>
-                        </label>
-                        <label class="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
-                            <input type="checkbox" name="include_watermark" class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
-                            <span class="text-sm text-gray-700">Watermark</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Options -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Chaguo Zaidi</label>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <label class="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
-                            <input type="checkbox" name="include_charts" class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
-                            <span class="text-sm text-gray-700">Jumuisha Michoro</span>
-                        </label>
-                        <label class="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
-                            <input type="checkbox" name="include_summary" checked class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
-                            <span class="text-sm text-gray-700">Jumuisha Muhtasari</span>
-                        </label>
-                        <label class="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
-                            <input type="checkbox" name="group_by_category" checked class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
-                            <span class="text-sm text-gray-700">Gawa kwa Kategoria</span>
-                        </label>
-                        <label class="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
-                            <input type="checkbox" name="include_totals" checked class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
-                            <span class="text-sm text-gray-700">Jumuisha Jumla</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200">
-                    <button type="button" onclick="toggleGenerateForm()" class="px-6 py-2.5 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-all duration-200 flex items-center justify-center gap-2">
-                        <i class="fas fa-times"></i>
-                        <span>Ghairi</span>
-                    </button>
-                    <button type="button" onclick="previewReport()" class="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center justify-center gap-2">
-                        <i class="fas fa-eye"></i>
-                        <span>Hakiki</span>
-                    </button>
-                    <button type="button" onclick="generateExport()" class="px-6 py-2.5 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-all duration-200 flex items-center justify-center gap-2">
-                        <i class="fas fa-bolt" id="generateIcon"></i>
-                        <span id="generateText">Tengeneza Faili</span>
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 
     <!-- Search and Filter -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-        <div class="mb-4">
-            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                <i class="fas fa-search text-primary-500 mr-2"></i> Tafuta Ripoti
-            </h3>
-        </div>
+    <div class="rx-card rounded-xl p-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Tafuta</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-search text-gray-400"></i>
-                    </div>
-                    <input id="searchExport" type="text" class="pl-10 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Tafuta kwa jina la faili, aina, au tarehe...">
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Tafuta</label>
+                <div class="rx-search">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd"/></svg>
+                    <input id="searchExport" type="text" placeholder="Tafuta kwa jina, aina, au tarehe...">
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Aina</label>
-                <select id="filterType" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Aina</label>
+                <select id="filterType" class="rx-select">
                     <option value="">Zote</option>
                     <option value="mapato">Mapato</option>
                     <option value="matumizi">Matumizi</option>
-                    <option value="kiwanja">Kiwanja</option>
-                    <option value="custom">Nyingine</option>
+                    <option value="mapato_matumizi">Mapato na Matumizi</option>
                 </select>
             </div>
         </div>
     </div>
 
     <!-- Reports Table -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <!-- Table Header -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-6 border-b border-gray-200">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                    <i class="fas fa-file-excel text-primary-500 mr-2"></i> Faili za Ripoti
-                    <span class="ml-3 text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                        {{ count($recentExports) }} faili
-                    </span>
-                </h3>
-            </div>
-            <div class="mt-3 sm:mt-0 flex items-center gap-2">
-                <button onclick="refreshExports()" class="h-8 w-8 bg-gray-100 text-gray-600 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-all duration-200" title="Fresha Orodha">
-                    <i class="fas fa-sync-alt text-sm" id="refreshIcon"></i>
-                </button>
-                <button onclick="openBulkDeleteModal()" id="deleteSelectedBtn" class="h-8 px-3 bg-red-100 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-200 transition-all duration-200 hidden" title="Futa Faili Zilizochaguliwa">
-                    <i class="fas fa-trash text-sm mr-1"></i>
-                    <span id="deleteCount">0</span>
-                </button>
+    <div class="rx-card rounded-2xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(239,193,32,0.1)">
+                        <i class="fas fa-file-pdf" style="color: #efc120"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900">Ripoti Zilizotengenezwa</h3>
+                        <p class="text-xs text-gray-500">{{ $recentExports->count() }} ripoti</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="location.reload()" class="rx-icon-btn rx-icon-btn-gray" title="Fresha">
+                        <i class="fas fa-sync-alt text-xs"></i>
+                    </button>
+                    <button onclick="openBulkDeleteModal()" id="deleteSelectedBtn" class="rx-icon-btn rx-icon-btn-red hidden" title="Futa Zilizochaguliwa">
+                        <i class="fas fa-trash text-xs"></i>
+                        <span id="deleteCount" class="text-xs ml-1">0</span>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Table -->
         <div class="overflow-x-auto">
-            <table class="w-full">
+            <table class="rx-table">
                 <thead>
-                    <tr class="bg-primary-600 text-white text-sm">
-                        <th class="py-4 px-4 text-center font-semibold w-12">
-                            <input type="checkbox" id="selectAll" class="w-4 h-4 text-primary-600 bg-white border-gray-300 rounded focus:ring-primary-500">
+                    <tr>
+                        <th class="w-12 text-center">
+                            <input type="checkbox" id="selectAll" class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
                         </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-file mr-2"></i>
-                                Jina la Faili
+                        <th>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-file text-xs" style="color: #efc120"></i>
+                                <span>Jina la Ripoti</span>
                             </div>
                         </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-tag mr-2"></i>
-                                Aina
+                        <th>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-tag text-xs" style="color: #efc120"></i>
+                                <span>Aina</span>
                             </div>
                         </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-info-circle mr-2"></i>
-                                Maelezo
+                        <th>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-info-circle text-xs" style="color: #efc120"></i>
+                                <span>Maelezo</span>
                             </div>
                         </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-hdd mr-2"></i>
-                                Ukubwa
+                        <th>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-hdd text-xs" style="color: #efc120"></i>
+                                <span>Ukubwa</span>
                             </div>
                         </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider">
-                            <div class="flex items-center">
-                                <i class="fas fa-calendar-alt mr-2"></i>
-                                Tarehe
+                        <th>
+                            <div class="flex items-center gap-1.5">
+                                <i class="fas fa-calendar-alt text-xs" style="color: #efc120"></i>
+                                <span>Tarehe</span>
                             </div>
                         </th>
-                        <th class="py-4 px-6 text-left font-semibold uppercase tracking-wider sticky right-0 bg-primary-600">
-                            <div class="flex items-center">
-                                <i class="fas fa-cogs mr-2"></i>
-                                Vitendo
+                        <th class="text-right">
+                            <div class="flex items-center justify-end gap-1.5">
+                                <i class="fas fa-cogs text-xs" style="color: #efc120"></i>
+                                <span>Vitendo</span>
                             </div>
                         </th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100" id="exportsTable">
+                <tbody id="exportsTable">
                     @forelse($recentExports as $export)
                     @php
-                        $typeColors = [
-                            'mapato' => 'bg-green-100 text-green-800',
-                            'kiwanja' => 'bg-blue-100 text-blue-800',
-                            'matumizi' => 'bg-red-100 text-red-800',
-                            'custom' => 'bg-purple-100 text-purple-800'
-                        ];
-                        $typeColor = $typeColors[$export['type'] ?? 'custom'] ?? 'bg-gray-100 text-gray-800';
-
-                        $typeIcons = [
-                            'mapato' => 'fas fa-hand-holding-usd',
+                        $typeBadge = match($export->type) {
+                            'mapato', 'sadaka' => 'rx-badge-green',
+                            'kiwanja' => 'rx-badge-blue',
+                            'matumizi' => 'rx-badge-red',
+                            default => 'rx-badge-purple',
+                        };
+                        $typeIcon = match($export->type) {
+                            'mapato', 'sadaka' => 'fas fa-hand-holding-usd',
                             'kiwanja' => 'fas fa-hands-praying',
                             'matumizi' => 'fas fa-money-bill-wave',
-                            'custom' => 'fas fa-chart-pie'
-                        ];
-                        $typeIcon = $typeIcons[$export['type'] ?? 'custom'] ?? 'fas fa-file-excel';
+                            default => 'fas fa-chart-pie',
+                        };
                     @endphp
-                    <tr class="bg-white hover:bg-gray-50 transition-all duration-200 export-row"
-                        data-filename="{{ strtolower($export['filename'] ?? '') }}"
-                        data-type="{{ strtolower($export['type'] ?? '') }}"
-                        data-description="{{ strtolower($export['description'] ?? '') }}">
-                        <td class="py-4 px-4 text-center">
-                            <input type="checkbox" name="export_ids[]" value="{{ $export['id'] }}" class="export-checkbox w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500">
+                    <tr class="transition-colors export-row"
+                        data-filename="{{ strtolower($export->filename) }}"
+                        data-type="{{ strtolower($export->type) }}"
+                        data-description="{{ strtolower($export->description ?? '') }}">
+                        <td class="text-center">
+                            <input type="checkbox" name="export_ids[]" value="{{ $export->id }}" class="export-checkbox w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
                         </td>
-                        <td class="py-4 px-6">
+                        <td>
                             <div class="flex items-center gap-3">
-                                <div class="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-file-excel text-green-600"></i>
+                                <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: rgba(239,68,68,0.1)">
+                                    <i class="fas fa-file-pdf text-xs" style="color: #ef4444"></i>
                                 </div>
                                 <div>
-                                    <div class="font-medium text-gray-900 text-sm">{{ $export['filename'] }}</div>
-                                    <div class="text-xs text-gray-500 font-mono">{{ $export['id'] }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $export->filename }}</div>
+                                    <div class="text-[11px] text-gray-400 font-mono">#{{ $export->id }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="py-4 px-6">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $typeColor }}">
-                                <i class="{{ $typeIcon }} mr-1.5"></i>
-                                {{ ucfirst($export['type'] ?? 'custom') }}
+                        <td>
+                            <span class="rx-badge {{ $typeBadge }}">
+                                <i class="{{ $typeIcon }} mr-1"></i>
+                                {{ ucfirst(str_replace('_', ' ', $export->type)) }}
                             </span>
                         </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-700 max-w-xs truncate">{{ $export['description'] }}</div>
+                        <td>
+                            <span class="text-sm text-gray-600 max-w-xs truncate block">{{ $export->description }}</span>
                         </td>
-                        <td class="py-4 px-6">
-                            <span class="text-sm text-gray-600 font-medium">{{ $export['size'] }}</span>
+                        <td>
+                            <span class="text-sm text-gray-600 font-medium">{{ $export->human_size }}</span>
                         </td>
-                        <td class="py-4 px-6">
-                            <div class="text-sm text-gray-600">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-calendar-alt text-gray-400"></i>
-                                    {{ \Carbon\Carbon::parse($export['date'])->format('d/m/Y H:i') }}
-                                </div>
+                        <td>
+                            <div class="flex items-center gap-2 text-sm text-gray-600">
+                                <i class="fas fa-calendar-alt text-gray-400 text-xs"></i>
+                                {{ $export->created_at->format('d/m/Y H:i') }}
                             </div>
                         </td>
-                        <td class="py-4 px-6 sticky right-0 bg-white">
-                            <div class="flex items-center space-x-2">
-                                @if($export['download_url'] && $export['download_url'] !== '#')
-                                <a href="{{ $export['download_url'] }}" class="h-8 w-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center hover:bg-green-200 transition-all duration-200" title="Pakua Faili">
-                                    <i class="fas fa-download text-sm"></i>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                @if($export->download_url !== '#')
+                                <a href="{{ route('export.excel.download', $export->id) }}" class="rx-icon-btn rx-icon-btn-green" title="Pakua">
+                                    <i class="fas fa-download text-xs"></i>
                                 </a>
                                 @else
-                                <span class="h-8 w-8 bg-gray-100 text-gray-400 rounded-lg flex items-center justify-center cursor-not-allowed" title="Faili Haipatikani">
-                                    <i class="fas fa-download text-sm"></i>
+                                <span class="rx-icon-btn rx-icon-btn-gray opacity-50 cursor-not-allowed" title="Haipatikani">
+                                    <i class="fas fa-download text-xs"></i>
                                 </span>
                                 @endif
-                                <button onclick="deleteExport('{{ $export['id'] }}')" class="h-8 w-8 bg-red-100 text-red-600 rounded-lg flex items-center justify-center hover:bg-red-200 transition-all duration-200" title="Futa Faili">
-                                    <i class="fas fa-trash text-sm"></i>
+                                <button onclick="deleteExport('{{ $export->id }}')" class="rx-icon-btn rx-icon-btn-red" title="Futa">
+                                    <i class="fas fa-trash text-xs"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="py-12 px-6 text-center">
-                            <div class="mx-auto w-16 h-16 mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                                <i class="fas fa-file-excel text-gray-400 text-2xl"></i>
+                        <td colspan="7">
+                            <div class="rx-empty">
+                                <div class="rx-empty-icon"><i class="fas fa-file-pdf"></i></div>
+                                <p class="rx-empty-title">Hakuna ripoti bado</p>
+                                <p class="rx-empty-desc">Bofya kitufe hapo juu kutengeneza ripoti yako ya kwanza</p>
                             </div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-2">Hakuna faili zilizotengenezwa bado</h3>
-                            <p class="text-gray-500 mb-6">Anza kwa kutengeneza faili yako ya kwanza ya Excel.</p>
-                            <button onclick="toggleGenerateForm()" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200">
-                                <i class="fas fa-plus mr-2"></i> Tengeneza Ripoti Mpya
-                            </button>
                         </td>
                     </tr>
                     @endforelse
@@ -498,149 +304,52 @@
 </div>
 
 <!-- Bulk Delete Modal -->
-<div id="bulkDeleteModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
-        <div class="sticky top-0 bg-white px-6 py-5 rounded-t-xl border-b border-gray-200 z-10">
+<div id="bulkDeleteModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-[9999]">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all duration-300 scale-95">
+        <div class="sticky top-0 bg-white px-6 py-5 rounded-t-2xl border-b border-gray-200 z-10">
             <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <div class="h-10 w-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-exclamation-triangle text-red-600"></i>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(239,68,68,0.1)">
+                        <i class="fas fa-exclamation-triangle" style="color: #ef4444"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900">Thibitisha Ufutaji</h3>
-                        <p class="text-sm text-gray-600">Hatua hii haiwezi kubatilika</p>
+                        <h3 class="text-base font-bold text-gray-900">Thibitisha Ufutaji</h3>
+                        <p class="text-xs text-gray-500">Hatua hii haiwezi kubatilika</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeBulkDeleteModal()" class="text-gray-400 hover:text-gray-600 rounded-lg p-1.5 hover:bg-gray-100 transition-all duration-200">
-                    <i class="fas fa-times text-xl"></i>
+                <button onclick="closeBulkDeleteModal()" class="rx-icon-btn rx-icon-btn-purple">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
         </div>
-
         <div class="p-6">
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg mb-4">
-                <div class="flex">
-                    <i class="fas fa-exclamation-triangle text-yellow-400 mr-2"></i>
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-exclamation-triangle text-yellow-400"></i>
                     <p class="text-sm text-yellow-700">
-                        Una uhakika unataka kufuta <span id="bulkDeleteCount" class="font-semibold">0</span> faili zilizochaguliwa?
+                        Una uhakika unataka kufuta <span id="bulkDeleteCount" class="font-semibold">0</span> ripoti?
                     </p>
                 </div>
             </div>
         </div>
-
-        <div class="sticky bottom-0 bg-gray-50 px-6 py-5 rounded-b-xl border-t border-gray-200 flex justify-end space-x-3">
-            <button onclick="closeBulkDeleteModal()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all duration-200">
-                Ghairi
-            </button>
-            <button onclick="confirmBulkDelete()" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all duration-200 flex items-center gap-2">
-                <i class="fas fa-trash"></i>
-                <span>Futa Faili</span>
+        <div class="sticky bottom-0 bg-gray-50 px-6 py-4 rounded-b-2xl border-t border-gray-200 flex justify-end gap-3">
+            <button onclick="closeBulkDeleteModal()" class="rx-btn rx-btn-secondary">Ghairi</button>
+            <button onclick="confirmBulkDelete()" class="rx-btn rx-btn-danger flex items-center gap-2">
+                <i class="fas fa-trash"></i> Futa
             </button>
         </div>
     </div>
 </div>
 
 @include('partials.loading-modal')
-
-<!-- Include Flatpickr CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endsection
 
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Flatpickr
-    flatpickr('#start_date', {
-        dateFormat: "Y-m-d",
-        altInput: true,
-        altFormat: "F j, Y",
-        maxDate: new Date()
-    });
+    document.getElementById('searchExport')?.addEventListener('input', filterRows);
+    document.getElementById('filterType')?.addEventListener('change', filterRows);
 
-    flatpickr('#end_date', {
-        dateFormat: "Y-m-d",
-        altInput: true,
-        altFormat: "F j, Y",
-        maxDate: new Date()
-    });
-
-    // Period type change handler
-    const periodType = document.getElementById('period_type');
-    const customDateRange = document.getElementById('customDateRange');
-
-    periodType.addEventListener('change', function() {
-        if (this.value === 'custom') {
-            customDateRange.classList.remove('hidden');
-        } else {
-            customDateRange.classList.add('hidden');
-        }
-    });
-
-    // Format selection handler
-    const formatOptions = document.querySelectorAll('.format-option');
-    const pdfOptions = document.getElementById('pdfOptions');
-
-    formatOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            // Remove active state from all
-            formatOptions.forEach(opt => {
-                opt.classList.remove('border-red-500', 'border-green-500', 'border-blue-500', 'bg-gray-50');
-                opt.classList.add('border-gray-200');
-            });
-
-            // Add active state to clicked
-            const format = this.dataset.format;
-            const colorClass = format === 'pdf' ? 'border-red-500' : (format === 'excel' ? 'border-green-500' : 'border-blue-500');
-            this.classList.remove('border-gray-200');
-            this.classList.add(colorClass, 'bg-gray-50');
-
-            // Check the radio
-            this.querySelector('input[type="radio"]').checked = true;
-
-            // Show/hide PDF options
-            if (format === 'pdf') {
-                pdfOptions.classList.remove('hidden');
-            } else {
-                pdfOptions.classList.add('hidden');
-            }
-        });
-    });
-
-    // Set initial active state for Excel (default)
-    const excelOption = document.querySelector('.format-option[data-format="excel"]');
-    if (excelOption) {
-        excelOption.classList.remove('border-gray-200');
-        excelOption.classList.add('border-green-500', 'bg-gray-50');
-    }
-
-    // Search functionality
-    const searchInput = document.getElementById('searchExport');
-    const filterType = document.getElementById('filterType');
-
-    function filterRows() {
-        const searchValue = searchInput.value.toLowerCase();
-        const typeValue = filterType.value.toLowerCase();
-        const rows = document.querySelectorAll('.export-row');
-
-        rows.forEach(row => {
-            const filename = row.dataset.filename || '';
-            const type = row.dataset.type || '';
-            const description = row.dataset.description || '';
-
-            const matchesSearch = filename.includes(searchValue) ||
-                                type.includes(searchValue) ||
-                                description.includes(searchValue);
-            const matchesType = typeValue === '' || type === typeValue;
-
-            row.style.display = matchesSearch && matchesType ? '' : 'none';
-        });
-    }
-
-    searchInput.addEventListener('input', filterRows);
-    filterType.addEventListener('change', filterRows);
-
-    // Checkbox functionality
     const selectAll = document.getElementById('selectAll');
     const checkboxes = document.querySelectorAll('.export-checkbox');
     const deleteBtn = document.getElementById('deleteSelectedBtn');
@@ -648,237 +357,120 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateDeleteButton() {
         const checked = document.querySelectorAll('.export-checkbox:checked').length;
-        if (checked > 0) {
-            deleteBtn.classList.remove('hidden');
-            deleteCount.textContent = checked;
-        } else {
-            deleteBtn.classList.add('hidden');
-        }
+        deleteBtn.classList.toggle('hidden', checked === 0);
+        deleteCount.textContent = checked;
     }
 
-    selectAll.addEventListener('change', function() {
+    selectAll?.addEventListener('change', function() {
         checkboxes.forEach(cb => cb.checked = this.checked);
         updateDeleteButton();
     });
-
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', updateDeleteButton);
-    });
+    checkboxes.forEach(cb => cb.addEventListener('change', updateDeleteButton));
 });
 
-// Toggle generate form
-function toggleGenerateForm() {
-    const form = document.getElementById('generateFormContainer');
-    form.classList.toggle('hidden');
+function filterRows() {
+    const search = (document.getElementById('searchExport')?.value || '').toLowerCase();
+    const type = (document.getElementById('filterType')?.value || '').toLowerCase();
+    document.querySelectorAll('.export-row').forEach(row => {
+        const match = (row.dataset.filename || '').includes(search) ||
+                      (row.dataset.type || '').includes(search) ||
+                      (row.dataset.description || '').includes(search);
+        const typeMatch = type === '' || (row.dataset.type || '') === type;
+        row.style.display = match && typeMatch ? '' : 'none';
+    });
 }
 
-// Refresh exports
-function refreshExports() {
-    const icon = document.getElementById('refreshIcon');
-    icon.classList.add('fa-spin');
-    setTimeout(() => {
-        window.location.reload();
-    }, 500);
-}
+function generateReport(period) {
+    const btn = document.getElementById('btn-' + period);
+    const btnText = btn.querySelector('.btn-text');
+    const originalText = btnText.textContent;
 
-// Generate quick report (for quick cards)
-function generateQuickReport(period, format) {
-    const loadingModal = document.getElementById('loadingModal');
-    const progressBar = document.getElementById('progressBar');
-    const loadingMessage = document.getElementById('loadingMessage');
+    btn.disabled = true;
+    btnText.textContent = 'Inatengeneza...';
+    btn.querySelector('i').className = 'fas fa-spinner fa-spin';
 
-    loadingMessage.textContent = format === 'pdf' ? 'Inatengeneza ripoti ya PDF...' : 'Inatengeneza faili ya Excel...';
-    loadingModal.classList.remove('hidden');
-
-    let progress = 0;
-    const interval = setInterval(() => {
-        progress += Math.random() * 15;
-        if (progress > 90) progress = 90;
-        progressBar.style.width = progress + '%';
-    }, 200);
-
-    fetch('/panel/reports/quick-export', {
+    fetch('{{ route("reports.quick-export") }}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify({
             type: 'mapato_matumizi',
             period: period,
-            format: format,
+            format: 'pdf',
             include_logo: true,
             include_header: true
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        const ct = response.headers.get('content-type');
+        if (ct && ct.includes('application/json')) {
+            return response.json();
+        }
+        // It's a file download (non-JSON response)
+        return response.blob().then(blob => ({
+            _fileDownload: true,
+            _blob: blob,
+            _cd: response.headers.get('content-disposition') || ''
+        }));
+    })
     .then(data => {
-        clearInterval(interval);
-        progressBar.style.width = '100%';
-
-        setTimeout(() => {
-            loadingModal.classList.add('hidden');
-            progressBar.style.width = '0%';
-            if (data.success) {
-                if (data.download_url && data.download_url !== '#') {
-                    window.location.href = data.download_url;
-                }
-                setTimeout(() => location.reload(), 500);
-            } else {
-                showError(data.message || 'Hitilafu imetokea!');
+        if (data._fileDownload) {
+            // Direct file download - save it and trigger download
+            const url = URL.createObjectURL(data._blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            // Reload to show in table
+            setTimeout(() => location.reload(), 1000);
+        } else if (data.success) {
+            if (data.download_url && data.download_url !== '#') {
+                window.location.href = data.download_url;
             }
-        }, 500);
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            alert('Hitilafu: ' + (data.message || 'Imeshindwa kutengeneza ripoti'));
+            resetBtn(btn, btnText, originalText);
+        }
     })
     .catch(error => {
-        clearInterval(interval);
-        loadingModal.classList.add('hidden');
-        progressBar.style.width = '0%';
-        showError('Hitilafu ya mtandao!', 'Hitilafu ya Uunganisho');
+        console.error('Error:', error);
+        alert('Hitilafu ya mtandao. Tafadhali jaribu tena.');
+        resetBtn(btn, btnText, originalText);
     });
 }
 
-// Print report
-function printReport(period) {
-    const printWindow = window.open('/panel/reports/print?period=' + period, '_blank');
-    if (printWindow) {
-        printWindow.focus();
-    }
+function resetBtn(btn, btnText, originalText) {
+    btn.disabled = false;
+    btnText.textContent = originalText;
+    btn.querySelector('i').className = 'fas fa-file-pdf';
 }
 
-// Preview report
-function previewReport() {
-    const exportType = document.getElementById('export_type').value;
-    const periodType = document.getElementById('period_type').value;
-
-    if (!exportType || !periodType) {
-        showWarning('Tafadhali chagua aina ya ripoti na kipindi.', 'Taarifa Zinahitajika');
-        return;
-    }
-
-    let url = '/panel/reports/preview?type=' + exportType + '&period=' + periodType;
-
-    if (periodType === 'custom') {
-        const startDate = document.getElementById('start_date').value;
-        const endDate = document.getElementById('end_date').value;
-        url += '&start_date=' + startDate + '&end_date=' + endDate;
-    }
-
-    window.open(url, '_blank');
-}
-
-// Generate export
-function generateExport() {
-    const exportType = document.getElementById('export_type').value;
-    const periodType = document.getElementById('period_type').value;
-    const exportFormat = document.querySelector('input[name="export_format"]:checked').value;
-    const startDate = document.getElementById('start_date').value;
-    const endDate = document.getElementById('end_date').value;
-
-    if (!exportType || !periodType) {
-        showWarning('Tafadhali jaza aina ya ripoti na kipindi.', 'Taarifa Zinahitajika');
-        return;
-    }
-
-    if (periodType === 'custom' && (!startDate || !endDate)) {
-        showWarning('Tafadhali jaza tarehe ya kuanzia na ya mwisho.', 'Tarehe Zinahitajika');
-        return;
-    }
-
-    // Gather form options
-    const formData = {
-        type: exportType,
-        period: periodType,
-        format: exportFormat,
-        start_date: startDate,
-        end_date: endDate,
-        include_logo: document.querySelector('input[name="include_logo"]')?.checked ?? true,
-        include_header: document.querySelector('input[name="include_header"]')?.checked ?? true,
-        include_signature: document.querySelector('input[name="include_signature"]')?.checked ?? false,
-        include_watermark: document.querySelector('input[name="include_watermark"]')?.checked ?? false,
-        include_charts: document.querySelector('input[name="include_charts"]')?.checked ?? false,
-        include_summary: document.querySelector('input[name="include_summary"]')?.checked ?? true,
-        group_by_category: document.querySelector('input[name="group_by_category"]')?.checked ?? true,
-        include_totals: document.querySelector('input[name="include_totals"]')?.checked ?? true
-    };
-
-    // Show loading
-    const loadingModal = document.getElementById('loadingModal');
-    const progressBar = document.getElementById('progressBar');
-    const loadingMessage = document.getElementById('loadingMessage');
-
-    loadingMessage.textContent = exportFormat === 'pdf' ? 'Inatengeneza ripoti ya PDF...' : 'Inatengeneza faili...';
-    loadingModal.classList.remove('hidden');
-
-    let progress = 0;
-    const interval = setInterval(() => {
-        progress += Math.random() * 15;
-        if (progress > 90) progress = 90;
-        progressBar.style.width = progress + '%';
-    }, 200);
-
-    fetch('/panel/reports/generate', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        clearInterval(interval);
-        progressBar.style.width = '100%';
-
-        setTimeout(() => {
-            loadingModal.classList.add('hidden');
-            progressBar.style.width = '0%';
-            if (data.success) {
-                if (data.download_url && data.download_url !== '#') {
-                    window.location.href = data.download_url;
-                }
-                setTimeout(() => location.reload(), 500);
-            } else {
-                showError(data.message || 'Hitilafu imetokea!');
-            }
-        }, 500);
-    })
-    .catch(error => {
-        clearInterval(interval);
-        loadingModal.classList.add('hidden');
-        progressBar.style.width = '0%';
-        showError('Hitilafu ya mtandao!', 'Hitilafu ya Uunganisho');
-    });
-}
-
-// Delete single export
 async function deleteExport(id) {
-    const confirmed = await showConfirm('Una uhakika unataka kufuta faili hii?', 'Thibitisha Ufutaji');
-    if (confirmed) {
-        fetch(`/panel/export-excel/delete/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showSuccess('Faili imefutwa kikamilifu!');
-                setTimeout(() => location.reload(), 1000);
-            } else {
-                showError('Hitilafu imetokea wakati wa kufuta faili.');
-            }
-        });
-    }
+    if (!confirm('Una uhakika unataka kufuta ripoti hii?')) return;
+    fetch('{{ url("panel/export-excel/delete") }}/' + id, {
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            setTimeout(() => location.reload(), 300);
+        } else {
+            alert(data.message || 'Hitilafu');
+        }
+    });
 }
 
-// Bulk delete functions
 function openBulkDeleteModal() {
     const count = document.querySelectorAll('.export-checkbox:checked').length;
-    if (count === 0) {
-        showWarning('Tafadhali chagua angalau faili moja.', 'Hakuna Faili Iliyochaguliwa');
-        return;
-    }
+    if (count === 0) return;
     document.getElementById('bulkDeleteCount').textContent = count;
     document.getElementById('bulkDeleteModal').classList.remove('hidden');
 }
@@ -888,30 +480,11 @@ function closeBulkDeleteModal() {
 }
 
 function confirmBulkDelete() {
-    const selectedIds = Array.from(document.querySelectorAll('.export-checkbox:checked')).map(cb => cb.value);
-
+    const ids = Array.from(document.querySelectorAll('.export-checkbox:checked')).map(cb => cb.value);
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = '{{ route('export.excel.bulk-delete') }}';
-
-    const csrfToken = document.createElement('input');
-    csrfToken.type = 'hidden';
-    csrfToken.name = '_token';
-    csrfToken.value = '{{ csrf_token() }}';
-    form.appendChild(csrfToken);
-
-    const methodInput = document.createElement('input');
-    methodInput.type = 'hidden';
-    methodInput.name = '_method';
-    methodInput.value = 'DELETE';
-    form.appendChild(methodInput);
-
-    const idsInput = document.createElement('input');
-    idsInput.type = 'hidden';
-    idsInput.name = 'export_ids';
-    idsInput.value = selectedIds.join(',');
-    form.appendChild(idsInput);
-
+    form.action = '{{ route("export.excel.bulk-delete") }}';
+    form.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><input type="hidden" name="export_ids" value="' + ids.join(',') + '">';
     document.body.appendChild(form);
     form.submit();
 }

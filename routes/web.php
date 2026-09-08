@@ -171,6 +171,7 @@ Route::middleware(['auth'])->group(function () {
         // Add this route for bulk delete
         Route::delete('/export-excel/bulk-delete', [ExportExcelController::class, 'bulkDelete'])->name('export.excel.bulk-delete');
         Route::delete('/export-excel/delete/{id}', [ExportExcelController::class, 'deleteExport'])->name('export.excel.delete');
+        Route::get('/export-excel/download/{id}', [ExportExcelController::class, 'download'])->name('export.excel.download');
         Route::post('/export-excel/custom', [ExportExcelController::class, 'customExport'])->name('export.excel.custom');
     });
 
@@ -383,7 +384,173 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/messages/unread-count', [MessageController::class, 'unreadCount'])->name('messages.unread-count');
     });
 
+    // Attendance Tracking
+    Route::prefix('panel')->group(function () {
+        Route::get('/attendance', [\App\Http\Controllers\AttendanceController::class, 'index'])->name('attendance.index');
+        Route::post('/attendance', [\App\Http\Controllers\AttendanceController::class, 'store'])->name('attendance.store');
+        Route::get('/attendance/{id}', [\App\Http\Controllers\AttendanceController::class, 'show'])->name('attendance.show');
+        Route::delete('/attendance/{id}', [\App\Http\Controllers\AttendanceController::class, 'destroy'])->name('attendance.destroy');
+        Route::get('/attendance-report', [\App\Http\Controllers\AttendanceController::class, 'report'])->name('attendance.report');
+        Route::get('/api/absent-members', [\App\Http\Controllers\AttendanceController::class, 'getAbsentMembers'])->name('attendance.absent');
+    });
+
+    // Budget Management
+    Route::prefix('panel')->group(function () {
+        Route::get('/budgets', [\App\Http\Controllers\BudgetController::class, 'index'])->name('budgets.index');
+        Route::get('/budgets/create', [\App\Http\Controllers\BudgetController::class, 'create'])->name('budgets.create');
+        Route::post('/budgets', [\App\Http\Controllers\BudgetController::class, 'store'])->name('budgets.store');
+        Route::get('/budgets/{id}', [\App\Http\Controllers\BudgetController::class, 'show'])->name('budgets.show');
+        Route::get('/budgets/{id}/edit', [\App\Http\Controllers\BudgetController::class, 'edit'])->name('budgets.edit');
+        Route::put('/budgets/{id}', [\App\Http\Controllers\BudgetController::class, 'update'])->name('budgets.update');
+        Route::delete('/budgets/{id}', [\App\Http\Controllers\BudgetController::class, 'destroy'])->name('budgets.destroy');
+        Route::post('/budgets/update-actuals', [\App\Http\Controllers\BudgetController::class, 'updateActualAmounts'])->name('budgets.update-actuals');
+    });
+
+    // Children's Ministry (Sunday School)
+    Route::prefix('panel')->group(function () {
+        Route::get('/children', [\App\Http\Controllers\ChildrenClassController::class, 'index'])->name('children.index');
+        Route::get('/children/create', [\App\Http\Controllers\ChildrenClassController::class, 'create'])->name('children.create');
+        Route::post('/children', [\App\Http\Controllers\ChildrenClassController::class, 'store'])->name('children.store');
+        Route::get('/children/{id}', [\App\Http\Controllers\ChildrenClassController::class, 'show'])->name('children.show');
+        Route::get('/children/{id}/edit', [\App\Http\Controllers\ChildrenClassController::class, 'edit'])->name('children.edit');
+        Route::put('/children/{id}', [\App\Http\Controllers\ChildrenClassController::class, 'update'])->name('children.update');
+        Route::delete('/children/{id}', [\App\Http\Controllers\ChildrenClassController::class, 'destroy'])->name('children.destroy');
+        Route::post('/children/{id}/add-student', [\App\Http\Controllers\ChildrenClassController::class, 'addStudent'])->name('children.add-student');
+        Route::delete('/children/{id}/students/{memberId}', [\App\Http\Controllers\ChildrenClassController::class, 'removeStudent'])->name('children.remove-student');
+        Route::post('/children/{id}/add-teacher', [\App\Http\Controllers\ChildrenClassController::class, 'addTeacher'])->name('children.add-teacher');
+        Route::delete('/children/{id}/teachers/{memberId}', [\App\Http\Controllers\ChildrenClassController::class, 'removeTeacher'])->name('children.remove-teacher');
+    });
+
+    // Annual Giving Statements
+    Route::prefix('panel')->group(function () {
+        Route::get('/statements', [\App\Http\Controllers\AnnualStatementController::class, 'index'])->name('statements.index');
+        Route::get('/statements/{member}', [\App\Http\Controllers\AnnualStatementController::class, 'show'])->name('statements.show');
+        Route::get('/statements/{member}/print', [\App\Http\Controllers\AnnualStatementController::class, 'printStatement'])->name('statements.print');
+        Route::get('/statements-bulk-print', [\App\Http\Controllers\AnnualStatementController::class, 'bulkPrint'])->name('statements.bulk-print');
+    });
+
+    // Visitor/Guest Tracking
+    Route::prefix('panel')->group(function () {
+        Route::get('/visitors', [\App\Http\Controllers\VisitorController::class, 'index'])->name('visitors.index');
+        Route::get('/visitors/create', [\App\Http\Controllers\VisitorController::class, 'create'])->name('visitors.create');
+        Route::post('/visitors', [\App\Http\Controllers\VisitorController::class, 'store'])->name('visitors.store');
+        Route::get('/visitors/{id}', [\App\Http\Controllers\VisitorController::class, 'show'])->name('visitors.show');
+        Route::get('/visitors/{id}/edit', [\App\Http\Controllers\VisitorController::class, 'edit'])->name('visitors.edit');
+        Route::put('/visitors/{id}', [\App\Http\Controllers\VisitorController::class, 'update'])->name('visitors.update');
+        Route::delete('/visitors/{id}', [\App\Http\Controllers\VisitorController::class, 'destroy'])->name('visitors.destroy');
+        Route::post('/visitors/{id}/follow-up', [\App\Http\Controllers\VisitorController::class, 'followUp'])->name('visitors.follow-up');
+        Route::post('/visitors/{id}/convert', [\App\Http\Controllers\VisitorController::class, 'convertToMember'])->name('visitors.convert');
+    });
+
+    // Member Follow-up
+    Route::prefix('panel')->group(function () {
+        Route::get('/followups', [\App\Http\Controllers\MemberFollowupController::class, 'index'])->name('followups.index');
+        Route::get('/followups/create', [\App\Http\Controllers\MemberFollowupController::class, 'create'])->name('followups.create');
+        Route::post('/followups', [\App\Http\Controllers\MemberFollowupController::class, 'store'])->name('followups.store');
+        Route::get('/followups/{id}', [\App\Http\Controllers\MemberFollowupController::class, 'show'])->name('followups.show');
+        Route::get('/followups/{id}/edit', [\App\Http\Controllers\MemberFollowupController::class, 'edit'])->name('followups.edit');
+        Route::put('/followups/{id}', [\App\Http\Controllers\MemberFollowupController::class, 'update'])->name('followups.update');
+        Route::delete('/followups/{id}', [\App\Http\Controllers\MemberFollowupController::class, 'destroy'])->name('followups.destroy');
+        Route::patch('/followups/{id}/status', [\App\Http\Controllers\MemberFollowupController::class, 'updateStatus'])->name('followups.update-status');
+    });
+
+    // Volunteer/Serving Schedule
+    Route::prefix('panel')->group(function () {
+        Route::get('/serving', [\App\Http\Controllers\ServingScheduleController::class, 'index'])->name('serving.index');
+        Route::get('/serving/create', [\App\Http\Controllers\ServingScheduleController::class, 'create'])->name('serving.create');
+        Route::post('/serving', [\App\Http\Controllers\ServingScheduleController::class, 'store'])->name('serving.store');
+        Route::get('/serving/{id}', [\App\Http\Controllers\ServingScheduleController::class, 'show'])->name('serving.show');
+        Route::get('/serving/{id}/edit', [\App\Http\Controllers\ServingScheduleController::class, 'edit'])->name('serving.edit');
+        Route::put('/serving/{id}', [\App\Http\Controllers\ServingScheduleController::class, 'update'])->name('serving.update');
+        Route::delete('/serving/{id}', [\App\Http\Controllers\ServingScheduleController::class, 'destroy'])->name('serving.destroy');
+        Route::post('/serving/{id}/add-assignment', [\App\Http\Controllers\ServingScheduleController::class, 'addAssignment'])->name('serving.add-assignment');
+        Route::delete('/serving/{id}/assignments/{assignmentId}', [\App\Http\Controllers\ServingScheduleController::class, 'removeAssignment'])->name('serving.remove-assignment');
+    });
+
+    // Media/Photo Gallery
+    Route::prefix('panel')->group(function () {
+        Route::get('/gallery', [\App\Http\Controllers\MediaGalleryController::class, 'index'])->name('gallery.index');
+        Route::get('/gallery/create', [\App\Http\Controllers\MediaGalleryController::class, 'create'])->name('gallery.create');
+        Route::post('/gallery', [\App\Http\Controllers\MediaGalleryController::class, 'store'])->name('gallery.store');
+        Route::get('/gallery/{id}', [\App\Http\Controllers\MediaGalleryController::class, 'show'])->name('gallery.show');
+        Route::get('/gallery/{id}/edit', [\App\Http\Controllers\MediaGalleryController::class, 'edit'])->name('gallery.edit');
+        Route::put('/gallery/{id}', [\App\Http\Controllers\MediaGalleryController::class, 'update'])->name('gallery.update');
+        Route::delete('/gallery/{id}', [\App\Http\Controllers\MediaGalleryController::class, 'destroy'])->name('gallery.destroy');
+        Route::delete('/gallery/{galleryId}/items/{itemId}', [\App\Http\Controllers\MediaGalleryController::class, 'deleteItem'])->name('gallery.delete-item');
+    });
+
+    // Online Giving / M-Pesa
+    Route::prefix('panel')->group(function () {
+        Route::get('/online-giving', [\App\Http\Controllers\OnlineGivingController::class, 'index'])->name('online-giving.index');
+        Route::get('/online-giving/create', [\App\Http\Controllers\OnlineGivingController::class, 'create'])->name('online-giving.create');
+        Route::post('/online-giving', [\App\Http\Controllers\OnlineGivingController::class, 'store'])->name('online-giving.store');
+        Route::get('/online-giving/{id}', [\App\Http\Controllers\OnlineGivingController::class, 'show'])->name('online-giving.show');
+        Route::post('/online-giving/{id}/approve', [\App\Http\Controllers\OnlineGivingController::class, 'approve'])->name('online-giving.approve');
+        Route::post('/online-giving/{id}/reject', [\App\Http\Controllers\OnlineGivingController::class, 'reject'])->name('online-giving.reject');
+    });
+
+    // Membership Transfers
+    Route::prefix('panel')->group(function () {
+        Route::get('/transfers', [\App\Http\Controllers\MembershipTransferController::class, 'index'])->name('transfers.index');
+        Route::get('/transfers/create', [\App\Http\Controllers\MembershipTransferController::class, 'create'])->name('transfers.create');
+        Route::post('/transfers', [\App\Http\Controllers\MembershipTransferController::class, 'store'])->name('transfers.store');
+        Route::get('/transfers/{id}', [\App\Http\Controllers\MembershipTransferController::class, 'show'])->name('transfers.show');
+        Route::post('/transfers/{id}/approve', [\App\Http\Controllers\MembershipTransferController::class, 'approve'])->name('transfers.approve');
+        Route::post('/transfers/{id}/reject', [\App\Http\Controllers\MembershipTransferController::class, 'reject'])->name('transfers.reject');
+        Route::delete('/transfers/{id}', [\App\Http\Controllers\MembershipTransferController::class, 'destroy'])->name('transfers.destroy');
+    });
+
+    // Department Money Approval with Digital Signature
+    Route::prefix('panel')->group(function () {
+        Route::get('/approvals', [\App\Http\Controllers\DepartmentApprovalController::class, 'index'])->name('approvals.index');
+        Route::get('/approvals/create', [\App\Http\Controllers\DepartmentApprovalController::class, 'create'])->name('approvals.create');
+        Route::post('/approvals', [\App\Http\Controllers\DepartmentApprovalController::class, 'store'])->name('approvals.store');
+        Route::get('/approvals/{id}', [\App\Http\Controllers\DepartmentApprovalController::class, 'show'])->name('approvals.show');
+        Route::post('/approvals/{id}/approve', [\App\Http\Controllers\DepartmentApprovalController::class, 'approve'])->name('approvals.approve');
+        Route::post('/approvals/{id}/reject', [\App\Http\Controllers\DepartmentApprovalController::class, 'reject'])->name('approvals.reject');
+        Route::get('/approvals-thresholds', [\App\Http\Controllers\DepartmentApprovalController::class, 'thresholds'])->name('approvals.thresholds');
+        Route::post('/approvals-thresholds', [\App\Http\Controllers\DepartmentApprovalController::class, 'storeThreshold'])->name('approvals.thresholds.store');
+        Route::post('/update-signature', [\App\Http\Controllers\DepartmentApprovalController::class, 'updateSignature'])->name('profile.update-signature');
+    });
+
+    // QuickBooks-style Accounting Engine
+    Route::prefix('panel/accounting')->name('accounting.')->group(function () {
+        Route::get('/chart-of-accounts', [\App\Http\Controllers\AccountingController::class, 'chartOfAccounts'])->name('chart-of-accounts');
+        Route::post('/accounts', [\App\Http\Controllers\AccountingController::class, 'storeAccount'])->name('accounts.store');
+        Route::put('/accounts/{id}', [\App\Http\Controllers\AccountingController::class, 'updateAccount'])->name('accounts.update');
+        Route::get('/journal', [\App\Http\Controllers\AccountingController::class, 'journalEntries'])->name('journal.index');
+        Route::get('/journal/create', [\App\Http\Controllers\AccountingController::class, 'createJournalEntry'])->name('journal.create');
+        Route::post('/journal', [\App\Http\Controllers\AccountingController::class, 'storeJournalEntry'])->name('journal.store');
+        Route::get('/journal/{id}', [\App\Http\Controllers\AccountingController::class, 'showJournalEntry'])->name('journal.show');
+        Route::post('/journal/{id}/post', [\App\Http\Controllers\AccountingController::class, 'postJournalEntry'])->name('journal.post');
+        Route::post('/journal/{id}/void', [\App\Http\Controllers\AccountingController::class, 'voidJournalEntry'])->name('journal.void');
+        Route::get('/reports/trial-balance', [\App\Http\Controllers\AccountingController::class, 'trialBalance'])->name('trial-balance');
+        Route::get('/reports/balance-sheet', [\App\Http\Controllers\AccountingController::class, 'balanceSheet'])->name('balance-sheet');
+        Route::get('/reports/income-statement', [\App\Http\Controllers\AccountingController::class, 'incomeStatement'])->name('income-statement');
+        Route::get('/ledger/{id}', [\App\Http\Controllers\AccountingController::class, 'accountLedger'])->name('ledger');
+    });
+
+    // Payroll / Salary Management
+    Route::prefix('panel/payroll')->name('payroll.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PayrollController::class, 'index'])->name('index');
+        Route::get('/create-period', [\App\Http\Controllers\PayrollController::class, 'createPeriod'])->name('create-period');
+        Route::post('/periods', [\App\Http\Controllers\PayrollController::class, 'storePeriod'])->name('store-period');
+        Route::get('/periods/{id}', [\App\Http\Controllers\PayrollController::class, 'show'])->name('show');
+        Route::post('/periods/{id}/process', [\App\Http\Controllers\PayrollController::class, 'process'])->name('process');
+        Route::post('/periods/{id}/approve', [\App\Http\Controllers\PayrollController::class, 'approvePeriod'])->name('approve');
+        Route::post('/periods/{id}/paid', [\App\Http\Controllers\PayrollController::class, 'markPaid'])->name('paid');
+        Route::get('/salary-structures', [\App\Http\Controllers\PayrollController::class, 'salaryStructures'])->name('salary-structures');
+        Route::get('/salary-structures/create', [\App\Http\Controllers\PayrollController::class, 'createStructure'])->name('create-structure');
+        Route::post('/salary-structures', [\App\Http\Controllers\PayrollController::class, 'storeStructure'])->name('store-structure');
+        Route::get('/salary-structures/{id}/edit', [\App\Http\Controllers\PayrollController::class, 'editStructure'])->name('edit-structure');
+        Route::put('/salary-structures/{id}', [\App\Http\Controllers\PayrollController::class, 'updateStructure'])->name('update-structure');
+        Route::get('/payslip/{id}', [\App\Http\Controllers\PayrollController::class, 'payslip'])->name('payslip');
+    });
+
 });
+
+// Online Giving Callback (Public - called by payment gateway)
+Route::post('/api/payment-callback', [\App\Http\Controllers\OnlineGivingController::class, 'callback'])->name('payment.callback');
 
 // API Routes for AJAX calls
 Route::prefix('api')->middleware(['auth'])->group(function () {
